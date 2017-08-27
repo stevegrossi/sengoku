@@ -1,0 +1,3 @@
+Game <%= @game_id %>
+
+<script>window.game_id = <%= @game_id %>;</script>

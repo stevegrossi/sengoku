@@ -16,7 +16,9 @@ defmodule SengokuWeb.Router do
   scope "/", SengokuWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", GameController, :index
+    post "/", GameController, :create
+    get "/:game_id", GameController, :show
   end
 
   # Other scopes may use custom stacks.

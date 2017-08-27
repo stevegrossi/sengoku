@@ -1,7 +1,7 @@
 defmodule SengokuWeb.GameChannel do
   use SengokuWeb, :channel
 
-  def join("games:lobby", payload, socket) do
+  def join("games:" <> _game_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

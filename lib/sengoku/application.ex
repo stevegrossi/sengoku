@@ -11,7 +11,7 @@ defmodule Sengoku.Application do
       # Start the endpoint when the application starts
       supervisor(SengokuWeb.Endpoint, []),
       # Start your own worker by calling: Sengoku.Worker.start_link(arg1, arg2, arg3)
-      # worker(Sengoku.Worker, [arg1, arg2, arg3]),
+      worker(Registry, [:unique, :game_server_registry]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

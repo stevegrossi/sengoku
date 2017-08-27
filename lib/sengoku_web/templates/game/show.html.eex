@@ -1,3 +1,4 @@
-Game <%= @game_id %>
+<pre id="state_container"></pre>
+<button id="end_turn_button">End Turn</button>
 
-<script>window.game_id = <%= @game_id %>;</script>
+<script>window.game_id = '<%= @game_id %>';</script>

@@ -1,6 +1,8 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
+  @players [1, 2, 3, 4]
+
   def new do
     game_id = random_token(7)
     start_link(game_id)
@@ -18,7 +20,9 @@ defmodule Sengoku.GameServer do
     end
     {:ok, %{
       game_id: game_id,
-      turn: 0
+      turn: 1,
+      current_player: List.first(@players),
+      players: @players
     }}
   end
 
@@ -34,8 +38,18 @@ defmodule Sengoku.GameServer do
 
   # Server
 
-  def handle_call(:end_turn, _from, state) do
-    new_state = Map.update!(state, :turn, &(&1 + 1))
+  def handle_call(:end_turn, _from, %{current_player: current_player} = state) do
+    next_player_in_list = current_player + 1
+    new_state =
+      case Enum.member?(@players, next_player_in_list) do
+        true ->
+          state
+            |> Map.put(:current_player, next_player_in_list)
+        false ->
+          state
+          |> Map.update!(:turn, &(&1 + 1))
+          |> Map.put(:current_player, List.first(@players))
+      end
     {:reply, new_state, new_state}
   end
 

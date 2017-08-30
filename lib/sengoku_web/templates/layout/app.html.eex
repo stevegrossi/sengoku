@@ -12,7 +12,7 @@
   </head>
 
   <body>
-    <h1><a href="/">Sengoku</a></h1>
+    <h1><a href="/"><img src="<%= static_path(@conn, "/images/sengoku.svg") %>" width="200" alt="Sengoku" /></a></h1>
 
     <main role="main">
       <%= render @view_module, @view_template, assigns %>

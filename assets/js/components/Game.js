@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
+import Board from './Board'
 
 class Game extends React.Component {
   constructor(props) {
@@ -27,8 +28,12 @@ class Game extends React.Component {
     return (
       <div>
         <p>This is Game <b>{this.props.id}</b></p>
+        {this.state.territories &&
+          <Board territories={this.state.territories} />
+        }
         <button onClick={this.endTurn.bind(this)}>End Turn</button>
         <button onClick={this.placeArmy.bind(this)}>Place Army</button>
+        <h2>State</h2>
         <pre>
           {JSON.stringify(this.state, null, 2)}
         </pre>

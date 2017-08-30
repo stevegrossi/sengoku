@@ -19,3 +19,14 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
+
+// Boot up React
+import React from "react"
+import ReactDOM from "react-dom"
+import Game from "./components/Game"
+
+const game_id = window.game_id
+const game_container = document.getElementById('game_container')
+if (game_id && game_container) {
+  ReactDOM.render(<Game id={game_id} />, game_container)
+}

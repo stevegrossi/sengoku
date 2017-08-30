@@ -1,3 +1,5 @@
+<div id="game_container">Loading...</div>
+
 <pre id="state_container"></pre>
 <button id="end_turn_button">End Turn</button>
 <button id="place_army_button">Place Army</button>

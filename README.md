@@ -1,5 +1,35 @@
 # Sengoku
 
+## State
+
+```elixir
+%{
+	winner: nil,
+	turnNumber: 2,
+	players: %{
+		oda: %{
+			unplacedArmies: 3
+		}
+		# etc.
+	},
+	%{
+		territories: %{ # Probably a %Board{} struct
+			1 => %{
+				owner: :tokugawa,
+				armies: 4,
+				adjacentTerritories: [3, 4]
+			},
+			2 => %{
+				owner: nil,
+				armies: 0,
+				adjacentTerritories: [5, 6]
+			}
+			# etc.
+		}
+	}
+}
+```
+
 ## Leaders
 
 - Oda Nobunaga

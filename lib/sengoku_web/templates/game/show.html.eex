@@ -1,4 +1,5 @@
 <pre id="state_container"></pre>
 <button id="end_turn_button">End Turn</button>
+<button id="place_army_button">Place Army</button>
 
 <script>window.game_id = '<%= @game_id %>';</script>

@@ -57,6 +57,7 @@ socket.connect()
 if (window.game_id) {
   const state_container = document.getElementById('state_container')
   const end_turn_button = document.getElementById('end_turn_button')
+  const place_army_button = document.getElementById('place_army_button')
 
   let channel = socket.channel('games:' + window.game_id, {})
   channel.join()
@@ -67,8 +68,16 @@ if (window.game_id) {
     state_container.innerHTML = JSON.stringify(new_state, null, 2)
   })
 
+  const action = (type, payload) => {
+    channel.push(type, payload)
+  }
+
   end_turn_button.onclick = (e) => {
-    channel.push('end_turn')
+    action('end_turn')
+  }
+
+  place_army_button.onclick = (e) => {
+    action('place_armies', { count: 1, territory: 1 })
   }
 }
 

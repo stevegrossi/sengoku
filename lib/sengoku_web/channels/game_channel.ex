@@ -17,10 +17,14 @@ defmodule SengokuWeb.GameChannel do
   #   {:reply, {:ok, payload}, socket}
   # end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (game:lobby).
   def handle_in("end_turn", _payload, socket) do
     state = Sengoku.GameServer.end_turn(socket.assigns[:game_id])
+    broadcast socket, "update", state
+    {:noreply, socket}
+  end
+
+  def handle_in("place_armies", %{"count" => count, "territory" => territory_id}, socket) do
+    state = Sengoku.GameServer.place_armies(socket.assigns[:game_id], count, territory_id)
     broadcast socket, "update", state
     {:noreply, socket}
   end

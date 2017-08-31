@@ -17,12 +17,19 @@ class Game extends React.Component {
     })
   }
 
+  action(type, payload) {
+    payload = payload || {}
+    payload.type = type
+    console.log('action', payload)
+    this.props.channel.push('action', payload)
+  }
+
   endTurn() {
-    this.props.channel.push('end_turn')
+    this.action('end_turn')
   }
 
   placeArmy() {
-    this.props.channel.push('place_armies', { count: 1, territory: 1 })
+    this.action('place_armies', { count: 1, territory: 1 })
   }
 
   render() {

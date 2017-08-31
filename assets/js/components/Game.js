@@ -20,8 +20,19 @@ class Game extends React.Component {
   }
 
   selectTerritory(id) {
-    console.log('select_territory', id)
-    this.setState({ selectedTerritoryId: id })
+    const player_owns_territory =
+      this.state.territories[id].owner == this.state.current_player_id
+
+    if (player_owns_territory) {
+      console.log('select_territory', id)
+      this.setState({ selectedTerritoryId: id })
+    }
+  }
+
+  attackTerritory(id) {
+    if (this.state.selectedTerritoryId) {
+      action('attack', { from: this.state.selectedTerritoryId, to: id })
+    }
   }
 
   action(type, payload) {
@@ -44,7 +55,7 @@ class Game extends React.Component {
     return (
       <div>
         {this.state.players &&
-          <Players players={this.state.players} />
+          <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
         }
         {this.state.territories &&
           <Board territories={this.state.territories}

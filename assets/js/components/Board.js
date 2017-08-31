@@ -3,16 +3,21 @@ import boardData from '../boardData'
 import colors from '../colors'
 
 const Board = (props) => {
+  const neighbors = props.selectedTerritoryId && props.territories[props.selectedTerritoryId].neighbors
   const territories = Object.keys(props.territories).map(Number).map((id) => {
     const data = props.territories[id]
     const tile = boardData[id]
+    const is_selected = props.selectedTerritoryId == id
+    const neighbor_of_selected = neighbors && neighbors.indexOf(id) > -1
+
     return (
       <g key={id}
          transform={tile.translate}
          fill={colors[data.owner] || '#fff'}
          stroke="#000"
          onClick={() => props.selectTerritory(id)}
-         strokeWidth={props.selectedTerritoryId == id ? '1.5' : '0.75'}>
+         strokeWidth={is_selected ? '1.5' : '0.75'}
+         opacity={neighbor_of_selected ? '0.5' : '1'}>
 
         {tile.path}
 

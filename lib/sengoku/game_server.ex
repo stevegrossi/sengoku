@@ -1,9 +1,7 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
-  alias Sengoku.{Tile, Player, Battle}
-
-  @min_additional_armies 3
+  alias Sengoku.Game
 
   def new do
     game_id = random_token(7)
@@ -20,13 +18,7 @@ defmodule Sengoku.GameServer do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    state =
-      game_id
-      |> get_initial_state()
-      |> assign_tiles()
-      |> begin_turn()
-
-    {:ok, state}
+    {:ok, Game.initial_state}
   end
 
   # API
@@ -49,84 +41,18 @@ defmodule Sengoku.GameServer do
 
   # Server
 
-  def handle_call(:end_turn, _from, %{current_player_id: current_player_id} = state) do
-    next_player_id = current_player_id + 1
-    new_state =
-      case Map.has_key?(Player.initial_state, next_player_id) do
-        true ->
-          state
-            |> Map.put(:current_player_id, next_player_id)
-        false ->
-          state
-          |> Map.update!(:turn, &(&1 + 1))
-          |> Map.put(:current_player_id, Player.first_id)
-      end
-      |> begin_turn()
-
+  def handle_call(:end_turn, _from, state) do
+    new_state = Game.end_turn(state)
     {:reply, new_state, new_state}
   end
 
-  def handle_call({:place_armies, count, tile_id}, _from, %{current_player_id: current_player_id} = state) do
-    current_player = state.players[current_player_id]
-    new_state =
-      if count <= current_player.unplaced_armies do
-        tile = state.tiles[tile_id]
-
-        if tile.owner == current_player_id do
-          state
-          |> update_in([:players, current_player_id], fn(player) ->
-               struct(player, %{unplaced_armies: player.unplaced_armies - count})
-             end)
-          |> update_in([:tiles, tile_id], fn(tile) ->
-               struct(tile, %{armies: tile.armies + count})
-             end)
-        else
-          state
-        end
-      else
-        state
-      end
+  def handle_call({:place_armies, count, tile_id}, _from, state) do
+    new_state = Game.place_armies(state, count, tile_id)
     {:reply, new_state, new_state}
   end
 
-  def handle_call({:attack, from_id, to_id}, _from, %{current_player_id: current_player_id} = state) do
-    current_player = state.players[current_player_id]
-    from_tile = state.tiles[from_id]
-    to_tile = state.tiles[to_id]
-
-    new_state =
-      if (
-        from_tile.armies >= 1 &&
-        from_tile.owner == current_player_id &&
-        to_tile.owner != current_player_id &&
-        to_id in from_tile.neighbors
-      ) do
-        case Battle.resolve do
-          :attacker ->
-            if state.tiles[to_id].armies <= 1 do
-              state
-              |> update_in([:tiles, to_id], fn(tile) ->
-                   struct(tile, %{owner: current_player_id, armies: 1})
-                 end)
-              |> update_in([:tiles, from_id], fn(tile) ->
-                   struct(tile, %{armies: tile.armies - 1})
-                 end)
-            else
-              state
-              |> update_in([:tiles, to_id], fn(tile) ->
-                   struct(tile, %{armies: tile.armies - 1})
-                 end)
-            end
-          :defender ->
-            state
-            |> update_in([:tiles, from_id], fn(tile) ->
-                 struct(tile, %{armies: tile.armies - 1})
-               end)
-        end
-      else
-        state
-      end
-
+  def handle_call({:attack, from_id, to_id}, _from, state) do
+    new_state = Game.attack(state, from_id, to_id)
     {:reply, new_state, new_state}
   end
 
@@ -136,33 +62,6 @@ defmodule Sengoku.GameServer do
 
   defp via_tuple(game_id) do
     {:via, Registry, {:game_server_registry, game_id}}
-  end
-
-  defp assign_tiles(state) do
-    tile_ids = Map.keys(state.tiles)
-    Enum.reduce(Player.ids, state, fn(player_id, state) ->
-      not_really_random_tile = player_id * 6
-      update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
-        struct(tile, %{owner: player_id})
-      end)
-    end)
-  end
-
-  defp begin_turn(%{current_player_id: current_player_id} = state) do
-    state
-    |> update_in([:players, current_player_id], fn(player) ->
-         struct(player, %{unplaced_armies: player.unplaced_armies + @min_additional_armies})
-       end)
-  end
-
-  defp get_initial_state(game_id) do
-    %{
-      game_id: game_id,
-      turn: 1,
-      current_player_id: Player.first_id,
-      players: Player.initial_state,
-      tiles: Tile.initial_state
-    }
   end
 
   defp random_token(length) do

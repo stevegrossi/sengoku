@@ -2,11 +2,12 @@ defmodule Sengoku.GameServer do
   use GenServer
 
   @players %{
-    1 => %{unplaced_armies: 3},
-    2 => %{unplaced_armies: 3},
-    3 => %{unplaced_armies: 3},
-    4 => %{unplaced_armies: 3}
+    1 => %{unplaced_armies: 0},
+    2 => %{unplaced_armies: 0},
+    3 => %{unplaced_armies: 0},
+    4 => %{unplaced_armies: 0}
   }
+  @min_additional_armies 3
 
   def new do
     game_id = random_token(7)
@@ -27,6 +28,7 @@ defmodule Sengoku.GameServer do
       game_id
       |> get_initial_state()
       |> assign_territories()
+      |> begin_turn()
 
     {:ok, state}
   end
@@ -59,6 +61,8 @@ defmodule Sengoku.GameServer do
           |> Map.update!(:turn, &(&1 + 1))
           |> Map.put(:current_player_id, List.first(Map.keys(@players)))
       end
+      |> begin_turn()
+
     {:reply, new_state, new_state}
   end
 
@@ -94,6 +98,11 @@ defmodule Sengoku.GameServer do
     Enum.reduce(Map.keys(@players), state, fn(player_id, state) ->
       put_in(state, [:territories, player_id * 6, :owner], player_id)
     end)
+  end
+
+  defp begin_turn(%{current_player_id: current_player_id} = state) do
+    state
+    |> update_in([:players, current_player_id, :unplaced_armies], &(&1 + @min_additional_armies))
   end
 
   defp get_initial_state(game_id) do

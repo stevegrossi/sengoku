@@ -3,3 +3,8 @@ body {
   color: #3f250b;
   font-family: 'Crimson Text', serif;
 }
+
+.Territory-count {
+  fill: #000;
+  font-size: 10px;
+}

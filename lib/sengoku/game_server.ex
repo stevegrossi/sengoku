@@ -84,15 +84,6 @@ defmodule Sengoku.GameServer do
     {:via, Registry, {:game_server_registry, game_id}}
   end
 
-  # Territories:
-  #
-  #   1 | 2 | 3
-  #  ___|___|___
-  #   4 | 5 | 6
-  #  ___|___|___
-  #   7 | 8 | 9
-  #     |   |
-  #
   defp initial_state(game_id) do
     %{
       game_id: game_id,
@@ -108,7 +99,27 @@ defmodule Sengoku.GameServer do
         6 => %{ owner: nil, armies: 0},
         7 => %{ owner: 3, armies: 0},
         8 => %{ owner: nil, armies: 0},
-        9 => %{ owner: 4, armies: 0}
+        9 => %{ owner: 4, armies: 0},
+        10 => %{ owner: nil, armies: 0},
+        11 => %{ owner: nil, armies: 0},
+        12 => %{ owner: nil, armies: 0},
+        13 => %{ owner: nil, armies: 0},
+        14 => %{ owner: nil, armies: 0},
+        15 => %{ owner: nil, armies: 0},
+        16 => %{ owner: nil, armies: 0},
+        17 => %{ owner: nil, armies: 0},
+        18 => %{ owner: nil, armies: 0},
+        19 => %{ owner: nil, armies: 0},
+        20 => %{ owner: nil, armies: 0},
+        21 => %{ owner: nil, armies: 0},
+        22 => %{ owner: nil, armies: 0},
+        23 => %{ owner: nil, armies: 0},
+        24 => %{ owner: nil, armies: 0},
+        25 => %{ owner: nil, armies: 0},
+        26 => %{ owner: nil, armies: 0},
+        27 => %{ owner: nil, armies: 0},
+        28 => %{ owner: nil, armies: 0},
+        29 => %{ owner: nil, armies: 0}
       }
     }
   end

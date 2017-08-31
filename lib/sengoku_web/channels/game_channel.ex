@@ -16,8 +16,9 @@ defmodule SengokuWeb.GameChannel do
   def handle_in("action", action, socket) do
     game_id = socket.assigns[:game_id]
     new_state = command!(game_id, action)
-
-    broadcast socket, "update", new_state
+    if new_state do
+      broadcast socket, "update", new_state
+    end
     {:noreply, socket}
   end
 
@@ -40,4 +41,11 @@ defmodule SengokuWeb.GameChannel do
 
     GameServer.place_armies(game_id, count, territory)
   end
+  defp command!(game_id, %{"type" => "attack",
+                           "from" => from_id,
+                           "to" => to_id}) do
+
+    GameServer.attack(game_id, from_id, to_id)
+  end
+  defp command!(game_id, _), do: nil
 end

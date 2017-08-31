@@ -19,20 +19,33 @@ class Game extends React.Component {
     })
   }
 
-  selectTerritory(id) {
+  territoryClicked(id, e) {
+    console.log('territoryClicked', id)
     const player_owns_territory =
       this.state.territories[id].owner == this.state.current_player_id
 
     if (player_owns_territory) {
-      console.log('select_territory', id)
-      this.setState({ selectedTerritoryId: id })
+      if (this.state.players[this.state.current_player_id].unplaced_armies > 0) {
+        // Army placement phase
+        this.action('place_armies', { count: 1, territory: id })
+        e.stopPropagation()
+      } else if (!this.state.selectedTerritoryId) {
+        // Preparing to attack/move
+        console.log('selecting territory', id)
+        this.setState({ selectedTerritoryId: id })
+        e.stopPropagation()
+      }
+    } else {
+      // Attacking
+      if (this.state.selectedTerritoryId) {
+        this.action('attack', { from: this.state.selectedTerritoryId, to: id })
+        e.stopPropagation()
+      }
     }
   }
 
-  attackTerritory(id) {
-    if (this.state.selectedTerritoryId) {
-      action('attack', { from: this.state.selectedTerritoryId, to: id })
-    }
+  cancelSelection() {
+    this.setState({ selectedTerritoryId: null })
   }
 
   action(type, payload) {
@@ -43,12 +56,8 @@ class Game extends React.Component {
   }
 
   endTurn() {
+    this.cancelSelection()
     this.action('end_turn')
-  }
-
-  placeArmy() {
-    this.state.selectedTerritoryId &&
-      this.action('place_armies', { count: 1, territory: this.state.selectedTerritoryId })
   }
 
   render() {
@@ -59,11 +68,11 @@ class Game extends React.Component {
         }
         {this.state.territories &&
           <Board territories={this.state.territories}
-                 selectTerritory={this.selectTerritory.bind(this)}
+                 territoryClicked={this.territoryClicked.bind(this)}
+                 cancelSelection={this.cancelSelection.bind(this)}
                  selectedTerritoryId={this.state.selectedTerritoryId} />
         }
         <button onClick={this.endTurn.bind(this)}>End Turn</button>
-        <button onClick={this.placeArmy.bind(this)}>Place Army</button>
         <h2>State</h2>
         <pre>
           {JSON.stringify(this.state, null, 2)}

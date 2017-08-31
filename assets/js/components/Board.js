@@ -15,7 +15,7 @@ const Board = (props) => {
          transform={tile.translate}
          fill={colors[data.owner] || '#fff'}
          stroke="#000"
-         onClick={() => props.selectTerritory(id)}
+         onClick={(e) => props.territoryClicked(id, e)}
          strokeWidth={is_selected ? '1.5' : '0.75'}
          opacity={neighbor_of_selected ? '0.5' : '1'}>
 
@@ -31,9 +31,13 @@ const Board = (props) => {
   })
 
   return (
-    <svg viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <g id="japan" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        {territories}
+    <svg onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g id="japan"
+         stroke="none"
+         strokeWidth="1"
+         fill="none"
+         fillRule="evenodd"
+         children={territories}>
       </g>
     </svg>
   )

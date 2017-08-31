@@ -8,6 +8,7 @@ defmodule Sengoku.GameServer do
     4 => %{unplaced_armies: 0}
   }
   @min_additional_armies 3
+  @outcomes ~w(attacker defender)a
 
   def new do
     game_id = random_token(7)
@@ -41,6 +42,10 @@ defmodule Sengoku.GameServer do
 
   def place_armies(game_id, count, territory_id) do
     GenServer.call(via_tuple(game_id), {:place_armies, count, territory_id})
+  end
+
+  def attack(game_id, from_id, to_id) do
+    GenServer.call(via_tuple(game_id), {:attack, from_id, to_id})
   end
 
   def state(game_id) do
@@ -82,6 +87,44 @@ defmodule Sengoku.GameServer do
       else
         state
       end
+    {:reply, new_state, new_state}
+  end
+
+  def handle_call({:attack, from_id, to_id}, _from, %{current_player_id: current_player_id} = state) do
+    current_player = state.players[current_player_id]
+    from_territory = state.territories[from_id]
+    to_territory = state.territories[to_id]
+
+    # TODO: validations
+    # - from_territory has at least 1 army
+    # - from_territory is owned by current player
+    # - to_territory is NOT owned by current player
+    new_state =
+      if (
+        from_territory.armies >= 1 &&
+        from_territory.owner == current_player_id &&
+        to_territory.owner != current_player_id &&
+        to_id in from_territory.neighbors
+      ) do
+        case Enum.random(@outcomes) do
+          :attacker ->
+            if state.territories[to_id].armies <= 1 do
+              state
+              |> put_in([:territories, to_id, :owner], current_player_id)
+              |> put_in([:territories, to_id, :armies], 1)
+              |> update_in([:territories, from_id, :armies], &(&1 - 1))
+            else
+              state
+              |> update_in([:territories, to_id, :armies], &(&1 - 1))
+            end
+          :defender ->
+            state
+            |> update_in([:territories, from_id, :armies], &(&1 - 1))
+        end
+      else
+        state
+      end
+
     {:reply, new_state, new_state}
   end
 

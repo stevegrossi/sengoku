@@ -1,6 +1,8 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
+  alias Sengoku.Tile
+
   @players %{
     1 => %{unplaced_armies: 0},
     2 => %{unplaced_armies: 0},
@@ -80,7 +82,9 @@ defmodule Sengoku.GameServer do
         if tile.owner == current_player_id do
           state
           |> update_in([:players, current_player_id, :unplaced_armies], &(&1 - count))
-          |> update_in([:tiles, tile_id, :armies], &(&1 + count))
+          |> update_in([:tiles, tile_id], fn(tile) ->
+               struct(tile, %{armies: tile.armies + 1})
+             end)
         else
           state
         end
@@ -106,16 +110,23 @@ defmodule Sengoku.GameServer do
           :attacker ->
             if state.tiles[to_id].armies <= 1 do
               state
-              |> put_in([:tiles, to_id, :owner], current_player_id)
-              |> put_in([:tiles, to_id, :armies], 1)
-              |> update_in([:tiles, from_id, :armies], &(&1 - 1))
+              |> update_in([:tiles, to_id], fn(tile) ->
+                   struct(tile, %{owner: current_player_id, armies: 1})
+                 end)
+              |> update_in([:tiles, from_id], fn(tile) ->
+                   struct(tile, %{armies: tile.armies - 1})
+                 end)
             else
               state
-              |> update_in([:tiles, to_id, :armies], &(&1 - 1))
+              |> update_in([:tiles, to_id], fn(tile) ->
+                   struct(tile, %{armies: tile.armies - 1})
+                 end)
             end
           :defender ->
             state
-            |> update_in([:tiles, from_id, :armies], &(&1 - 1))
+            |> update_in([:tiles, from_id], fn(tile) ->
+                 struct(tile, %{armies: tile.armies - 1})
+               end)
         end
       else
         state
@@ -135,7 +146,10 @@ defmodule Sengoku.GameServer do
   defp assign_tiles(state) do
     tile_ids = Map.keys(state.tiles)
     Enum.reduce(Map.keys(@players), state, fn(player_id, state) ->
-      put_in(state, [:tiles, player_id * 6, :owner], player_id)
+      not_really_random_tile = player_id * 6
+      update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
+        struct(tile, %{owner: player_id})
+      end)
     end)
   end
 
@@ -150,37 +164,7 @@ defmodule Sengoku.GameServer do
       turn: 1,
       current_player_id: List.first(Map.keys(@players)),
       players: @players,
-      tiles: %{
-         1 => %{ owner: nil, armies: 0, neighbors: [2]},
-         2 => %{ owner: nil, armies: 0, neighbors: [1, 3]},
-         3 => %{ owner: nil, armies: 0, neighbors: [2, 4, 6]},
-         4 => %{ owner: nil, armies: 0, neighbors: [3, 5]},
-         5 => %{ owner: nil, armies: 0, neighbors: [4, 6]},
-         6 => %{ owner: nil, armies: 0, neighbors: [3, 5, 7, 10]},
-         7 => %{ owner: nil, armies: 0, neighbors: [6, 8, 9, 10]},
-         8 => %{ owner: nil, armies: 0, neighbors: [7, 9]},
-         9 => %{ owner: nil, armies: 0, neighbors: [7, 8, 12, 13, 14]},
-        10 => %{ owner: nil, armies: 0, neighbors: [6, 7, 11, 12]},
-        11 => %{ owner: nil, armies: 0, neighbors: [10, 12]},
-        12 => %{ owner: nil, armies: 0, neighbors: [9, 10, 11, 14, 15, 16]},
-        13 => %{ owner: nil, armies: 0, neighbors: [9, 14]},
-        14 => %{ owner: nil, armies: 0, neighbors: [9, 12, 13, 15, 16, 17, 18, 19]},
-        15 => %{ owner: nil, armies: 0, neighbors: [12, 14, 16]},
-        16 => %{ owner: nil, armies: 0, neighbors: [12, 14, 15, 17]},
-        17 => %{ owner: nil, armies: 0, neighbors: [14, 16, 19, 20]},
-        18 => %{ owner: nil, armies: 0, neighbors: [14, 19]},
-        19 => %{ owner: nil, armies: 0, neighbors: [14, 17, 18, 20, 21]},
-        20 => %{ owner: nil, armies: 0, neighbors: [17, 19, 21, 24, 25, 28]},
-        21 => %{ owner: nil, armies: 0, neighbors: [19, 20, 22, 23, 24]},
-        22 => %{ owner: nil, armies: 0, neighbors: [21]},
-        23 => %{ owner: nil, armies: 0, neighbors: [21, 24]},
-        24 => %{ owner: nil, armies: 0, neighbors: [20, 21, 23, 25, 26]},
-        25 => %{ owner: nil, armies: 0, neighbors: [20, 24, 26, 28]},
-        26 => %{ owner: nil, armies: 0, neighbors: [24, 25, 27, 28]},
-        27 => %{ owner: nil, armies: 0, neighbors: [26, 28]},
-        28 => %{ owner: nil, armies: 0, neighbors: [20, 25, 26, 27, 29]},
-        29 => %{ owner: nil, armies: 0, neighbors: [28]}
-      }
+      tiles: Tile.initial_state
     }
   end
 

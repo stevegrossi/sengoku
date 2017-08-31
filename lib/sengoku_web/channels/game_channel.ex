@@ -1,6 +1,8 @@
 defmodule SengokuWeb.GameChannel do
   use SengokuWeb, :channel
 
+  alias Sengoku.GameServer
+
   def join("games:" <> game_id, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
@@ -20,7 +22,7 @@ defmodule SengokuWeb.GameChannel do
   end
 
   def handle_info(:after_join, socket) do
-    push socket, "update", Sengoku.GameServer.state(socket.assigns[:game_id])
+    push socket, "update", GameServer.state(socket.assigns[:game_id])
     {:noreply, socket}
   end
 
@@ -30,12 +32,12 @@ defmodule SengokuWeb.GameChannel do
   end
 
   defp command!(game_id, %{"type" => "end_turn"} = action) do
-    Sengoku.GameServer.end_turn(game_id)
+    GameServer.end_turn(game_id)
   end
   defp command!(game_id, %{"type" => "place_armies",
                            "count" => count,
                            "territory" => territory}) do
 
-    Sengoku.GameServer.place_armies(game_id, count, territory)
+    GameServer.place_armies(game_id, count, territory)
   end
 end

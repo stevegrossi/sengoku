@@ -28,7 +28,7 @@ defmodule Sengoku.GameServer do
     state =
       game_id
       |> get_initial_state()
-      |> assign_territories()
+      |> assign_tiles()
       |> begin_turn()
 
     {:ok, state}
@@ -40,8 +40,8 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), :end_turn)
   end
 
-  def place_armies(game_id, count, territory_id) do
-    GenServer.call(via_tuple(game_id), {:place_armies, count, territory_id})
+  def place_armies(game_id, count, tile_id) do
+    GenServer.call(via_tuple(game_id), {:place_armies, count, tile_id})
   end
 
   def attack(game_id, from_id, to_id) do
@@ -71,16 +71,16 @@ defmodule Sengoku.GameServer do
     {:reply, new_state, new_state}
   end
 
-  def handle_call({:place_armies, count, territory_id}, _from, %{current_player_id: current_player_id} = state) do
+  def handle_call({:place_armies, count, tile_id}, _from, %{current_player_id: current_player_id} = state) do
     current_player = state.players[current_player_id]
     new_state =
       if count <= current_player.unplaced_armies do
-        territory = state.territories[territory_id]
+        tile = state.tiles[tile_id]
 
-        if territory.owner == current_player_id do
+        if tile.owner == current_player_id do
           state
           |> update_in([:players, current_player_id, :unplaced_armies], &(&1 - count))
-          |> update_in([:territories, territory_id, :armies], &(&1 + count))
+          |> update_in([:tiles, tile_id, :armies], &(&1 + count))
         else
           state
         end
@@ -92,34 +92,30 @@ defmodule Sengoku.GameServer do
 
   def handle_call({:attack, from_id, to_id}, _from, %{current_player_id: current_player_id} = state) do
     current_player = state.players[current_player_id]
-    from_territory = state.territories[from_id]
-    to_territory = state.territories[to_id]
+    from_tile = state.tiles[from_id]
+    to_tile = state.tiles[to_id]
 
-    # TODO: validations
-    # - from_territory has at least 1 army
-    # - from_territory is owned by current player
-    # - to_territory is NOT owned by current player
     new_state =
       if (
-        from_territory.armies >= 1 &&
-        from_territory.owner == current_player_id &&
-        to_territory.owner != current_player_id &&
-        to_id in from_territory.neighbors
+        from_tile.armies >= 1 &&
+        from_tile.owner == current_player_id &&
+        to_tile.owner != current_player_id &&
+        to_id in from_tile.neighbors
       ) do
         case Enum.random(@outcomes) do
           :attacker ->
-            if state.territories[to_id].armies <= 1 do
+            if state.tiles[to_id].armies <= 1 do
               state
-              |> put_in([:territories, to_id, :owner], current_player_id)
-              |> put_in([:territories, to_id, :armies], 1)
-              |> update_in([:territories, from_id, :armies], &(&1 - 1))
+              |> put_in([:tiles, to_id, :owner], current_player_id)
+              |> put_in([:tiles, to_id, :armies], 1)
+              |> update_in([:tiles, from_id, :armies], &(&1 - 1))
             else
               state
-              |> update_in([:territories, to_id, :armies], &(&1 - 1))
+              |> update_in([:tiles, to_id, :armies], &(&1 - 1))
             end
           :defender ->
             state
-            |> update_in([:territories, from_id, :armies], &(&1 - 1))
+            |> update_in([:tiles, from_id, :armies], &(&1 - 1))
         end
       else
         state
@@ -136,10 +132,10 @@ defmodule Sengoku.GameServer do
     {:via, Registry, {:game_server_registry, game_id}}
   end
 
-  defp assign_territories(state) do
-    territory_ids = Map.keys(state.territories)
+  defp assign_tiles(state) do
+    tile_ids = Map.keys(state.tiles)
     Enum.reduce(Map.keys(@players), state, fn(player_id, state) ->
-      put_in(state, [:territories, player_id * 6, :owner], player_id)
+      put_in(state, [:tiles, player_id * 6, :owner], player_id)
     end)
   end
 
@@ -154,7 +150,7 @@ defmodule Sengoku.GameServer do
       turn: 1,
       current_player_id: List.first(Map.keys(@players)),
       players: @players,
-      territories: %{
+      tiles: %{
          1 => %{ owner: nil, armies: 0, neighbors: [2]},
          2 => %{ owner: nil, armies: 0, neighbors: [1, 3]},
          3 => %{ owner: nil, armies: 0, neighbors: [2, 4, 6]},

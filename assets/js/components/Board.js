@@ -3,8 +3,7 @@ import boardData from '../boardData'
 import colors from '../colors'
 
 const Board = (props) => {
-
-  const territories = Object.keys(props.territories).map((id) => {
+  const territories = Object.keys(props.territories).map(Number).map((id) => {
     const data = props.territories[id]
     const tile = boardData[id]
     return (
@@ -12,7 +11,8 @@ const Board = (props) => {
          transform={tile.translate}
          fill={colors[data.owner] || '#fff'}
          stroke="#000"
-         strokeWidth="0.75">
+         onClick={() => props.selectTerritory(id)}
+         strokeWidth={props.selectedTerritoryId == id ? '1.5' : '0.75'}>
 
         {tile.path}
 

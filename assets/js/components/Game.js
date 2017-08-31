@@ -7,7 +7,9 @@ import Players from './Players'
 class Game extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      selectedTerritoryId: null,
+    }
   }
 
   componentDidMount() {
@@ -15,6 +17,11 @@ class Game extends React.Component {
     this.props.channel.on('update', new_state => {
       self.setState(new_state)
     })
+  }
+
+  selectTerritory(id) {
+    console.log('select_territory', id)
+    this.setState({ selectedTerritoryId: id })
   }
 
   action(type, payload) {
@@ -29,7 +36,8 @@ class Game extends React.Component {
   }
 
   placeArmy() {
-    this.action('place_armies', { count: 1, territory: 1 })
+    this.state.selectedTerritoryId &&
+      this.action('place_armies', { count: 1, territory: this.state.selectedTerritoryId })
   }
 
   render() {
@@ -39,7 +47,9 @@ class Game extends React.Component {
           <Players players={this.state.players} />
         }
         {this.state.territories &&
-          <Board territories={this.state.territories} />
+          <Board territories={this.state.territories}
+                 selectTerritory={this.selectTerritory.bind(this)}
+                 selectedTerritoryId={this.state.selectedTerritoryId} />
         }
         <button onClick={this.endTurn.bind(this)}>End Turn</button>
         <button onClick={this.placeArmy.bind(this)}>Place Army</button>

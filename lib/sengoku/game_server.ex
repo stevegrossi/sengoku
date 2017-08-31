@@ -1,16 +1,9 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
-  alias Sengoku.Tile
+  alias Sengoku.{Tile, Player, Battle}
 
-  @players %{
-    1 => %{unplaced_armies: 0},
-    2 => %{unplaced_armies: 0},
-    3 => %{unplaced_armies: 0},
-    4 => %{unplaced_armies: 0}
-  }
   @min_additional_armies 3
-  @outcomes ~w(attacker defender)a
 
   def new do
     game_id = random_token(7)
@@ -59,14 +52,14 @@ defmodule Sengoku.GameServer do
   def handle_call(:end_turn, _from, %{current_player_id: current_player_id} = state) do
     next_player_id = current_player_id + 1
     new_state =
-      case Map.has_key?(@players, next_player_id) do
+      case Map.has_key?(Player.initial_state, next_player_id) do
         true ->
           state
             |> Map.put(:current_player_id, next_player_id)
         false ->
           state
           |> Map.update!(:turn, &(&1 + 1))
-          |> Map.put(:current_player_id, List.first(Map.keys(@players)))
+          |> Map.put(:current_player_id, Player.first_id)
       end
       |> begin_turn()
 
@@ -81,9 +74,11 @@ defmodule Sengoku.GameServer do
 
         if tile.owner == current_player_id do
           state
-          |> update_in([:players, current_player_id, :unplaced_armies], &(&1 - count))
+          |> update_in([:players, current_player_id], fn(player) ->
+               struct(player, %{unplaced_armies: player.unplaced_armies - count})
+             end)
           |> update_in([:tiles, tile_id], fn(tile) ->
-               struct(tile, %{armies: tile.armies + 1})
+               struct(tile, %{armies: tile.armies + count})
              end)
         else
           state
@@ -106,7 +101,7 @@ defmodule Sengoku.GameServer do
         to_tile.owner != current_player_id &&
         to_id in from_tile.neighbors
       ) do
-        case Enum.random(@outcomes) do
+        case Battle.resolve do
           :attacker ->
             if state.tiles[to_id].armies <= 1 do
               state
@@ -145,7 +140,7 @@ defmodule Sengoku.GameServer do
 
   defp assign_tiles(state) do
     tile_ids = Map.keys(state.tiles)
-    Enum.reduce(Map.keys(@players), state, fn(player_id, state) ->
+    Enum.reduce(Player.ids, state, fn(player_id, state) ->
       not_really_random_tile = player_id * 6
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
         struct(tile, %{owner: player_id})
@@ -155,15 +150,17 @@ defmodule Sengoku.GameServer do
 
   defp begin_turn(%{current_player_id: current_player_id} = state) do
     state
-    |> update_in([:players, current_player_id, :unplaced_armies], &(&1 + @min_additional_armies))
+    |> update_in([:players, current_player_id], fn(player) ->
+         struct(player, %{unplaced_armies: player.unplaced_armies + @min_additional_armies})
+       end)
   end
 
   defp get_initial_state(game_id) do
     %{
       game_id: game_id,
       turn: 1,
-      current_player_id: List.first(Map.keys(@players)),
-      players: @players,
+      current_player_id: Player.first_id,
+      players: Player.initial_state,
       tiles: Tile.initial_state
     }
   end

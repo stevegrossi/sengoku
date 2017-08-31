@@ -1,14 +1,8 @@
 import React from 'react'
 import boardData from '../boardData'
+import colors from '../colors'
 
 const Board = (props) => {
-
-  const fills = {
-    1: 'red',
-    2: 'green',
-    3: 'blue',
-    4: 'yellow',
-  }
 
   const territories = Object.keys(props.territories).map((id) => {
     const data = props.territories[id]
@@ -16,7 +10,7 @@ const Board = (props) => {
     return (
       <g key={id}
          transform={tile.translate}
-         fill={fills[data.owner] || '#fff'}
+         fill={colors[data.owner] || '#fff'}
          stroke="#000"
          strokeWidth="0.75">
 

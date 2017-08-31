@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
 import Board from './Board'
+import Players from './Players'
 
 class Game extends React.Component {
   constructor(props) {
@@ -27,7 +28,9 @@ class Game extends React.Component {
   render() {
     return (
       <div>
-        <p>This is Game <b>{this.props.id}</b></p>
+        {this.state.players &&
+          <Players players={this.state.players} />
+        }
         {this.state.territories &&
           <Board territories={this.state.territories} />
         }

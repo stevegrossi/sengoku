@@ -11,7 +11,7 @@ if (game_id && game_container) {
   const channel = socket.channel('games:' + game_id, {})
   channel.join()
     .receive('ok', resp => {
-      console.log('Joined successfully', resp)
+      console.log('Joined game ' + game_id, resp)
       ReactDOM.render(<Game id={game_id} channel={channel} />, game_container)
     })
     .receive('error', resp => { console.error('Unable to join game channel :(', resp) })

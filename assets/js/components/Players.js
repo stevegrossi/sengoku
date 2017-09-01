@@ -6,6 +6,7 @@ const Players = (props) => {
   const players = Object.keys(props.players).map(Number).map((player_id) => {
     return <Player key={player_id}
                    id={player_id}
+                   className="Player"
                    selected={props.currentPlayerId == player_id}
                    unplacedArmies={props.players[player_id].unplaced_armies} />
   })

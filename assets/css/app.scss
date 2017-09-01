@@ -7,10 +7,21 @@ body {
 .Players {
   list-style: none;
   margin: 0;
-  padding: 1em;
-  border: 1px solid #000;
   float: left;
-  margin-bottom: -8em;
+  padding: 0;
+  margin: 0 0 -8em;
+  color: #fff;
+  text-shadow: 0 -1px 1px rgba(0,0,0,.25);
+  line-height: 1;
+}
+
+.Player {
+  padding: .5em;
+  margin: 0;
+
+  &--active {
+    margin-right: -1em;
+  }
 }
 
 .Tile-count {

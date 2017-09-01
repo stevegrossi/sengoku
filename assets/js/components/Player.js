@@ -3,14 +3,13 @@ import colors from '../colors'
 
 const Player = (props) => {
   const styles = {
-    color: colors[props.id]
+    backgroundColor: colors[props.id],
   }
 
   return (
-    <li>
-      <span style={styles}>
-        {props.selected && <span>•</span>}
-        Player {props.id}
+    <li className={props.selected ? 'Player Player--active' : 'Player'} style={styles}>
+      <span>
+        <b>Player {props.id}</b>
       </span>: {props.unplacedArmies} armies
     </li>
   )

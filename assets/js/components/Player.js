@@ -1,15 +1,15 @@
 import React from 'react'
-import colors from '../colors'
+import playerUI from '../playerUI'
 
 const Player = (props) => {
   const styles = {
-    backgroundColor: colors[props.id],
+    backgroundColor: playerUI[props.id].color,
   }
 
   return (
     <li className={props.selected ? 'Player Player--active' : 'Player'} style={styles}>
       <span>
-        <b>Player {props.id}</b>
+        <b>{playerUI[props.id].name}</b>
       </span>: {props.unplacedArmies} armies
     </li>
   )

@@ -1,6 +1,6 @@
 import React from 'react'
 import boardData from '../boardData'
-import colors from '../colors'
+import playerUI from '../playerUI'
 
 const Board = (props) => {
   const neighbors = props.selectedTileId && props.tiles[props.selectedTileId].neighbors
@@ -13,7 +13,7 @@ const Board = (props) => {
     return (
       <g key={id}
          transform={tile.translate}
-         fill={colors[data.owner] || '#fff'}
+         fill={playerUI[data.owner] && playerUI[data.owner].color || '#fff'}
          stroke="#000"
          onClick={(e) => props.tileClicked(id, e)}
          strokeWidth={is_selected ? '1.5' : '0.75'}

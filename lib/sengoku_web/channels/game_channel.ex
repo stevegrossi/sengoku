@@ -32,7 +32,7 @@ defmodule SengokuWeb.GameChannel do
     true
   end
 
-  defp command!(game_id, %{"type" => "end_turn"} = action) do
+  defp command!(game_id, %{"type" => "end_turn"}) do
     GameServer.end_turn(game_id)
   end
   defp command!(game_id, %{"type" => "place_army",
@@ -46,5 +46,5 @@ defmodule SengokuWeb.GameChannel do
 
     GameServer.attack(game_id, from_id, to_id)
   end
-  defp command!(game_id, _), do: nil
+  defp command!(_game_id, _action), do: nil
 end

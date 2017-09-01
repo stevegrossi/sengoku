@@ -27,8 +27,8 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), :end_turn)
   end
 
-  def place_armies(game_id, count, tile_id) do
-    GenServer.call(via_tuple(game_id), {:place_armies, count, tile_id})
+  def place_army(game_id, tile_id) do
+    GenServer.call(via_tuple(game_id), {:place_army, tile_id})
   end
 
   def attack(game_id, from_id, to_id) do
@@ -46,8 +46,8 @@ defmodule Sengoku.GameServer do
     {:reply, new_state, new_state}
   end
 
-  def handle_call({:place_armies, count, tile_id}, _from, state) do
-    new_state = Game.place_armies(state, count, tile_id)
+  def handle_call({:place_army, tile_id}, _from, state) do
+    new_state = Game.place_army(state, tile_id)
     {:reply, new_state, new_state}
   end
 

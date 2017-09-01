@@ -1,6 +1,13 @@
+$bg: #ebd9c1;
+$bg-opacity: 0.9;
+$text: #3f250b;
+$white: #fff;
+$black: #000;
+
 body {
-  background-color: #efece5;
-  color: #3f250b;
+  background: linear-gradient(rgba($bg, $bg-opacity), rgba($bg, $bg-opacity)),
+              url('/images/waves.svg');
+  color: $text;
   font-family: 'Crimson Text', serif;
 }
 
@@ -10,21 +17,25 @@ body {
   float: left;
   padding: 0;
   margin: 0 0 -8em;
-  color: #fff;
-  text-shadow: 0 -1px 1px rgba(0,0,0,.25);
-  line-height: 1;
+  color: $white;
+  text-shadow: 0 -1px 1px rgba(0,0,0,.2);
 }
 
 .Player {
-  padding: .5em;
+  padding: .75em;
   margin: 0;
+  width: 10em;
+  display: flex;
+  line-height: 1;
+  justify-content: space-between;
+  transition: width 0.1s ease;
 
   &--active {
-    margin-right: -1em;
+    width: 11em;
   }
 }
 
 .Tile-count {
-  fill: #000;
+  fill: $black;
   font-size: 10px;
 }

@@ -8,9 +8,8 @@ const Player = (props) => {
 
   return (
     <li className={props.selected ? 'Player Player--active' : 'Player'} style={styles}>
-      <span>
-        <b>{playerUI[props.id].name}</b>
-      </span>: {props.unplacedArmies} armies
+      <b>{playerUI[props.id].name}</b>
+      <span>{props.unplacedArmies} 兵</span>
     </li>
   )
 }

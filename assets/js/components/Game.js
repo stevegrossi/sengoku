@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
 import Board from './Board'
 import Players from './Players'
+import playerUI from '../playerUI'
 
 class Game extends React.Component {
   constructor(props) {
@@ -65,6 +66,11 @@ class Game extends React.Component {
       <div>
         {this.state.players &&
           <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
+        }
+        {this.state.winner_id &&
+          <div className="Overlay">
+            {playerUI[this.state.winner_id].name} wins!
+          </div>
         }
         {this.state.tiles &&
           <Board tiles={this.state.tiles}

@@ -72,6 +72,7 @@ defmodule Sengoku.Game do
             |> put_tile(to_id, :owner, current_player_id)
             |> put_tile(to_id, :armies, 1)
             |> deactivate_player_if_defeated(defender_id)
+            |> maybe_declare_winner()
           else
             state
             |> update_tile(to_id, :armies, &(&1 - 1))
@@ -90,7 +91,8 @@ defmodule Sengoku.Game do
       turn: 1,
       current_player_id: Player.first_id,
       players: Player.initial_state,
-      tiles: Tile.initial_state
+      tiles: Tile.initial_state,
+      winner_id: nil
     }
   end
 
@@ -115,6 +117,21 @@ defmodule Sengoku.Game do
       state
       |> put_player(player_id, :active, false)
       |> put_player(player_id, :unplaced_armies, 0)
+    end
+  end
+
+  defp maybe_declare_winner(state) do
+    active_player_ids =
+      state.players
+      |> Enum.filter(fn({_id, player}) -> player.active end)
+      |> Enum.into(%{})
+      |> Map.keys
+
+    if Enum.count(active_player_ids) == 1 do
+      state
+      |> Map.put(:winner_id, hd(active_player_ids))
+    else
+      state
     end
   end
 

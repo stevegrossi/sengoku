@@ -10,6 +10,7 @@ defmodule Sengoku.GameTest do
 
       assert state.turn == 1
       assert state.current_player_id == 1
+      assert state.winner_id == nil
     end
 
     test "makes each player owner of one tile" do
@@ -190,6 +191,26 @@ defmodule Sengoku.GameTest do
       assert new_state.players[2].active == false
       assert new_state.players[2].unplaced_armies == 0
       assert new_state.players[1].active == true
+    end
+
+    test "when only one player remains active, they win!" do
+      old_state = %{
+        winner_id: nil,
+        current_player_id: 1,
+        players: %{
+          1 => %Player{active: true, unplaced_armies: 5},
+          2 => %Player{active: true, unplaced_armies: 5}
+        },
+        tiles: %{
+          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+        }
+      }
+
+      new_state = Game.attack(old_state, 1, 2, :attacker)
+      assert new_state.players[2].active == false
+      assert new_state.players[1].active == true
+      assert new_state.winner_id == 1
     end
 
     test "when the defender wins, the attacker loses an army" do

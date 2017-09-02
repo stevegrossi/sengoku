@@ -16,15 +16,21 @@ defmodule Sengoku.Game do
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
-    next_player_id = current_player_id + 1
-    case Map.has_key?(Player.initial_state, next_player_id) do
+    active_player_ids =
+      state.players
+      |> Enum.filter(fn({_id, player}) -> player.active end)
+      |> Enum.into(%{})
+      |> Map.keys
+
+    next_player_id = Enum.at(active_player_ids, Enum.find_index(active_player_ids, fn(id) -> id == current_player_id end) + 1)
+    case Enum.member?(active_player_ids, next_player_id) do
       true ->
         state
           |> Map.put(:current_player_id, next_player_id)
       false ->
         state
         |> Map.update!(:turn, &(&1 + 1))
-        |> Map.put(:current_player_id, Player.first_id)
+        |> Map.put(:current_player_id, hd(active_player_ids))
     end
     |> begin_turn()
   end
@@ -49,11 +55,12 @@ defmodule Sengoku.Game do
   def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
+    defender_id = to_tile.owner
 
     if (
       from_tile.armies >= 1 &&
       from_tile.owner == current_player_id &&
-      to_tile.owner != current_player_id &&
+      defender_id != current_player_id &&
       to_id in from_tile.neighbors
     ) do
       outcome = outcome || Enum.random(@battle_outcomes)
@@ -64,6 +71,7 @@ defmodule Sengoku.Game do
             |> update_tile(from_id, :armies, &(&1 - 1))
             |> put_tile(to_id, :owner, current_player_id)
             |> put_tile(to_id, :armies, 1)
+            |> deactivate_player_if_defeated(defender_id)
           else
             state
             |> update_tile(to_id, :armies, &(&1 - 1))
@@ -95,6 +103,21 @@ defmodule Sengoku.Game do
     end)
   end
 
+  defp deactivate_player_if_defeated(state, player_id) do
+    has_remaining_tiles =
+      state.tiles
+      |> Map.values
+      |> Enum.any?(fn(%Tile{} = tile) -> tile.owner == player_id end)
+
+    if has_remaining_tiles do
+      state
+    else
+      state
+      |> put_player(player_id, :active, false)
+      |> put_player(player_id, :unplaced_armies, 0)
+    end
+  end
+
   defp put_tile(state, tile_id, key, value) do
     update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
       Map.put(tile, key, value)
@@ -104,6 +127,12 @@ defmodule Sengoku.Game do
   defp update_tile(state, tile_id, key, func) do
     update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
       Map.update!(tile, key, func)
+    end)
+  end
+
+  defp put_player(state, player_id, key, value) do
+    update_in(state, [:players, player_id], fn(%Player{} = player) ->
+      Map.put(player, key, value)
     end)
   end
 

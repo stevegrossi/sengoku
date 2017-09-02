@@ -6,10 +6,18 @@ const Player = (props) => {
     backgroundColor: playerUI[props.id].color,
   }
 
+  const classNames = [
+    'Player',
+    props.current && 'Player--current',
+    props.active || 'Player--inactive'
+  ].join(' ')
+
   return (
-    <li className={props.selected ? 'Player Player--active' : 'Player'} style={styles}>
+    <li className={classNames} style={styles}>
       <b>{playerUI[props.id].name}</b>
-      <span>{props.unplacedArmies} 兵</span>
+      {props.active &&
+        <span>{props.unplacedArmies} 兵</span>
+      }
     </li>
   )
 }

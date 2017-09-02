@@ -1,5 +1,5 @@
 defmodule Sengoku.Player do
-  defstruct ~w(unplaced_armies)a
+  defstruct unplaced_armies: 0, active: true
 
   def new(unplaced_armies) do
     %__MODULE__{unplaced_armies: unplaced_armies}

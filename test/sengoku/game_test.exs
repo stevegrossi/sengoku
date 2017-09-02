@@ -47,22 +47,22 @@ defmodule Sengoku.GameTest do
 
   describe ".end_turn" do
 
-    test "increments current_player_id to the next Player and grants them armies" do
+    test "increments current_player_id to the next active Player and grants them armies" do
       old_state = %{
         current_player_id: 2,
         turn: 1,
         players: %{
-          1 => %Player{unplaced_armies: 1},
-          2 => %Player{unplaced_armies: 1},
-          3 => %Player{unplaced_armies: 1},
-          4 => %Player{unplaced_armies: 1}
+          1 => %Player{active: true, unplaced_armies: 1},
+          2 => %Player{active: true, unplaced_armies: 1},
+          3 => %Player{active: false, unplaced_armies: 1},
+          4 => %Player{active: true, unplaced_armies: 1}
         }
       }
 
       new_state = old_state |> Game.end_turn
 
-      assert new_state.current_player_id == 3
-      assert new_state.players[3].unplaced_armies == 4
+      assert new_state.current_player_id == 4
+      assert new_state.players[4].unplaced_armies == 4
     end
 
     test "when the last Player’s turn ends, starts at 1 and increments turn" do
@@ -156,6 +156,10 @@ defmodule Sengoku.GameTest do
     test "when the attacker defeats the last defender, captures the territory and moves one army in" do
       old_state = %{
         current_player_id: 1,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
         tiles: %{
           1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
           2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
@@ -165,7 +169,27 @@ defmodule Sengoku.GameTest do
       new_state = Game.attack(old_state, 1, 2, :attacker)
       assert new_state.tiles[2].armies == 1
       assert new_state.tiles[1].armies == 1
-      assert new_state.tiles[1].owner == 1
+      assert new_state.tiles[2].owner == 1
+    end
+
+    test "when the defender loses their last tile, makes them inactive" do
+      old_state = %{
+        current_player_id: 1,
+        players: %{
+          1 => %Player{active: true, unplaced_armies: 5},
+          2 => %Player{active: true, unplaced_armies: 5}
+        },
+        tiles: %{
+          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+        }
+      }
+
+      new_state = Game.attack(old_state, 1, 2, :attacker)
+      assert new_state.tiles[2].owner == 1
+      assert new_state.players[2].active == false
+      assert new_state.players[2].unplaced_armies == 0
+      assert new_state.players[1].active == true
     end
 
     test "when the defender wins, the attacker loses an army" do

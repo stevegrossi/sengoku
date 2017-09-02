@@ -30,8 +30,12 @@ body {
   justify-content: space-between;
   transition: width 0.1s ease;
 
-  &--active {
+  &--current {
     width: 11em;
+  }
+
+  &--inactive {
+    opacity: 0.5;
   }
 }
 

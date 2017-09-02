@@ -12,9 +12,7 @@ defmodule Sengoku.Game do
 
   def begin_turn(%{current_player_id: current_player_id} = state) do
     state
-    |> update_in([:players, current_player_id], fn(player) ->
-         struct(player, %{unplaced_armies: player.unplaced_armies + @min_additional_armies})
-       end)
+    |> update_player(current_player_id, :unplaced_armies, &(&1 + @min_additional_armies))
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
@@ -38,12 +36,8 @@ defmodule Sengoku.Game do
 
       if tile.owner == current_player_id do
         state
-        |> update_in([:players, current_player_id], fn(player) ->
-             struct(player, %{unplaced_armies: player.unplaced_armies - 1})
-           end)
-        |> update_in([:tiles, tile_id], fn(tile) ->
-             struct(tile, %{armies: tile.armies + 1})
-           end)
+        |> update_player(current_player_id, :unplaced_armies, &(&1 - 1))
+        |> update_tile(tile_id, :armies, &(&1 + 1))
       else
         state
       end
@@ -67,23 +61,16 @@ defmodule Sengoku.Game do
         :attacker ->
           if state.tiles[to_id].armies <= 1 do
             state
-            |> update_in([:tiles, to_id], fn(tile) ->
-                 struct(tile, %{owner: current_player_id, armies: 1})
-               end)
-            |> update_in([:tiles, from_id], fn(tile) ->
-                 struct(tile, %{armies: tile.armies - 1})
-               end)
+            |> update_tile(from_id, :armies, &(&1 - 1))
+            |> put_tile(to_id, :owner, current_player_id)
+            |> put_tile(to_id, :armies, 1)
           else
             state
-            |> update_in([:tiles, to_id], fn(tile) ->
-                 struct(tile, %{armies: tile.armies - 1})
-               end)
+            |> update_tile(to_id, :armies, &(&1 - 1))
           end
         :defender ->
           state
-          |> update_in([:tiles, from_id], fn(tile) ->
-               struct(tile, %{armies: tile.armies - 1})
-             end)
+          |> update_tile(from_id, :armies, &(&1 - 1))
       end
     else
       state
@@ -105,6 +92,24 @@ defmodule Sengoku.Game do
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
         struct(tile, %{owner: player_id})
       end)
+    end)
+  end
+
+  defp put_tile(state, tile_id, key, value) do
+    update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
+      Map.put(tile, key, value)
+    end)
+  end
+
+  defp update_tile(state, tile_id, key, func) do
+    update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
+      Map.update!(tile, key, func)
+    end)
+  end
+
+  defp update_player(state, player_id, key, func) do
+    update_in(state, [:players, player_id], fn(%Player{} = player) ->
+      Map.update!(player, key, func)
     end)
   end
 end

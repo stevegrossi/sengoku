@@ -61,6 +61,10 @@ class Game extends React.Component {
     this.action('end_turn')
   }
 
+  startGame() {
+    this.action('start_game')
+  }
+
   render() {
     return (
       <div>
@@ -78,11 +82,12 @@ class Game extends React.Component {
                  cancelSelection={this.cancelSelection.bind(this)}
                  selectedTileId={this.state.selectedTileId} />
         }
-        <button onClick={this.endTurn.bind(this)}>End Turn</button>
-        <h2>State</h2>
-        <pre>
-          {JSON.stringify(this.state, null, 2)}
-        </pre>
+        {this.state.turn == 0 &&
+          <button onClick={this.startGame.bind(this)}>Start Game</button>
+        }
+        {this.state.turn > 0 &&
+          <button onClick={this.endTurn.bind(this)}>End Turn</button>
+        }
       </div>
     )
   }

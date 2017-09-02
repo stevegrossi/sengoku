@@ -14,5 +14,7 @@ if (game_id && game_container) {
       console.log('Joined game ' + game_id, resp)
       ReactDOM.render(<Game id={game_id} channel={channel} />, game_container)
     })
-    .receive('error', resp => { console.error('Unable to join game channel :(', resp) })
+    .receive('error', resp => {
+      game_container.innerHTML = 'You cannot join a game already in progress.'
+    })
 }

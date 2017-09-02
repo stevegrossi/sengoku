@@ -1,5 +1,5 @@
 <h2>Lobby</h2>
 
 <%= form_tag("/") do %>
-  <input type="submit" value="New Game" />
+  <input type="submit" value="New Hot Seat Game" />
 <% end %>

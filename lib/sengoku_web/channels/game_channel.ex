@@ -4,7 +4,7 @@ defmodule SengokuWeb.GameChannel do
   alias Sengoku.GameServer
 
   def join("games:" <> game_id, payload, socket) do
-    if authorized?(payload) do
+    if authorized?(game_id, payload) do
       socket = assign(socket, :game_id, game_id)
       send self(), :after_join
       {:ok, socket}
@@ -27,11 +27,13 @@ defmodule SengokuWeb.GameChannel do
     {:noreply, socket}
   end
 
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(game_id, _payload) do
+    GameServer.game_open?(game_id)
   end
 
+  defp command!(game_id, %{"type" => "start_game"}) do
+    GameServer.start_game(game_id)
+  end
   defp command!(game_id, %{"type" => "end_turn"}) do
     GameServer.end_turn(game_id)
   end

@@ -13,12 +13,4 @@ defmodule Sengoku.Player do
       4 => new(0)
     }
   end
-
-  def ids do
-    Map.keys(initial_state())
-  end
-
-  def first_id do
-    List.first(ids())
-  end
 end

@@ -5,14 +5,30 @@ defmodule Sengoku.Game do
   @battle_outcomes ~w(attacker defender)a
 
   def initial_state do
-    new_state()
+    %{
+      turn: 0,
+      current_player_id: nil,
+      players: Player.initial_state,
+      tiles: Tile.initial_state,
+      winner_id: nil
+    }
+  end
+
+  def start_game(state) do
+    state
     |> assign_tiles
+    |> increment_turn
+    |> setup_first_turn
     |> begin_turn
   end
 
   def begin_turn(%{current_player_id: current_player_id} = state) do
     state
     |> update_player(current_player_id, :unplaced_armies, &(&1 + @min_additional_armies))
+  end
+
+  def game_open?(state) do
+    state.turn == 0
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
@@ -86,18 +102,18 @@ defmodule Sengoku.Game do
     end
   end
 
-  defp new_state do
-    %{
-      turn: 1,
-      current_player_id: Player.first_id,
-      players: Player.initial_state,
-      tiles: Tile.initial_state,
-      winner_id: nil
-    }
+  defp increment_turn(state) do
+    state
+    |> Map.update!(:turn, &(&1 + 1))
+  end
+
+  defp setup_first_turn(state) do
+    state
+    |> Map.put(:current_player_id, List.first(Map.keys(state.players)))
   end
 
   defp assign_tiles(state) do
-    Enum.reduce(Player.ids, state, fn(player_id, state) ->
+    Enum.reduce(Map.keys(state.players), state, fn(player_id, state) ->
       not_really_random_tile = player_id * 6
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
         struct(tile, %{owner: player_id})

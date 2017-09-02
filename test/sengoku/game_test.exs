@@ -5,18 +5,38 @@ defmodule Sengoku.GameTest do
 
   describe ".initial_state" do
 
-    test "returns the state for turn 1" do
+    test "returns the state before the game begins" do
       state = Game.initial_state
 
-      assert state.turn == 1
-      assert state.current_player_id == 1
+      assert state.turn == 0
+      assert state.current_player_id == nil
       assert state.winner_id == nil
     end
+  end
+
+  describe ".game_open?" do
+
+    test "return true on turn 0" do
+      state = %{turn: 0}
+
+      assert Game.game_open?(state) == true
+    end
+
+    test "return false on turn 1" do
+      state = %{turn: 1}
+
+      assert Game.game_open?(state) == false
+    end
+  end
+
+  describe ".start_game" do
 
     test "makes each player owner of one tile" do
-      state = Game.initial_state
+      state = Game.initial_state |> Game.start_game
 
-      Enum.each(Player.ids, fn(player_id) ->
+      state.players
+      |> Map.keys
+      |> Enum.each(fn(player_id) ->
         assert Enum.count(state.tiles, fn({_id, tile}) ->
           tile.owner == player_id
         end) == 1
@@ -24,7 +44,7 @@ defmodule Sengoku.GameTest do
     end
 
     test "grants Player one 3 unplaced armies" do
-      state = Game.initial_state
+      state = Game.initial_state |> Game.start_game
 
       assert state.players[1].unplaced_armies == 3
     end

@@ -23,6 +23,14 @@ defmodule Sengoku.GameServer do
 
   # API
 
+  def game_open?(game_id) do
+    GenServer.call(via_tuple(game_id), :game_open?)
+  end
+
+  def start_game(game_id) do
+    GenServer.call(via_tuple(game_id), :start_game)
+  end
+
   def end_turn(game_id) do
     GenServer.call(via_tuple(game_id), :end_turn)
   end
@@ -40,6 +48,15 @@ defmodule Sengoku.GameServer do
   end
 
   # Server
+
+  def handle_call(:game_open?, _from, state) do
+    {:reply, Game.game_open?(state), state}
+  end
+
+  def handle_call(:start_game, _from, state) do
+    new_state = Game.start_game(state)
+    {:reply, new_state, new_state}
+  end
 
   def handle_call(:end_turn, _from, state) do
     new_state = Game.end_turn(state)

@@ -20,7 +20,8 @@ defmodule SengokuWeb.GameChannel do
 
   def handle_in("action", action, socket) do
     game_id = socket.assigns[:game_id]
-    new_state = command!(game_id, action)
+    player_id = socket.assigns[:player_id]
+    new_state = command!(game_id, player_id, action)
     if new_state do
       broadcast socket, "update", new_state
     end
@@ -33,22 +34,23 @@ defmodule SengokuWeb.GameChannel do
     {:noreply, socket}
   end
 
-  defp command!(game_id, %{"type" => "start_game"}) do
+  defp command!(game_id, _player_id, %{"type" => "start_game"}) do
     GameServer.start_game(game_id)
   end
-  defp command!(game_id, %{"type" => "end_turn"}) do
-    GameServer.end_turn(game_id)
+  defp command!(game_id, player_id, %{"type" => "end_turn"}) do
+    if GameServer.state(game_id).current_player_id == player_id do
+      GameServer.end_turn(game_id)
+    end
   end
-  defp command!(game_id, %{"type" => "place_army",
-                           "tile" => tile}) do
-
-    GameServer.place_army(game_id, tile)
+  defp command!(game_id, player_id, %{"type" => "place_army", "tile" => tile}) do
+    if GameServer.state(game_id).current_player_id == player_id do
+      GameServer.place_army(game_id, tile)
+    end
   end
-  defp command!(game_id, %{"type" => "attack",
-                           "from" => from_id,
-                           "to" => to_id}) do
-
-    GameServer.attack(game_id, from_id, to_id)
+  defp command!(game_id, player_id, %{"type" => "attack", "from" => from_id, "to" => to_id}) do
+    if GameServer.state(game_id).current_player_id == player_id do
+      GameServer.attack(game_id, from_id, to_id)
+    end
   end
   defp command!(_game_id, _action), do: nil
 end

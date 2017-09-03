@@ -18,6 +18,10 @@ if (game_id && game_container) {
       ReactDOM.render(<Game id={game_id} channel={channel} />, game_container)
     })
     .receive('error', resp => {
-      game_container.innerHTML = 'You cannot join a game already in progress.'
+      if (resp.reason == 'in_progress') {
+        game_container.innerHTML = 'You cannot join a game already in progress.'
+      } else {
+        game_container.innerHTML = 'An unexpected error occurred. Please try refreshing.'
+      }
     })
 }

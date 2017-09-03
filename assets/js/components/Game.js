@@ -28,7 +28,7 @@ class Game extends React.Component {
     if (player_owns_tile) {
       if (this.state.players[this.state.current_player_id].unplaced_armies > 0) {
         // Army placement phase
-        this.action('place_army', { tile: id })
+        this.action('place_army', { tile_id: id })
         e.stopPropagation()
       } else if (!this.state.selectedTileId) {
         // Preparing to attack/move
@@ -39,7 +39,7 @@ class Game extends React.Component {
     } else {
       // Attacking
       if (this.state.selectedTileId) {
-        this.action('attack', { from: this.state.selectedTileId, to: id })
+        this.action('attack', { from_id: this.state.selectedTileId, to_id: id })
         e.stopPropagation()
       }
     }

@@ -27,23 +27,11 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), {:authenticate_player, token})
   end
 
-  def start_game(game_id) do
-    GenServer.call(via_tuple(game_id), :start_game)
+  def action(game_id, player_id, %{type: _type} = action) do
+    GenServer.call(via_tuple(game_id), {:action, player_id, action})
   end
 
-  def end_turn(game_id) do
-    GenServer.call(via_tuple(game_id), :end_turn)
-  end
-
-  def place_army(game_id, tile_id) do
-    GenServer.call(via_tuple(game_id), {:place_army, tile_id})
-  end
-
-  def attack(game_id, from_id, to_id) do
-    GenServer.call(via_tuple(game_id), {:attack, from_id, to_id})
-  end
-
-  def state(game_id) do
+  def state(game_id) do # TODO: rename: get_state
     GenServer.call(via_tuple(game_id), :state)
   end
 
@@ -58,23 +46,32 @@ defmodule Sengoku.GameServer do
     end
   end
 
-  def handle_call(:start_game, _from, state) do
-    new_state = Game.start_game(state)
-    {:reply, new_state, new_state}
-  end
-
-  def handle_call(:end_turn, _from, state) do
-    new_state = Game.end_turn(state)
-    {:reply, new_state, new_state}
-  end
-
-  def handle_call({:place_army, tile_id}, _from, state) do
-    new_state = Game.place_army(state, tile_id)
-    {:reply, new_state, new_state}
-  end
-
-  def handle_call({:attack, from_id, to_id}, _from, state) do
-    new_state = Game.attack(state, from_id, to_id)
+  def handle_call({:action, player_id, %{type: type} = action}, _from, state) do
+    new_state =
+      case type do
+        "start_game" ->
+          Game.start_game(state)
+        "end_turn" ->
+          if state.current_player_id == player_id do
+            Game.end_turn(state)
+          else
+            state
+          end
+        "place_army" ->
+          if state.current_player_id == player_id do
+            Game.place_army(state, action.tile_id)
+          else
+            state
+          end
+        "attack" ->
+          if state.current_player_id == player_id do
+            Game.attack(state, action.from_id, action.to_id)
+          else
+            state
+          end
+        _ ->
+          state
+      end
     {:reply, new_state, new_state}
   end
 

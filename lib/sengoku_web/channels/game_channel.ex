@@ -29,7 +29,7 @@ defmodule SengokuWeb.GameChannel do
   end
 
   def handle_info(:after_join, socket) do
-    state = GameServer.state(socket.assigns[:game_id])
+    state = GameServer.get_state(socket.assigns[:game_id])
     broadcast socket, "update", state
     {:noreply, socket}
   end

@@ -31,8 +31,8 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), {:action, player_id, action})
   end
 
-  def state(game_id) do # TODO: rename: get_state
-    GenServer.call(via_tuple(game_id), :state)
+  def get_state(game_id) do
+    GenServer.call(via_tuple(game_id), :get_state)
   end
 
   # Server
@@ -75,7 +75,7 @@ defmodule Sengoku.GameServer do
     {:reply, new_state, new_state}
   end
 
-  def handle_call(:state, _from, state) do
+  def handle_call(:get_state, _from, state) do
     {:reply, state, state}
   end
 

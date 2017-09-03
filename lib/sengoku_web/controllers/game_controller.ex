@@ -1,12 +1,14 @@
 defmodule SengokuWeb.GameController do
   use SengokuWeb, :controller
 
-  def index(conn, _params) do
-    render conn, "index.html"
+  alias Sengoku.GameServer
+
+  def new(conn, _params) do
+    render conn, "new.html"
   end
 
-  def create(conn, _params) do
-    {:ok, game_id} = Sengoku.GameServer.new
+  def create(conn, %{"mode" => mode}) when mode in ~w(hot_seat online) do
+    {:ok, game_id} = GameServer.new
     redirect conn, to: "/#{game_id}"
   end
 

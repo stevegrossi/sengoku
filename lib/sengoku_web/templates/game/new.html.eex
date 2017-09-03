@@ -1,0 +1,11 @@
+<h2>Lobby</h2>
+
+<%= form_tag("/") do %>
+  <input type="hidden" name="mode" value="hot_seat" />
+  <input type="submit" value="New Hot Seat Game" />
+<% end %>
+
+<%= form_tag("/") do %>
+  <input type="hidden" name="mode" value="online" />
+  <input type="submit" value="New Online Game" />
+<% end %>

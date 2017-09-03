@@ -16,12 +16,7 @@ defmodule Sengoku.Game do
   end
 
   def start_game(state) do
-    active_player_ids =
-      state.players
-      |> Enum.filter(fn({_id, player}) -> player.active end)
-      |> Enum.into(%{})
-      |> Map.keys
-
+    active_player_ids = get_active_player_ids(state)
     if Enum.count(active_player_ids) > 1 do
       state
       |> assign_tiles
@@ -50,10 +45,8 @@ defmodule Sengoku.Game do
     else
       if state.turn == 0 do
         first_inactive_player_id =
-          state.players
-          |> Enum.filter(fn({_id, player}) -> not player.active end)
-          |> Enum.into(%{})
-          |> Map.keys
+          state
+          |> get_inactive_player_ids
           |> List.first
 
         if is_nil(first_inactive_player_id) do
@@ -73,12 +66,7 @@ defmodule Sengoku.Game do
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
-    active_player_ids =
-      state.players
-      |> Enum.filter(fn({_id, player}) -> player.active end)
-      |> Enum.into(%{})
-      |> Map.keys
-
+    active_player_ids = get_active_player_ids(state)
     next_player_id = Enum.at(active_player_ids, Enum.find_index(active_player_ids, fn(id) -> id == current_player_id end) + 1)
     case Enum.member?(active_player_ids, next_player_id) do
       true ->
@@ -154,12 +142,7 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    active_player_ids =
-      state.players
-      |> Enum.filter(fn({_id, player}) -> player.active end)
-      |> Enum.into(%{})
-      |> Map.keys
-
+    active_player_ids = get_active_player_ids(state)
     Enum.reduce(active_player_ids, state, fn(player_id, state) ->
       not_really_random_tile = player_id * 6
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
@@ -184,12 +167,7 @@ defmodule Sengoku.Game do
   end
 
   defp maybe_declare_winner(state) do
-    active_player_ids =
-      state.players
-      |> Enum.filter(fn({_id, player}) -> player.active end)
-      |> Enum.into(%{})
-      |> Map.keys
-
+    active_player_ids = get_active_player_ids(state)
     if Enum.count(active_player_ids) == 1 do
       state
       |> Map.put(:winner_id, hd(active_player_ids))
@@ -227,5 +205,22 @@ defmodule Sengoku.Game do
     |> :crypto.strong_rand_bytes
     |> Base.url_encode64
     |> binary_part(0, length)
+  end
+
+  defp get_active_player_ids(state) do
+    state.players
+    |> filter_player_ids(&(&1.active))
+  end
+
+  defp get_inactive_player_ids(state) do
+    state.players
+    |> filter_player_ids(&(not &1.active))
+  end
+
+  defp filter_player_ids(players_map, func) do
+    players_map
+    |> Enum.filter(fn({_id, player}) -> func.(player) end)
+    |> Enum.into(%{})
+    |> Map.keys
   end
 end

@@ -46,33 +46,24 @@ defmodule Sengoku.GameServer do
     end
   end
 
-  def handle_call({:action, player_id, %{type: type} = action}, _from, state) do
-    new_state =
-      case type do
-        "start_game" ->
-          Game.start_game(state)
-        "end_turn" ->
-          if state.current_player_id == player_id do
-            Game.end_turn(state)
-          else
-            state
-          end
-        "place_army" ->
-          if state.current_player_id == player_id do
-            Game.place_army(state, action.tile_id)
-          else
-            state
-          end
-        "attack" ->
-          if state.current_player_id == player_id do
-            Game.attack(state, action.from_id, action.to_id)
-          else
-            state
-          end
-        _ ->
-          state
-      end
+  def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
+    new_state = Game.start_game(state)
     {:reply, new_state, new_state}
+  end
+  def handle_call({:action, player_id, %{type: "end_turn"}}, _from, %{current_player_id: player_id} = state) do
+    new_state = Game.end_turn(state)
+    {:reply, new_state, new_state}
+  end
+  def handle_call({:action, player_id, %{type: "place_army", tile_id: tile_id}}, _from, %{current_player_id: player_id} = state) do
+    new_state = Game.place_army(state, tile_id)
+    {:reply, new_state, new_state}
+  end
+  def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{current_player_id: player_id} = state) do
+    new_state = Game.attack(state, from_id, to_id)
+    {:reply, new_state, new_state}
+  end
+  def handle_call({:action, player_id, _action}, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call(:get_state, _from, state) do

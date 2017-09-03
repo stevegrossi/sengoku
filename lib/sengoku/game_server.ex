@@ -23,10 +23,6 @@ defmodule Sengoku.GameServer do
 
   # API
 
-  def game_open?(game_id) do
-    GenServer.call(via_tuple(game_id), :game_open?)
-  end
-
   def authenticate_player(game_id, token) do
     GenServer.call(via_tuple(game_id), {:authenticate_player, token})
   end
@@ -52,11 +48,6 @@ defmodule Sengoku.GameServer do
   end
 
   # Server
-
-  def handle_call(:game_open?, _from, state) do
-    reply = Game.game_open?(state)
-    {:reply, reply, state}
-  end
 
   def handle_call({:authenticate_player, token}, _from, state) do
     case Game.authenticate_player(state, token) do

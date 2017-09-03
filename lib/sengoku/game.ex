@@ -33,10 +33,6 @@ defmodule Sengoku.Game do
     |> update_player(current_player_id, :unplaced_armies, &(&1 + @min_additional_armies))
   end
 
-  def game_open?(state) do
-    state.turn == 0
-  end
-
   def authenticate_player(state, token) do
     existing_player_id = state.tokens[token]
 

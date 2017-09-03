@@ -65,6 +65,10 @@ class Game extends React.Component {
     this.action('start_game')
   }
 
+  canStartGame() {
+    return Object.values(this.state.players).filter((player) => player.active).length > 1
+  }
+
   render() {
     return (
       <div>
@@ -83,7 +87,7 @@ class Game extends React.Component {
                  selectedTileId={this.state.selectedTileId} />
         }
         {this.state.turn == 0 &&
-          <button onClick={this.startGame.bind(this)}>Start Game</button>
+          <button disabled={!this.canStartGame()} onClick={this.startGame.bind(this)}>Start Game</button>
         }
         {this.state.turn > 0 &&
           <button onClick={this.endTurn.bind(this)}>End Turn</button>

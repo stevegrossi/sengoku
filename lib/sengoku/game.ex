@@ -16,11 +16,21 @@ defmodule Sengoku.Game do
   end
 
   def start_game(state) do
-    state
-    |> assign_tiles
-    |> increment_turn
-    |> setup_first_turn
-    |> begin_turn
+    active_player_ids =
+      state.players
+      |> Enum.filter(fn({_id, player}) -> player.active end)
+      |> Enum.into(%{})
+      |> Map.keys
+
+    if Enum.count(active_player_ids) > 1 do
+      state
+      |> assign_tiles
+      |> increment_turn
+      |> setup_first_turn
+      |> begin_turn
+    else
+      state
+    end
   end
 
   def begin_turn(%{current_player_id: current_player_id} = state) do
@@ -149,7 +159,7 @@ defmodule Sengoku.Game do
       |> Enum.filter(fn({_id, player}) -> player.active end)
       |> Enum.into(%{})
       |> Map.keys
-      
+
     Enum.reduce(active_player_ids, state, fn(player_id, state) ->
       not_really_random_tile = player_id * 6
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->

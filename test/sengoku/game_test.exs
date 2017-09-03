@@ -129,9 +129,52 @@ defmodule Sengoku.GameTest do
     end
 
     test "grants Player one 3 unplaced armies" do
-      state = Game.initial_state |> Game.start_game
+      old_state = %{
+        turn: 0,
+        players: %{
+          1 => %Player{active: true, unplaced_armies: 0},
+          2 => %Player{active: true, unplaced_armies: 0},
+          3 => %Player{active: true, unplaced_armies: 0},
+          4 => %Player{active: false, unplaced_armies: 0}
+        },
+        tiles: %{
+          1 => %Tile{owner: nil},
+          2 => %Tile{owner: nil},
+          3 => %Tile{owner: nil},
+          4 => %Tile{owner: nil},
+          5 => %Tile{owner: nil},
+          6 => %Tile{owner: nil},
+          7 => %Tile{owner: nil},
+          8 => %Tile{owner: nil},
+          9 => %Tile{owner: nil},
+          10 => %Tile{owner: nil},
+          11 => %Tile{owner: nil},
+          12 => %Tile{owner: nil},
+          13 => %Tile{owner: nil},
+          14 => %Tile{owner: nil},
+          15 => %Tile{owner: nil},
+          16 => %Tile{owner: nil},
+          17 => %Tile{owner: nil},
+          18 => %Tile{owner: nil},
+        }
+      }
 
-      assert state.players[1].unplaced_armies == 3
+      new_state = Game.start_game(old_state)
+      assert new_state.players[1].unplaced_armies == 3
+    end
+
+    test "does nothing if only one active player" do
+      old_state = %{
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: false},
+          3 => %Player{active: false},
+          4 => %Player{active: false}
+        }
+      }
+
+      new_state = Game.start_game(old_state)
+      assert new_state == old_state
     end
   end
 

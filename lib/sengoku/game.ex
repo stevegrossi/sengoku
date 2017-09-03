@@ -144,7 +144,13 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    Enum.reduce(Map.keys(state.players), state, fn(player_id, state) ->
+    active_player_ids =
+      state.players
+      |> Enum.filter(fn({_id, player}) -> player.active end)
+      |> Enum.into(%{})
+      |> Map.keys
+      
+    Enum.reduce(active_player_ids, state, fn(player_id, state) ->
       not_really_random_tile = player_id * 6
       update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
         struct(tile, %{owner: player_id})

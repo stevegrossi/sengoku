@@ -84,16 +84,48 @@ defmodule Sengoku.GameTest do
 
   describe ".start_game" do
 
-    test "makes each player owner of one tile" do
-      state = Game.initial_state |> Game.start_game
+    test "makes each active player owner of one tile" do
+      old_state = %{
+        turn: 0,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true},
+          3 => %Player{active: true},
+          4 => %Player{active: false}
+        },
+        tiles: %{
+          1 => %Tile{owner: nil},
+          2 => %Tile{owner: nil},
+          3 => %Tile{owner: nil},
+          4 => %Tile{owner: nil},
+          5 => %Tile{owner: nil},
+          6 => %Tile{owner: nil},
+          7 => %Tile{owner: nil},
+          8 => %Tile{owner: nil},
+          9 => %Tile{owner: nil},
+          10 => %Tile{owner: nil},
+          11 => %Tile{owner: nil},
+          12 => %Tile{owner: nil},
+          13 => %Tile{owner: nil},
+          14 => %Tile{owner: nil},
+          15 => %Tile{owner: nil},
+          16 => %Tile{owner: nil},
+          17 => %Tile{owner: nil},
+          18 => %Tile{owner: nil},
+        }
+      }
 
-      state.players
-      |> Map.keys
-      |> Enum.each(fn(player_id) ->
-        assert Enum.count(state.tiles, fn({_id, tile}) ->
+      new_state = Game.start_game(old_state)
+
+      Enum.each(1..3, fn(player_id) ->
+        assert Enum.count(new_state.tiles, fn({_id, tile}) ->
           tile.owner == player_id
         end) == 1
       end)
+
+      assert Enum.count(new_state.tiles, fn({_id, tile}) ->
+        tile.owner == 4
+      end) == 0
     end
 
     test "grants Player one 3 unplaced armies" do

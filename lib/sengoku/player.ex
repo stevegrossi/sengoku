@@ -1,16 +1,16 @@
 defmodule Sengoku.Player do
   defstruct unplaced_armies: 0, active: false
 
-  def new(unplaced_armies) do
-    %__MODULE__{unplaced_armies: unplaced_armies}
+  def new(atts \\ %{}) do
+    struct(__MODULE__, atts)
   end
 
-  def initial_state do
+  def initial_state(atts \\ %{}) do
     %{
-      1 => new(0),
-      2 => new(0),
-      3 => new(0),
-      4 => new(0)
+      1 => new(atts),
+      2 => new(atts),
+      3 => new(atts),
+      4 => new(atts)
     }
   end
 end

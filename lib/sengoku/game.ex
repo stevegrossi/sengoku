@@ -4,12 +4,23 @@ defmodule Sengoku.Game do
   @min_additional_armies 3
   @battle_outcomes ~w(attacker defender)a
 
-  def initial_state(mode \\ :hot_seat) do
+  def initial_state(:hot_seat) do
     %{
-      mode: mode,
+      mode: :hot_seat,
       turn: 0,
       current_player_id: nil,
-      players: Player.initial_state,
+      players: Player.initial_state(%{active: true}),
+      tiles: Tile.initial_state,
+      winner_id: nil,
+      tokens: %{}
+    }
+  end
+  def initial_state(:online) do
+    %{
+      mode: :online,
+      turn: 0,
+      current_player_id: nil,
+      players: Player.initial_state(%{active: false}),
       tiles: Tile.initial_state,
       winner_id: nil,
       tokens: %{}
@@ -34,7 +45,10 @@ defmodule Sengoku.Game do
     |> update_player(current_player_id, :unplaced_armies, &(&1 + @min_additional_armies))
   end
 
-  def authenticate_player(state, token) do
+  def authenticate_player(%{mode: :hot_seat} = state, token) do
+    {:ok, {nil, nil}, state}
+  end
+  def authenticate_player(%{mode: :online} = state, token) do
     existing_player_id = state.tokens[token]
 
     if existing_player_id do

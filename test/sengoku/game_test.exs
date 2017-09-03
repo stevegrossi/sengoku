@@ -14,18 +14,71 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".game_open?" do
+  describe ".authenticate_player" do
 
-    test "return true on turn 0" do
-      state = %{turn: 0}
+    test "with no token, registers the next inactive player and makes them active" do
+      token = nil
+      old_state = %{
+        turn: 0,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: false}
+        },
+        tokens: %{
+          "foo" => 1
+        }
+      }
 
-      assert Game.game_open?(state) == true
+      assert {:ok, {2, new_token}, new_state} = Game.authenticate_player(old_state, token)
+      assert new_state.players[2].active == true
+      assert new_state.tokens[new_token] == 2
     end
 
-    test "return false on turn 1" do
-      state = %{turn: 1}
+    test "with no token, prevents adding new players when the game is in progress" do
+      token = nil
+      old_state = %{
+        turn: 1,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: false}
+        },
+        tokens: %{
+          "foo" => 1
+        }
+      }
 
-      assert Game.game_open?(state) == false
+      assert {:error, :in_progress} = Game.authenticate_player(old_state, token)
+    end
+
+    test "with no token, errors when no inactive players" do
+      token = nil
+      old_state = %{
+        turn: 0,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
+        tokens: %{
+          "foo" => 1,
+          "bar" => 2
+        }
+      }
+
+      assert {:error, :full} = Game.authenticate_player(old_state, token)
+    end
+
+    test "with a token, returns the existing player_id for the token" do
+      token = "abcdef"
+      old_state = %{
+        turn: 0,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: false}
+        },
+        tokens: %{ token => 1 }
+      }
+
+      assert {:ok, {1, ^token}, ^old_state} = Game.authenticate_player(old_state, token)
     end
   end
 
@@ -86,22 +139,22 @@ defmodule Sengoku.GameTest do
       assert new_state.players[4].unplaced_armies == 4
     end
 
-    test "when the last Player’s turn ends, starts at 1 and increments turn" do
+    test "when the last active Player’s turn ends, starts at 1 and increments turn" do
       old_state = %{
         current_player_id: 4,
         turn: 1,
         players: %{
-          1 => %Player{unplaced_armies: 1},
-          2 => %Player{unplaced_armies: 1},
-          3 => %Player{unplaced_armies: 1},
-          4 => %Player{unplaced_armies: 1}
+          1 => %Player{unplaced_armies: 0, active: false},
+          2 => %Player{unplaced_armies: 1, active: true},
+          3 => %Player{unplaced_armies: 1, active: true},
+          4 => %Player{unplaced_armies: 1, active: true}
         }
       }
 
       new_state = old_state |> Game.end_turn
 
-      assert new_state.current_player_id == 1
-      assert new_state.players[1].unplaced_armies == 4
+      assert new_state.current_player_id == 2
+      assert new_state.players[2].unplaced_armies == 4
       assert new_state.turn == 2
     end
   end

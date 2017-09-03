@@ -27,6 +27,10 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), :game_open?)
   end
 
+  def authenticate_player(game_id, token) do
+    GenServer.call(via_tuple(game_id), {:authenticate_player, token})
+  end
+
   def start_game(game_id) do
     GenServer.call(via_tuple(game_id), :start_game)
   end
@@ -50,7 +54,17 @@ defmodule Sengoku.GameServer do
   # Server
 
   def handle_call(:game_open?, _from, state) do
-    {:reply, Game.game_open?(state), state}
+    reply = Game.game_open?(state)
+    {:reply, reply, state}
+  end
+
+  def handle_call({:authenticate_player, token}, _from, state) do
+    case Game.authenticate_player(state, token) do
+      {:ok, {player_id, token}, new_state} ->
+        {:reply, {:ok, player_id, token}, new_state}
+      {:error, error} ->
+        {:reply, {:error, error}, state}
+    end
   end
 
   def handle_call(:start_game, _from, state) do

@@ -10,7 +10,8 @@ defmodule Sengoku.Game do
       current_player_id: nil,
       players: Player.initial_state,
       tiles: Tile.initial_state,
-      winner_id: nil
+      winner_id: nil,
+      tokens: %{}
     }
   end
 
@@ -29,6 +30,36 @@ defmodule Sengoku.Game do
 
   def game_open?(state) do
     state.turn == 0
+  end
+
+  def authenticate_player(state, token) do
+    existing_player_id = state.tokens[token]
+
+    if existing_player_id do
+      {:ok, {existing_player_id, token}, state}
+    else
+      if state.turn == 0 do
+        first_inactive_player_id =
+          state.players
+          |> Enum.filter(fn({_id, player}) -> not player.active end)
+          |> Enum.into(%{})
+          |> Map.keys
+          |> List.first
+
+        if is_nil(first_inactive_player_id) do
+          {:error, :full}
+        else
+          new_token = random_token(16)
+          state =
+            state
+            |> put_in([:tokens, new_token], first_inactive_player_id)
+            |> put_player(first_inactive_player_id, :active, true)
+          {:ok, {first_inactive_player_id, new_token}, state}
+        end
+      else
+        {:error, :in_progress}
+      end
+    end
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
@@ -173,5 +204,12 @@ defmodule Sengoku.Game do
     update_in(state, [:players, player_id], fn(%Player{} = player) ->
       Map.update!(player, key, func)
     end)
+  end
+
+  defp random_token(length) do
+    length
+    |> :crypto.strong_rand_bytes
+    |> Base.url_encode64
+    |> binary_part(0, length)
   end
 end

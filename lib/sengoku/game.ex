@@ -4,8 +4,9 @@ defmodule Sengoku.Game do
   @min_additional_armies 3
   @battle_outcomes ~w(attacker defender)a
 
-  def initial_state do
+  def initial_state(mode \\ :hot_seat) do
     %{
+      mode: mode,
       turn: 0,
       current_player_id: nil,
       players: Player.initial_state,

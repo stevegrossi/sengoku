@@ -3,22 +3,22 @@ defmodule Sengoku.GameServer do
 
   alias Sengoku.Game
 
-  def new do
+  def new(mode) do
     game_id = random_token(7)
-    start_link(game_id)
+    start_link(game_id, mode)
     {:ok, game_id}
   end
 
-  def start_link(game_id) do
-    GenServer.start_link(__MODULE__, game_id)
+  def start_link(game_id, mode) do
+    GenServer.start_link(__MODULE__, {game_id, mode})
   end
 
-  def init(game_id) do
+  def init({game_id, mode}) do
     case Registry.register(:game_server_registry, game_id, :ok) do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    {:ok, Game.initial_state}
+    {:ok, Game.initial_state(mode)}
   end
 
   # API

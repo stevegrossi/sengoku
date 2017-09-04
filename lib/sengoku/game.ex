@@ -1,7 +1,8 @@
 defmodule Sengoku.Game do
   alias Sengoku.{Tile, Player}
 
-  @min_additional_units 3
+  @min_new_units 3
+  @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
 
   def initial_state(:hot_seat) do
@@ -42,7 +43,19 @@ defmodule Sengoku.Game do
 
   def begin_turn(%{current_player_id: current_player_id} = state) do
     state
-    |> update_player(current_player_id, :unplaced_units, &(&1 + @min_additional_units))
+    |> grant_new_units(current_player_id)
+  end
+
+  defp grant_new_units(state, player_id) do
+    new_units_count =
+      state.tiles
+      |> filter_tile_ids(fn(tile) -> tile.owner == player_id end)
+      |> length
+      |> Integer.floor_div(@tiles_per_new_unit)
+      |> max(@min_new_units)
+
+    state
+    |> update_player(player_id, :unplaced_units, &(&1 + new_units_count))
   end
 
   def authenticate_player(%{mode: :hot_seat} = state, _token) do

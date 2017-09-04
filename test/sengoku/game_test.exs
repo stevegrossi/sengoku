@@ -161,17 +161,64 @@ defmodule Sengoku.GameTest do
 
   describe ".begin_turn" do
 
-    test "grants the current player 3 unplaced units" do
+    test "grants the current player 1 unit for every 3 owned territories" do
       old_state = %{
-        current_player_id: 99,
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 2},
+          2 => %Tile{owner: 1},
+          3 => %Tile{owner: 1},
+          4 => %Tile{owner: 1},
+          5 => %Tile{owner: 1},
+          6 => %Tile{owner: 1},
+          7 => %Tile{owner: 1},
+          8 => %Tile{owner: 1},
+          9 => %Tile{owner: 1},
+          10 => %Tile{owner: 1},
+          11 => %Tile{owner: 1},
+          12 => %Tile{owner: 1},
+          13 => %Tile{owner: 1},
+          14 => %Tile{owner: 1},
+          15 => %Tile{owner: 1},
+        },
         players: %{
-          99 => %Player{unplaced_units: 11}
+          1 => %Player{unplaced_units: 0}
         }
       }
 
       new_state = old_state |> Game.begin_turn
 
-      assert new_state.players[99].unplaced_units == 14
+      assert new_state.players[1].unplaced_units == 4
+    end
+
+    test "grants the current player at least 3 unplaced units" do
+      old_state = %{
+        current_player_id: 2,
+        tiles: %{
+          1 => %Tile{owner: 2},
+          2 => %Tile{owner: 1},
+          3 => %Tile{owner: 1},
+          4 => %Tile{owner: 1},
+          5 => %Tile{owner: 1},
+          6 => %Tile{owner: 1},
+          7 => %Tile{owner: 1},
+          8 => %Tile{owner: 1},
+          9 => %Tile{owner: 1},
+          10 => %Tile{owner: 1},
+          11 => %Tile{owner: 1},
+          12 => %Tile{owner: 1},
+          13 => %Tile{owner: 1},
+          14 => %Tile{owner: 1},
+          15 => %Tile{owner: 1},
+        },
+        players: %{
+          2 => %Player{unplaced_units: 0}
+        }
+      }
+
+      new_state = old_state |> Game.begin_turn
+
+      assert new_state.players[2].unplaced_units == 3
     end
   end
 
@@ -186,7 +233,8 @@ defmodule Sengoku.GameTest do
           2 => %Player{active: true, unplaced_units: 1},
           3 => %Player{active: false, unplaced_units: 1},
           4 => %Player{active: true, unplaced_units: 1}
-        }
+        },
+        tiles: %{}
       }
 
       new_state = old_state |> Game.end_turn
@@ -204,7 +252,8 @@ defmodule Sengoku.GameTest do
           2 => %Player{unplaced_units: 1, active: true},
           3 => %Player{unplaced_units: 1, active: true},
           4 => %Player{unplaced_units: 1, active: true}
-        }
+        },
+        tiles: %{}
       }
 
       new_state = old_state |> Game.end_turn

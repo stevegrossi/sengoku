@@ -160,12 +160,20 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tile(state, player_id) do
-    tile_id =
+    claimed_tile_ids =
       state.tiles
-      |> filter_tile_ids(fn(tile) -> is_nil(tile.owner) end)
+      |> filter_tile_ids(fn(tile) -> !is_nil(tile.owner) end)
+
+    available_tile_id =
+      state.tiles
+      |> filter_tile_ids(fn(tile) ->
+           is_nil(tile.owner) && (
+             tile.neighbors -- claimed_tile_ids == tile.neighbors
+           )
+         end)
       |> Enum.random
 
-    put_tile(state, tile_id, :owner, player_id)
+    put_tile(state, available_tile_id, :owner, player_id)
   end
 
   defp deactivate_player_if_defeated(state, player_id) do

@@ -9,7 +9,7 @@ const Players = (props) => {
                    className="Player"
                    current={props.currentPlayerId == player_id}
                    active={props.players[player_id].active}
-                   unplacedArmies={props.players[player_id].unplaced_armies} />
+                   unplacedArmies={props.players[player_id].unplaced_units} />
   })
 
   return (

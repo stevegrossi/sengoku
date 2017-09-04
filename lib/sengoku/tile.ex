@@ -1,5 +1,5 @@
 defmodule Sengoku.Tile do
-  defstruct owner: nil, armies: 1, neighbors: []
+  defstruct owner: nil, units: 1, neighbors: []
 
   def new(neighbors) do
     %__MODULE__{neighbors: neighbors}

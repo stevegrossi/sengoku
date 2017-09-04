@@ -128,14 +128,14 @@ defmodule Sengoku.GameTest do
       end) == 0
     end
 
-    test "grants Player one 3 unplaced armies" do
+    test "grants Player one 3 unplaced units" do
       old_state = %{
         turn: 0,
         players: %{
-          1 => %Player{active: true, unplaced_armies: 0},
-          2 => %Player{active: true, unplaced_armies: 0},
-          3 => %Player{active: true, unplaced_armies: 0},
-          4 => %Player{active: false, unplaced_armies: 0}
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+          3 => %Player{active: true, unplaced_units: 0},
+          4 => %Player{active: false, unplaced_units: 0}
         },
         tiles: %{
           1 => %Tile{owner: nil},
@@ -160,7 +160,7 @@ defmodule Sengoku.GameTest do
       }
 
       new_state = Game.start_game(old_state)
-      assert new_state.players[1].unplaced_armies == 3
+      assert new_state.players[1].unplaced_units == 3
     end
 
     test "does nothing if only one active player" do
@@ -180,38 +180,38 @@ defmodule Sengoku.GameTest do
 
   describe ".begin_turn" do
 
-    test "grants the current player 3 unplaced armies" do
+    test "grants the current player 3 unplaced units" do
       old_state = %{
         current_player_id: 99,
         players: %{
-          99 => %Player{unplaced_armies: 11}
+          99 => %Player{unplaced_units: 11}
         }
       }
 
       new_state = old_state |> Game.begin_turn
 
-      assert new_state.players[99].unplaced_armies == 14
+      assert new_state.players[99].unplaced_units == 14
     end
   end
 
   describe ".end_turn" do
 
-    test "increments current_player_id to the next active Player and grants them armies" do
+    test "increments current_player_id to the next active Player and grants them units" do
       old_state = %{
         current_player_id: 2,
         turn: 1,
         players: %{
-          1 => %Player{active: true, unplaced_armies: 1},
-          2 => %Player{active: true, unplaced_armies: 1},
-          3 => %Player{active: false, unplaced_armies: 1},
-          4 => %Player{active: true, unplaced_armies: 1}
+          1 => %Player{active: true, unplaced_units: 1},
+          2 => %Player{active: true, unplaced_units: 1},
+          3 => %Player{active: false, unplaced_units: 1},
+          4 => %Player{active: true, unplaced_units: 1}
         }
       }
 
       new_state = old_state |> Game.end_turn
 
       assert new_state.current_player_id == 4
-      assert new_state.players[4].unplaced_armies == 4
+      assert new_state.players[4].unplaced_units == 4
     end
 
     test "when the last active Player’s turn ends, starts at 1 and increments turn" do
@@ -219,68 +219,68 @@ defmodule Sengoku.GameTest do
         current_player_id: 4,
         turn: 1,
         players: %{
-          1 => %Player{unplaced_armies: 0, active: false},
-          2 => %Player{unplaced_armies: 1, active: true},
-          3 => %Player{unplaced_armies: 1, active: true},
-          4 => %Player{unplaced_armies: 1, active: true}
+          1 => %Player{unplaced_units: 0, active: false},
+          2 => %Player{unplaced_units: 1, active: true},
+          3 => %Player{unplaced_units: 1, active: true},
+          4 => %Player{unplaced_units: 1, active: true}
         }
       }
 
       new_state = old_state |> Game.end_turn
 
       assert new_state.current_player_id == 2
-      assert new_state.players[2].unplaced_armies == 4
+      assert new_state.players[2].unplaced_units == 4
       assert new_state.turn == 2
     end
   end
 
-  describe ".place_army" do
+  describe ".place_unit" do
 
-    test "moves an army from the Player to the Tile" do
+    test "moves an unit from the Player to the Tile" do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_armies: 2},
+          1 => %Player{unplaced_units: 2},
         },
         tiles: %{
-          1 => %Tile{owner: 1, armies: 4}
+          1 => %Tile{owner: 1, units: 4}
         }
       }
 
-      new_state = old_state |> Game.place_army(1)
+      new_state = old_state |> Game.place_unit(1)
 
-      assert new_state.tiles[1].armies == 5
-      assert new_state.players[1].unplaced_armies == 1
+      assert new_state.tiles[1].units == 5
+      assert new_state.players[1].unplaced_units == 1
     end
 
     test "changes nothing if the Player does not own the Tile" do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_armies: 2},
+          1 => %Player{unplaced_units: 2},
         },
         tiles: %{
-          1 => %Tile{owner: 99, armies: 4}
+          1 => %Tile{owner: 99, units: 4}
         }
       }
 
-      new_state = old_state |> Game.place_army(1)
+      new_state = old_state |> Game.place_unit(1)
 
       assert new_state == old_state
     end
 
-    test "changes nothing if the Player has no unplaced armies" do
+    test "changes nothing if the Player has no unplaced units" do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_armies: 0},
+          1 => %Player{unplaced_units: 0},
         },
         tiles: %{
-          1 => %Tile{owner: 1, armies: 4}
+          1 => %Tile{owner: 1, units: 4}
         }
       }
 
-      new_state = old_state |> Game.place_army(1)
+      new_state = old_state |> Game.place_unit(1)
 
       assert new_state == old_state
     end
@@ -288,21 +288,21 @@ defmodule Sengoku.GameTest do
 
   describe ".attack" do
 
-    test "when the attacker wins, the defender loses an army" do
+    test "when the attacker wins, the defender loses an unit" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 2, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         }
       }
 
       new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].armies == 1
-      assert new_state.tiles[1].armies == 2
+      assert new_state.tiles[2].units == 1
+      assert new_state.tiles[1].units == 2
     end
 
-    test "when the attacker defeats the last defender, captures the territory and moves one army in" do
+    test "when the attacker defeats the last defender, captures the territory and moves one unit in" do
       old_state = %{
         current_player_id: 1,
         players: %{
@@ -310,14 +310,14 @@ defmodule Sengoku.GameTest do
           2 => %Player{active: true}
         },
         tiles: %{
-          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         }
       }
 
       new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].armies == 1
-      assert new_state.tiles[1].armies == 1
+      assert new_state.tiles[2].units == 1
+      assert new_state.tiles[1].units == 1
       assert new_state.tiles[2].owner == 1
     end
 
@@ -325,19 +325,19 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{active: true, unplaced_armies: 5},
-          2 => %Player{active: true, unplaced_armies: 5}
+          1 => %Player{active: true, unplaced_units: 5},
+          2 => %Player{active: true, unplaced_units: 5}
         },
         tiles: %{
-          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         }
       }
 
       new_state = Game.attack(old_state, 1, 2, :attacker)
       assert new_state.tiles[2].owner == 1
       assert new_state.players[2].active == false
-      assert new_state.players[2].unplaced_armies == 0
+      assert new_state.players[2].unplaced_units == 0
       assert new_state.players[1].active == true
     end
 
@@ -346,12 +346,12 @@ defmodule Sengoku.GameTest do
         winner_id: nil,
         current_player_id: 1,
         players: %{
-          1 => %Player{active: true, unplaced_armies: 5},
-          2 => %Player{active: true, unplaced_armies: 5}
+          1 => %Player{active: true, unplaced_units: 5},
+          2 => %Player{active: true, unplaced_units: 5}
         },
         tiles: %{
-          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         }
       }
 
@@ -361,26 +361,26 @@ defmodule Sengoku.GameTest do
       assert new_state.winner_id == 1
     end
 
-    test "when the defender wins, the attacker loses an army" do
+    test "when the defender wins, the attacker loses an unit" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 2, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         }
       }
 
       new_state = Game.attack(old_state, 1, 2, :defender)
-      assert new_state.tiles[1].armies == 1
-      assert new_state.tiles[2].armies == 2
+      assert new_state.tiles[1].units == 1
+      assert new_state.tiles[2].units == 2
     end
 
-    test "changes nothing if Player has no armies in origin" do
+    test "changes nothing if Player has no units in origin" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 0, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 0, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         }
       }
 
@@ -392,8 +392,8 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 1, owner: 2, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [1]}
+          1 => %Tile{units: 1, owner: 2, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         }
       }
 
@@ -405,8 +405,8 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 1, owner: 1, neighbors: [2]},
-          2 => %Tile{armies: 1, owner: 1, neighbors: [1]}
+          1 => %Tile{units: 1, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 1, owner: 1, neighbors: [1]}
         }
       }
 
@@ -418,8 +418,8 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         tiles: %{
-          1 => %Tile{armies: 1, owner: 1, neighbors: [3]},
-          2 => %Tile{armies: 1, owner: 2, neighbors: [3]}
+          1 => %Tile{units: 1, owner: 1, neighbors: [3]},
+          2 => %Tile{units: 1, owner: 2, neighbors: [3]}
         }
       }
 

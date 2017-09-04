@@ -31,7 +31,7 @@ const Board = (props) => {
               stroke="none"
               x={tile.tx}
               y={tile.ty}
-              textAnchor="middle">{data.armies}</text>
+              textAnchor="middle">{data.units}</text>
       </g>
     )
   })

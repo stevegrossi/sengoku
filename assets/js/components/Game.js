@@ -26,9 +26,9 @@ class Game extends React.Component {
       this.state.tiles[id].owner == this.state.current_player_id
 
     if (player_owns_tile) {
-      if (this.state.players[this.state.current_player_id].unplaced_armies > 0) {
-        // Army placement phase
-        this.action('place_army', { tile_id: id })
+      if (this.state.players[this.state.current_player_id].unplaced_units > 0) {
+        // Unit placement phase
+        this.action('place_unit', { tile_id: id })
         e.stopPropagation()
       } else if (!this.state.selectedTileId) {
         // Preparing to attack/move

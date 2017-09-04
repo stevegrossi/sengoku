@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   alias Sengoku.{Tile, Player}
 
-  @min_additional_armies 3
+  @min_additional_units 3
   @battle_outcomes ~w(attacker defender)a
 
   def initial_state(:hot_seat) do
@@ -42,7 +42,7 @@ defmodule Sengoku.Game do
 
   def begin_turn(%{current_player_id: current_player_id} = state) do
     state
-    |> update_player(current_player_id, :unplaced_armies, &(&1 + @min_additional_armies))
+    |> update_player(current_player_id, :unplaced_units, &(&1 + @min_additional_units))
   end
 
   def authenticate_player(%{mode: :hot_seat} = state, token) do
@@ -91,15 +91,15 @@ defmodule Sengoku.Game do
     |> begin_turn()
   end
 
-  def place_army(%{current_player_id: current_player_id} = state, tile_id) do
+  def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
     current_player = state.players[current_player_id]
-    if current_player.unplaced_armies > 0 do
+    if current_player.unplaced_units > 0 do
       tile = state.tiles[tile_id]
 
       if tile.owner == current_player_id do
         state
-        |> update_player(current_player_id, :unplaced_armies, &(&1 - 1))
-        |> update_tile(tile_id, :armies, &(&1 + 1))
+        |> update_player(current_player_id, :unplaced_units, &(&1 - 1))
+        |> update_tile(tile_id, :units, &(&1 + 1))
       else
         state
       end
@@ -114,7 +114,7 @@ defmodule Sengoku.Game do
     defender_id = to_tile.owner
 
     if (
-      from_tile.armies >= 1 &&
+      from_tile.units >= 1 &&
       from_tile.owner == current_player_id &&
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
@@ -122,20 +122,20 @@ defmodule Sengoku.Game do
       outcome = outcome || Enum.random(@battle_outcomes)
       case outcome do
         :attacker ->
-          if state.tiles[to_id].armies <= 1 do
+          if state.tiles[to_id].units <= 1 do
             state
-            |> update_tile(from_id, :armies, &(&1 - 1))
+            |> update_tile(from_id, :units, &(&1 - 1))
             |> put_tile(to_id, :owner, current_player_id)
-            |> put_tile(to_id, :armies, 1)
+            |> put_tile(to_id, :units, 1)
             |> deactivate_player_if_defeated(defender_id)
             |> maybe_declare_winner()
           else
             state
-            |> update_tile(to_id, :armies, &(&1 - 1))
+            |> update_tile(to_id, :units, &(&1 - 1))
           end
         :defender ->
           state
-          |> update_tile(from_id, :armies, &(&1 - 1))
+          |> update_tile(from_id, :units, &(&1 - 1))
       end
     else
       state
@@ -173,7 +173,7 @@ defmodule Sengoku.Game do
     else
       state
       |> put_player(player_id, :active, false)
-      |> put_player(player_id, :unplaced_armies, 0)
+      |> put_player(player_id, :unplaced_units, 0)
     end
   end
 

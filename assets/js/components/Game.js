@@ -25,22 +25,35 @@ class Game extends React.Component {
     const player_owns_tile =
       this.state.tiles[id].owner == this.state.current_player_id
 
-    if (player_owns_tile) {
-      if (this.state.players[this.state.current_player_id].unplaced_units > 0) {
-        // Unit placement phase
-        this.action('place_unit', { tile_id: id })
+    if (this.state.selectedTileId) {
+      // Moving or attacking
+      if (player_owns_tile && this.state.selectedTileId !== id) {
+        // Moving
+        const unitCount = prompt('How many units do you wish to move? (This will end your turn.)')
+        this.action('move', {
+          from_id: this.state.selectedTileId,
+          to_id: id,
+          count: parseInt(unitCount)
+        })
+        this.cancelSelection()
         e.stopPropagation()
-      } else if (!this.state.selectedTileId) {
-        // Preparing to attack/move
-        console.log('selecting tile', id)
-        this.setState({ selectedTileId: id })
+      } else if (this.state.selectedTileId !== id) {
+        // Attacking
+        this.action('attack', { from_id: this.state.selectedTileId, to_id: id })
         e.stopPropagation()
       }
     } else {
-      // Attacking
-      if (this.state.selectedTileId) {
-        this.action('attack', { from_id: this.state.selectedTileId, to_id: id })
-        e.stopPropagation()
+      if (player_owns_tile) {
+        if (this.state.players[this.state.current_player_id].unplaced_units > 0) {
+          // Placing units
+          this.action('place_unit', { tile_id: id })
+          e.stopPropagation()
+        } else {
+          // Selecting a tile to move to/attack
+          console.log('selecting tile', id)
+          this.setState({ selectedTileId: id })
+          e.stopPropagation()
+        }
       }
     }
   }

@@ -155,6 +155,22 @@ defmodule Sengoku.Game do
     end
   end
 
+  def move(%{current_player_id: current_player_id} = state, from_id, to_id, count) do
+    if (
+      state.tiles[from_id].owner == current_player_id &&
+      state.tiles[to_id].owner == current_player_id &&
+      count < state.tiles[from_id].units &&
+      from_id in state.tiles[to_id].neighbors
+    ) do
+      state
+      |> update_tile(from_id, :units, &(&1 - count))
+      |> update_tile(to_id, :units, &(&1 + count))
+      |> end_turn
+    else
+      state
+    end
+  end
+
   defp increment_turn(state) do
     state
     |> Map.update!(:turn, &(&1 + 1))

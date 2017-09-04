@@ -64,6 +64,10 @@ defmodule Sengoku.GameServer do
     new_state = Game.attack(state, from_id, to_id)
     {:reply, new_state, new_state}
   end
+  def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :online, current_player_id: player_id} = state) do
+    new_state = Game.move(state, from_id, to_id, count)
+    {:reply, new_state, new_state}
+  end
 
   # hot_seat
   def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
@@ -80,6 +84,10 @@ defmodule Sengoku.GameServer do
   end
   def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.attack(state, from_id, to_id)
+    {:reply, new_state, new_state}
+  end
+  def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :hot_seat} = state) do
+    new_state = Game.move(state, from_id, to_id, count)
     {:reply, new_state, new_state}
   end
 

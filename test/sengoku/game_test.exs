@@ -457,4 +457,128 @@ defmodule Sengoku.GameTest do
       assert new_state == old_state
     end
   end
+
+  describe ".move" do
+
+    test "moves a number of units from one territory to another" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+
+      assert new_state.tiles[1].units == 2
+      assert new_state.tiles[2].units == 4
+    end
+
+    test "ends the Player’s turn" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+      refute new_state.current_player_id == 1
+    end
+
+    test "does nothing if the destination is not a neighbor of the origin" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [3]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [3]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+      assert new_state == old_state
+    end
+
+    test "does nothing if the Player does not own the origin" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 2, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+      assert new_state == old_state
+    end
+
+    test "does nothing if the Player does not own the destination" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 2, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+      assert new_state == old_state
+    end
+
+    test "does nothing if the count is not less than the number of units in the origin" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 2, 5)
+      assert new_state == old_state
+    end
+
+    test "does nothing if the origin and destination are the same" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+      }
+
+      new_state = Game.move(old_state, 1, 1, 3)
+      assert new_state == old_state
+    end
+  end
 end

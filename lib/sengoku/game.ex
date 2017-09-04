@@ -45,7 +45,7 @@ defmodule Sengoku.Game do
     |> update_player(current_player_id, :unplaced_units, &(&1 + @min_additional_units))
   end
 
-  def authenticate_player(%{mode: :hot_seat} = state, token) do
+  def authenticate_player(%{mode: :hot_seat} = state, _token) do
     {:ok, {nil, nil}, state}
   end
   def authenticate_player(%{mode: :online} = state, token) do
@@ -155,11 +155,17 @@ defmodule Sengoku.Game do
   defp assign_tiles(state) do
     active_player_ids = get_active_player_ids(state)
     Enum.reduce(active_player_ids, state, fn(player_id, state) ->
-      not_really_random_tile = player_id * 6
-      update_in(state, [:tiles, not_really_random_tile], fn(tile) ->
-        struct(tile, %{owner: player_id})
-      end)
+      assign_tile(state, player_id)
     end)
+  end
+
+  defp assign_tile(state, player_id) do
+    tile_id =
+      state.tiles
+      |> filter_tile_ids(fn(tile) -> is_nil(tile.owner) end)
+      |> Enum.random
+
+    put_tile(state, tile_id, :owner, player_id)
   end
 
   defp deactivate_player_if_defeated(state, player_id) do
@@ -231,6 +237,13 @@ defmodule Sengoku.Game do
   defp filter_player_ids(players_map, func) do
     players_map
     |> Enum.filter(fn({_id, player}) -> func.(player) end)
+    |> Enum.into(%{})
+    |> Map.keys
+  end
+
+  defp filter_tile_ids(tiles_map, func) do
+    tiles_map
+    |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
     |> Enum.into(%{})
     |> Map.keys
   end

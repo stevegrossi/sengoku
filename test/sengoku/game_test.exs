@@ -104,19 +104,7 @@ defmodule Sengoku.GameTest do
           3 => %Tile{owner: nil},
           4 => %Tile{owner: nil},
           5 => %Tile{owner: nil},
-          6 => %Tile{owner: nil},
-          7 => %Tile{owner: nil},
-          8 => %Tile{owner: nil},
-          9 => %Tile{owner: nil},
-          10 => %Tile{owner: nil},
-          11 => %Tile{owner: nil},
-          12 => %Tile{owner: nil},
-          13 => %Tile{owner: nil},
-          14 => %Tile{owner: nil},
-          15 => %Tile{owner: nil},
-          16 => %Tile{owner: nil},
-          17 => %Tile{owner: nil},
-          18 => %Tile{owner: nil},
+          6 => %Tile{owner: nil}
         }
       }
 
@@ -148,19 +136,7 @@ defmodule Sengoku.GameTest do
           3 => %Tile{owner: nil},
           4 => %Tile{owner: nil},
           5 => %Tile{owner: nil},
-          6 => %Tile{owner: nil},
-          7 => %Tile{owner: nil},
-          8 => %Tile{owner: nil},
-          9 => %Tile{owner: nil},
-          10 => %Tile{owner: nil},
-          11 => %Tile{owner: nil},
-          12 => %Tile{owner: nil},
-          13 => %Tile{owner: nil},
-          14 => %Tile{owner: nil},
-          15 => %Tile{owner: nil},
-          16 => %Tile{owner: nil},
-          17 => %Tile{owner: nil},
-          18 => %Tile{owner: nil},
+          6 => %Tile{owner: nil}
         }
       }
 

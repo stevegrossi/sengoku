@@ -6,8 +6,9 @@ defmodule Sengoku.GameTest do
   describe ".initial_state" do
 
     test "returns the state before the game begins" do
-      state = Game.initial_state
+      state = Game.initial_state(:hot_seat)
 
+      assert state.mode == :hot_seat
       assert state.turn == 0
       assert state.current_player_id == nil
       assert state.winner_id == nil
@@ -19,6 +20,7 @@ defmodule Sengoku.GameTest do
     test "with no token, registers the next inactive player and makes them active" do
       token = nil
       old_state = %{
+        mode: :online,
         turn: 0,
         players: %{
           1 => %Player{active: true},
@@ -37,6 +39,7 @@ defmodule Sengoku.GameTest do
     test "with no token, prevents adding new players when the game is in progress" do
       token = nil
       old_state = %{
+        mode: :online,
         turn: 1,
         players: %{
           1 => %Player{active: true},
@@ -53,6 +56,7 @@ defmodule Sengoku.GameTest do
     test "with no token, errors when no inactive players" do
       token = nil
       old_state = %{
+        mode: :online,
         turn: 0,
         players: %{
           1 => %Player{active: true},
@@ -70,6 +74,7 @@ defmodule Sengoku.GameTest do
     test "with a token, returns the existing player_id for the token" do
       token = "abcdef"
       old_state = %{
+        mode: :online,
         turn: 0,
         players: %{
           1 => %Player{active: true},

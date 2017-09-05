@@ -1,11 +1,17 @@
-<h2>Lobby</h2>
-
 <%= form_tag("/") do %>
-  <input type="hidden" name="mode" value="hot_seat" />
-  <input type="submit" value="New Hot Seat Game" />
-<% end %>
-
-<%= form_tag("/") do %>
-  <input type="hidden" name="mode" value="online" />
-  <input type="submit" value="New Online Game" />
+  <p>
+    <label>
+      <input type="radio" name="mode" value="hot_seat" checked="checked" />
+      <strong>Hot Seat</strong>:
+      <span class="db">Players take turns at the same computer.</span>
+    </label>
+  </p>
+  <p>
+    <label>
+      <input type="radio" name="mode" value="online" />
+      <strong>Online</strong>:
+      <span class="db">Players join the game from different computers.</span>
+    </label>
+  </p>
+  <input type="submit" value="New Game" />
 <% end %>

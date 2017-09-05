@@ -48,60 +48,64 @@ defmodule Sengoku.GameServer do
 
   def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
     new_state = Game.start_game(state)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
 
   # online
   def handle_call({:action, player_id, %{type: "end_turn"}}, _from, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.end_turn(state)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.place_unit(state, tile_id)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
 
   # hot_seat
   def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
     new_state = Game.start_game(state)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "end_turn"}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.end_turn(state)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.place_unit(state, tile_id)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
   def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    {:reply, new_state, new_state}
+    {:reply, public_state(new_state), new_state}
   end
 
   # catch-all
   def handle_call({:action, player_id, _action}, _from, state) do
-    {:reply, state, state}
+    {:reply, public_state(state), state}
   end
 
   def handle_call(:get_state, _from, state) do
-    {:reply, state, state}
+    {:reply, public_state(state), state}
   end
 
   defp via_tuple(game_id) do
     {:via, Registry, {:game_server_registry, game_id}}
+  end
+
+  defp public_state(state) do
+    Map.delete(state, :tokens)
   end
 
   defp random_token(length) do

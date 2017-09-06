@@ -46,7 +46,7 @@ defmodule Sengoku.GameServer do
     end
   end
 
-  def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
+  def handle_call({:action, _player_id, %{type: "start_game"}}, _from, state) do
     new_state = Game.start_game(state)
     {:reply, public_state(new_state), new_state}
   end
@@ -70,29 +70,25 @@ defmodule Sengoku.GameServer do
   end
 
   # hot_seat
-  def handle_call({:action, player_id, %{type: "start_game"}}, _from, state) do
-    new_state = Game.start_game(state)
-    {:reply, public_state(new_state), new_state}
-  end
-  def handle_call({:action, player_id, %{type: "end_turn"}}, _from, %{mode: :hot_seat} = state) do
+  def handle_call({:action, _player_id, %{type: "end_turn"}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.end_turn(state)
     {:reply, public_state(new_state), new_state}
   end
-  def handle_call({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :hot_seat} = state) do
+  def handle_call({:action, _player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.place_unit(state, tile_id)
     {:reply, public_state(new_state), new_state}
   end
-  def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :hot_seat} = state) do
+  def handle_call({:action, _player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.attack(state, from_id, to_id)
     {:reply, public_state(new_state), new_state}
   end
-  def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :hot_seat} = state) do
+  def handle_call({:action, _player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :hot_seat} = state) do
     new_state = Game.move(state, from_id, to_id, count)
     {:reply, public_state(new_state), new_state}
   end
 
   # catch-all
-  def handle_call({:action, player_id, _action}, _from, state) do
+  def handle_call({:action, _player_id, _action}, _from, state) do
     {:reply, public_state(state), state}
   end
 

@@ -39,6 +39,36 @@ body {
   }
 }
 
+.Tile {
+  stroke: $black;
+  stroke-width: 0.75;
+
+  &-highlight {
+    opacity: 0;
+    fill: rgba(255,255,255,.1);
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &-border {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 0;
+    transition: all .1s ease-in;
+
+    &--major {
+      stroke-width: 5;
+      stroke: rgba(255, 255, 255, .4);
+    }
+
+    &--minor {
+      stroke-width: 5;
+      stroke: rgba(255, 255, 255, .2);
+    }
+  }
+}
 .Tile-count {
   fill: $black;
   font-size: 10px;

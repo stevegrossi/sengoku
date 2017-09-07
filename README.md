@@ -2,7 +2,7 @@
 
 Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and in active development.)
 
-![a screenshot of the game map](https://github.com/stevegrossi/sengoku/raw/master/sengoku.png)
+![a screenshot of the game map](https://github.com/stevegrossi/sengoku/raw/master/screenshot.png)
 
 ## Features
 
@@ -20,7 +20,6 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 
 ## Features Planned
 
-- Optimize the map to make games more interesting.
 - Make battle more strategic than just 50-50.
 - Provide feedback in the UI (perhaps in a log) of the results of actions like battle.
 - Add computer-controller players

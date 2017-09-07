@@ -31,5 +31,6 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 - Unit bonuses for holding all tiles in a region.
 - Instead of units, players gain currency which can be used to purchase units, or potentially territory upgrades like:
  - Stables grant an additional move per turn.
- - Mines grant extra currency per turn
+ - Mines grant extra currency per turn.
  - Castles grant defensive bonuses.
+ - Harbors let you move from one coastal province with a harbor to any other.

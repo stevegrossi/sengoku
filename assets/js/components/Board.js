@@ -23,11 +23,13 @@ const Board = (props) => {
         <g className="Tile-background">{tile.path}</g>
         <clipPath id={'clip-path-' + id}>{tile.path}</clipPath>
         <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + id + ')'} fill="transparent" strokeWidth="5" stroke="rgba(255,255,255,.5)">{tile.path}</g>
-        <text className="Tile-count"
-              stroke="none"
-              x={tile.tx}
-              y={tile.ty}
-              textAnchor="middle">{data.units}</text>
+        {data.units > 0 &&
+          <text className="Tile-count"
+                stroke="none"
+                x={tile.tx}
+                y={tile.ty}
+                textAnchor="middle">{data.units}</text>
+        }
         <g className="Tile-highlight">{tile.path}</g>
       </g>
     )

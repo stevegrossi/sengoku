@@ -473,10 +473,10 @@ defmodule Sengoku.GameTest do
         },
       }
 
-      new_state = Game.move(old_state, 1, 2, 3)
+      new_state = Game.move(old_state, 1, 2, 5)
 
-      assert new_state.tiles[1].units == 2
-      assert new_state.tiles[2].units == 4
+      assert new_state.tiles[1].units == 0
+      assert new_state.tiles[2].units == 6
     end
 
     test "ends the Player’s turn" do
@@ -547,7 +547,7 @@ defmodule Sengoku.GameTest do
       assert new_state == old_state
     end
 
-    test "does nothing if the count is not less than the number of units in the origin" do
+    test "does nothing if the count is more than the number of units in the origin" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
@@ -560,7 +560,7 @@ defmodule Sengoku.GameTest do
         },
       }
 
-      new_state = Game.move(old_state, 1, 2, 5)
+      new_state = Game.move(old_state, 1, 2, 6)
       assert new_state == old_state
     end
 

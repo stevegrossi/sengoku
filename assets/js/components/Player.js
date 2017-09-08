@@ -6,14 +6,12 @@ const Player = (props) => {
     backgroundColor: playerUI[props.id].color,
   }
 
-  const classNames = [
-    'Player',
-    props.current && 'Player--current',
-    props.active || 'Player--inactive'
-  ].join(' ')
+  let classNames = ['Player']
+  if (props.current) classNames.push('Player--current')
+  if (!props.active) classNames.push('Player--inactive')
 
   return (
-    <li className={classNames} style={styles}>
+    <li className={classNames.join(' ')} style={styles}>
       <b>{playerUI[props.id].name}</b>
       {props.active &&
         <span>

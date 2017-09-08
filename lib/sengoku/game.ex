@@ -132,7 +132,12 @@ defmodule Sengoku.Game do
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
     ) do
-      outcome = outcome || Enum.random(@battle_outcomes)
+      outcome =
+        cond do
+          not is_nil(outcome) -> outcome
+          state.tiles[to_id].units == 0 -> :attacker
+          true -> Enum.random(@battle_outcomes)
+        end
       case outcome do
         :attacker ->
           if state.tiles[to_id].units <= 1 do

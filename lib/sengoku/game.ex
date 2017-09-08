@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   alias Sengoku.{Tile, Player}
 
-  @min_new_units 3
+  @base_new_units 3
   @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
 
@@ -52,7 +52,7 @@ defmodule Sengoku.Game do
       |> filter_tile_ids(fn(tile) -> tile.owner == player_id end)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
-      |> max(@min_new_units)
+      |> Kernel.+(@base_new_units)
 
     state
     |> update_player(player_id, :unplaced_units, &(&1 + new_units_count))

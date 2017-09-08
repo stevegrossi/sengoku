@@ -16,7 +16,12 @@ const Player = (props) => {
     <li className={classNames} style={styles}>
       <b>{playerUI[props.id].name}</b>
       {props.active &&
-        <span>{props.unplacedArmies} 兵</span>
+        <span>
+          {props.unplacedArmies}
+          <svg className="Icon" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" version="1.1" >
+            <use href="#icon-unit" />
+          </svg>
+        </span>
       }
     </li>
   )

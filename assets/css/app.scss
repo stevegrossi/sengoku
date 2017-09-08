@@ -11,6 +11,13 @@ body {
   font-family: 'Crimson Text', serif;
 }
 
+.Icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
 .Players {
   list-style: none;
   margin: 0;
@@ -36,6 +43,10 @@ body {
 
   &--inactive {
     opacity: 0.5;
+  }
+
+  .Icon {
+    margin-left: .25em;
   }
 }
 

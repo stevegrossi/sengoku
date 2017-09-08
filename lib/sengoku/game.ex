@@ -146,7 +146,7 @@ defmodule Sengoku.Game do
             |> put_tile(to_id, :owner, current_player_id)
             |> put_tile(to_id, :units, 1)
             |> deactivate_player_if_defeated(defender_id)
-            |> maybe_declare_winner()
+            |> check_for_winner()
           else
             state
             |> update_tile(to_id, :units, &(&1 - 1))
@@ -225,7 +225,7 @@ defmodule Sengoku.Game do
     end
   end
 
-  defp maybe_declare_winner(state) do
+  defp check_for_winner(state) do
     active_player_ids = get_active_player_ids(state)
     if Enum.count(active_player_ids) == 1 do
       state

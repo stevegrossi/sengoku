@@ -1,11 +1,10 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Authentication, Tile, Player, Region}
+  alias Sengoku.{Authentication, Tile, Player, Region, Battle}
 
   @min_new_units 3
   @tiles_per_new_unit 3
-  @battle_outcomes ~w(attacker defender)a
   @initial_state %{
     turn: 0,
     current_player_id: nil,
@@ -104,9 +103,11 @@ defmodule Sengoku.Game do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
     defender_id = to_tile.owner
+    attacking_units = from_tile.units - 1
+    defending_units = to_tile.units
 
     if (
-      from_tile.units > 1 &&
+      attacking_units > 0 &&
       from_tile.owner == current_player_id &&
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
@@ -114,8 +115,8 @@ defmodule Sengoku.Game do
       outcome =
         cond do
           not is_nil(outcome) -> outcome
-          state.tiles[to_id].units == 0 -> :attacker
-          true -> Enum.random(@battle_outcomes)
+          defending_units == 0 -> :attacker
+          true -> Battle.decide(attacking_units, defending_units)
         end
       case outcome do
         :attacker ->

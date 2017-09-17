@@ -18,7 +18,6 @@ Up to 4 players: play against friends online, the computer, or both.
 
 ## Features Planned
 
-- Make battle more strategic than just 50-50.
 - Provide feedback in the UI (perhaps in a log) of the results of actions like battle.
 - Allow hot-seat games with fewer than 4 players
 - Let players choose their names

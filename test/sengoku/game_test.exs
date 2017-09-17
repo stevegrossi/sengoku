@@ -6,7 +6,7 @@ defmodule Sengoku.GameTest do
   describe ".initial_state" do
 
     test "returns the state before the game begins" do
-      state = Game.initial_state(:hot_seat)
+      state = Game.initial_state("123", :hot_seat)
 
       assert state.mode == :hot_seat
       assert state.turn == 0

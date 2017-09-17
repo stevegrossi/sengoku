@@ -293,9 +293,9 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].units == 1
+      new_state = Game.attack(old_state, 1, 2, {0, 2})
       assert new_state.tiles[1].units == 2
+      assert new_state.tiles[2].units == 0
     end
 
     test "when the attacker defeats the last defender, captures the territory and moves one unit in" do
@@ -311,9 +311,9 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].units == 1
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.tiles[1].units == 1
+      assert new_state.tiles[2].units == 1
       assert new_state.tiles[2].owner == 1
     end
 
@@ -330,7 +330,7 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.tiles[2].owner == 1
       assert new_state.players[2].active == false
       assert new_state.players[2].unplaced_units == 0
@@ -351,7 +351,7 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.players[2].active == false
       assert new_state.players[1].active == true
       assert new_state.winner_id == 1
@@ -366,7 +366,7 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :defender)
+      new_state = Game.attack(old_state, 1, 2, {1, 0})
       assert new_state.tiles[1].units == 1
       assert new_state.tiles[2].units == 2
     end

@@ -112,28 +112,26 @@ defmodule Sengoku.Game do
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
     ) do
-      outcome =
-        cond do
-          not is_nil(outcome) -> outcome
-          defending_units == 0 -> :attacker
-          true -> Battle.decide(attacking_units, defending_units)
-        end
-      case outcome do
-        :attacker ->
-          if state.tiles[to_id].units <= 1 do
-            state
-            |> Tile.adjust_units(from_id, -1)
-            |> Tile.update_attributes(to_id, %{owner: current_player_id, units: 1})
-            |> deactivate_player_if_defeated(defender_id)
-            |> check_for_winner()
-          else
-            state
-            |> Tile.adjust_units(to_id, -1)
-          end
-        :defender ->
-          state
-          |> Tile.adjust_units(from_id, -1)
-      end
+      {attacker_losses, defender_losses} =
+        outcome || Battle.decide(attacking_units, defending_units)
+
+      state
+      |> Tile.adjust_units(from_id, -attacker_losses)
+      |> Tile.adjust_units(to_id, -defender_losses)
+      |> check_for_capture(from_id, to_id)
+      |> deactivate_player_if_defeated(defender_id)
+      |> check_for_winner()
+    else
+      state
+    end
+  end
+
+  defp check_for_capture(state, from_id, to_id) do
+    if state.tiles[to_id].units == 0 do
+      state
+      |> Tile.adjust_units(from_id, -1)
+      |> Tile.set_owner(to_id, state.current_player_id)
+      # |> put_tile(to_id, :units, 1)
     else
       Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
       state

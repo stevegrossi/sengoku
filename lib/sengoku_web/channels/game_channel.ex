@@ -22,9 +22,7 @@ defmodule SengokuWeb.GameChannel do
     game_id = socket.assigns[:game_id]
     player_id = socket.assigns[:player_id]
     action = atomize_keys(action)
-    new_state = GameServer.action(game_id, player_id, action)
-
-    broadcast socket, "update", new_state
+    GameServer.action(game_id, player_id, action)
     {:noreply, socket}
   end
 

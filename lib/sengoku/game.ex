@@ -5,8 +5,9 @@ defmodule Sengoku.Game do
   @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
 
-  def initial_state(:hot_seat) do
+  def initial_state(game_id, :hot_seat) do
     %{
+      id: game_id,
       mode: :hot_seat,
       turn: 0,
       current_player_id: nil,
@@ -16,8 +17,9 @@ defmodule Sengoku.Game do
       tokens: %{}
     }
   end
-  def initial_state(:online) do
+  def initial_state(game_id, :online) do
     %{
+      id: game_id,
       mode: :online,
       turn: 0,
       current_player_id: nil,

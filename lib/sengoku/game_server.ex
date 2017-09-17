@@ -2,6 +2,7 @@ defmodule Sengoku.GameServer do
   use GenServer
 
   alias Sengoku.Game
+  alias SengokuWeb.Endpoint
 
   def new(mode) do
     game_id = random_token(7)
@@ -18,7 +19,7 @@ defmodule Sengoku.GameServer do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    {:ok, Game.initial_state(mode)}
+    {:ok, Game.initial_state(game_id, mode)}
   end
 
   # API
@@ -28,7 +29,7 @@ defmodule Sengoku.GameServer do
   end
 
   def action(game_id, player_id, %{type: _type} = action) do
-    GenServer.call(via_tuple(game_id), {:action, player_id, action})
+    GenServer.cast(via_tuple(game_id), {:action, player_id, action})
   end
 
   def get_state(game_id) do
@@ -46,54 +47,67 @@ defmodule Sengoku.GameServer do
     end
   end
 
-  def handle_call({:action, _player_id, %{type: "start_game"}}, _from, state) do
+  def handle_cast({:action, _player_id, %{type: "start_game"}}, state) do
     new_state = Game.start_game(state)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
 
   # online
-  def handle_call({:action, player_id, %{type: "end_turn"}}, _from, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "end_turn"}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.end_turn(state)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.place_unit(state, tile_id)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
 
   # hot_seat
-  def handle_call({:action, _player_id, %{type: "end_turn"}}, _from, %{mode: :hot_seat} = state) do
+  def handle_cast({:action, _player_id, %{type: "end_turn"}}, %{mode: :hot_seat} = state) do
     new_state = Game.end_turn(state)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, _player_id, %{type: "place_unit", tile_id: tile_id}}, _from, %{mode: :hot_seat} = state) do
+  def handle_cast({:action, _player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :hot_seat} = state) do
     new_state = Game.place_unit(state, tile_id)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, _player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, _from, %{mode: :hot_seat} = state) do
+  def handle_cast({:action, _player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :hot_seat} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
-  def handle_call({:action, _player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, _from, %{mode: :hot_seat} = state) do
+  def handle_cast({:action, _player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :hot_seat} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    {:reply, public_state(new_state), new_state}
+    broadcast_state(new_state)
+    {:noreply, new_state}
   end
 
   # catch-all
-  def handle_call({:action, _player_id, _action}, _from, state) do
-    {:reply, public_state(state), state}
+  def handle_cast({:action, _player_id, _action}, state) do
+    {:noreply, state}
   end
 
   def handle_call(:get_state, _from, state) do
     {:reply, public_state(state), state}
+  end
+
+  defp broadcast_state(state) do
+    Endpoint.broadcast("games:" <> state.id, "update", state)
   end
 
   defp via_tuple(game_id) do

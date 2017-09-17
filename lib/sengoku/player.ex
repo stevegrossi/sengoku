@@ -1,5 +1,5 @@
 defmodule Sengoku.Player do
-  defstruct unplaced_units: 0, active: false
+  defstruct unplaced_units: 0, active: false, ai: true
 
   def new(atts \\ %{}) do
     struct(__MODULE__, atts)

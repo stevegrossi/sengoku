@@ -1,7 +1,7 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
-  alias Sengoku.{Game, Token}
+  alias Sengoku.{Game, Token, AI}
   alias SengokuWeb.Endpoint
 
   def new(mode) do
@@ -108,8 +108,8 @@ defmodule Sengoku.GameServer do
 
   def handle_info(:take_ai_move_if_necessary, state) do
     if (state.players[state.current_player_id].ai) do
-      Process.sleep(1_000)
-      action = Sengoku.AI.take_action(state)
+      Process.sleep(50)
+      action = AI.take_action(state)
       action(state.id, state.current_player_id, action)
     end
     {:noreply, state}

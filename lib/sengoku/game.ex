@@ -212,6 +212,7 @@ defmodule Sengoku.Game do
     put_tile(state, available_tile_id, :owner, player_id)
   end
 
+  defp deactivate_player_if_defeated(state, nil), do: state
   defp deactivate_player_if_defeated(state, player_id) do
     has_remaining_tiles =
       state.tiles

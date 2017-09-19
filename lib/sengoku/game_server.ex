@@ -107,9 +107,10 @@ defmodule Sengoku.GameServer do
   end
 
   def handle_info(:take_ai_move_if_necessary, state) do
-    if (state.players[state.current_player_id].ai) do
+    ai_type = state.players[state.current_player_id].ai
+    unless is_nil(ai_type) do
       Process.sleep(50)
-      action = AI.take_action(state)
+      action = AI.select(ai_type).take_action(state)
       action(state.id, state.current_player_id, action)
     end
     {:noreply, state}

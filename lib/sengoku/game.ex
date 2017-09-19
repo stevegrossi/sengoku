@@ -1,4 +1,6 @@
 defmodule Sengoku.Game do
+  require Logger
+
   alias Sengoku.{Tile, Player, Token}
 
   @min_new_units 3
@@ -39,6 +41,7 @@ defmodule Sengoku.Game do
       |> setup_first_turn
       |> begin_turn
     else
+      Logger.warn("Tried to start game without enough players")
       state
     end
   end
@@ -116,9 +119,11 @@ defmodule Sengoku.Game do
         |> update_player(current_player_id, :unplaced_units, &(&1 - 1))
         |> update_tile(tile_id, :units, &(&1 + 1))
       else
+        Logger.warn("Tried to place unit in unowned tile")
         state
       end
     else
+      Logger.warn("Tried to place unit when you have none")
       state
     end
   end
@@ -158,6 +163,7 @@ defmodule Sengoku.Game do
           |> update_tile(from_id, :units, &(&1 - 1))
       end
     else
+      Logger.warn("Invalid attack from `#{from_id}` to `#{to_id}`")
       state
     end
   end
@@ -174,6 +180,7 @@ defmodule Sengoku.Game do
       |> update_tile(to_id, :units, &(&1 + count))
       |> end_turn
     else
+      Logger.warn("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
   end

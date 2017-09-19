@@ -1,6 +1,8 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
+  require Logger
+
   alias Sengoku.{Game, Token, AI}
   alias SengokuWeb.Endpoint
 
@@ -102,7 +104,8 @@ defmodule Sengoku.GameServer do
   end
 
   # catch-all
-  def handle_cast({:action, _player_id, _action}, state) do
+  def handle_cast({:action, player_id, action}, state) do
+    Logger.warn("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
     {:noreply, state}
   end
 

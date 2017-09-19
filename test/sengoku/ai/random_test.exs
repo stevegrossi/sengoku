@@ -1,4 +1,4 @@
-defmodule Sengoku.AITest do
+defmodule Sengoku.AI.RandomTest do
   use ExUnit.Case, async: true
 
   alias Sengoku.{AI, Player, Tile}

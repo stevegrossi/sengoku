@@ -5,6 +5,7 @@ defmodule Sengoku.AI.Random do
     cond do
       has_unplaced_units?(state) -> place_unit(state)
       has_attackable_neighbor?(state) -> attack(state)
+      can_move?(state) -> move(state)
       true -> end_turn()
     end
   end
@@ -83,5 +84,54 @@ defmodule Sengoku.AI.Random do
 
   defp end_turn do
     %{type: "end_turn"}
+  end
+
+  def can_move?(state) do
+    state
+    |> tile_ids_with_friendly_neighbors
+    |> length > 0
+  end
+
+  def move(state) do
+    tile_with_friendly_neighbor_id =
+      state
+      |> tile_ids_with_friendly_neighbors
+      |> Enum.random
+
+    tile_with_friendly_neighbor_units =
+      state.tiles[tile_with_friendly_neighbor_id].units
+
+    friendly_neighbor_id =
+      tile_with_friendly_neighbor_id
+      |> find_friendly_neighbor_id(state)
+
+    %{
+      type: "move",
+      from_id: tile_with_friendly_neighbor_id,
+      to_id: friendly_neighbor_id,
+      count: tile_with_friendly_neighbor_units
+    }
+  end
+
+  defp tile_ids_with_friendly_neighbors(state) do
+    state.tiles
+    |> filter_tile_ids(fn(tile) ->
+         tile.owner == state.current_player_id &&
+         tile.units > 0 &&
+         tile.neighbors
+         |> Enum.any?(fn(neighbor_id) ->
+              neighbor = state.tiles[neighbor_id]
+              neighbor.owner == state.current_player_id
+            end)
+       end)
+  end
+
+  defp find_friendly_neighbor_id(tile_id, state) do
+    state.tiles[tile_id].neighbors
+    |> Enum.filter(fn(neighbor_id) ->
+         neighbor = state.tiles[neighbor_id]
+         neighbor.owner == state.current_player_id
+       end)
+    |> Enum.random
   end
 end

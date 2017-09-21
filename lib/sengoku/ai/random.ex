@@ -50,7 +50,7 @@ defmodule Sengoku.AI.Random do
     state.tiles
     |> filter_tile_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
-         tile.units > 0 &&
+         tile.units > 1 &&
          tile.neighbors
          |> Enum.any?(fn(neighbor_id) ->
               neighbor = state.tiles[neighbor_id]

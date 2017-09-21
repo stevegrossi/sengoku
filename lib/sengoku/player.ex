@@ -7,7 +7,7 @@ defmodule Sengoku.Player do
 
   def initial_state(atts \\ %{}) do
     %{
-      1 => new(Map.merge(atts, %{ai: :random})),
+      1 => new(Map.merge(atts, %{ai: :smart})),
       2 => new(Map.merge(atts, %{ai: :random})),
       3 => new(Map.merge(atts, %{ai: :random})),
       4 => new(Map.merge(atts, %{ai: :random}))

@@ -1,17 +1,15 @@
 <%= form_tag("/") do %>
   <p>
-    <label>
-      <input type="radio" name="mode" value="hot_seat" checked="checked" />
-      <strong>Hot Seat</strong>:
-      <span class="db">Players take turns at the same computer.</span>
+    <input class="BorderRadio-input" type="radio" name="mode" value="hot_seat" id="mode_hot_seat" checked="checked" />
+    <label class="BorderRadio-label" for="mode_hot_seat">
+      <strong>Hot Seat</strong>
+      <br><span class="db">Players take turns at the same computer.</span>
+    </label>
+    <input class="BorderRadio-input" type="radio" name="mode" value="online" id="mode_online" />
+    <label class="BorderRadio-label" for="mode_online">
+      <strong>Online</strong>
+      <br><span class="db">Players join the game from different computers.</span>
     </label>
   </p>
-  <p>
-    <label>
-      <input type="radio" name="mode" value="online" />
-      <strong>Online</strong>:
-      <span class="db">Players join the game from different computers.</span>
-    </label>
-  </p>
-  <input type="submit" value="New Game" />
+  <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
 <% end %>

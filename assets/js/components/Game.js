@@ -84,26 +84,28 @@ class Game extends React.Component {
 
   render() {
     return (
-      <div>
-        {this.state.players &&
-          <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
-        }
-        {this.state.winner_id &&
-          <div className="Overlay">
-            {playerUI[this.state.winner_id].name} wins!
-          </div>
-        }
+      <div className="Game">
+        <div className="Display">
+          {this.state.players &&
+            <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
+          }
+          {this.state.winner_id &&
+            <div className="Overlay">
+              {playerUI[this.state.winner_id].name} wins!
+            </div>
+          }
+          {this.state.turn > 0 &&
+            <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
+          }
+          {this.state.turn == 0 &&
+            <button className="Button" disabled={!this.canStartGame()} onClick={this.startGame.bind(this)}>Start Game</button>
+          }
+        </div>
         {this.state.tiles &&
           <Board tiles={this.state.tiles}
                  tileClicked={this.tileClicked.bind(this)}
                  cancelSelection={this.cancelSelection.bind(this)}
                  selectedTileId={this.state.selectedTileId} />
-        }
-        {this.state.turn == 0 &&
-          <button disabled={!this.canStartGame()} onClick={this.startGame.bind(this)}>Start Game</button>
-        }
-        {this.state.turn > 0 &&
-          <button onClick={this.endTurn.bind(this)}>End Turn</button>
         }
       </div>
     )

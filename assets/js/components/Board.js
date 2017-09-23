@@ -36,7 +36,7 @@ const Board = (props) => {
   })
 
   return (
-    <svg onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g id="japan"
          stroke="none"
          strokeWidth="1"

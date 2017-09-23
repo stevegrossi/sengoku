@@ -15,6 +15,8 @@ defmodule SengokuWeb.GameController do
   end
 
   def show(conn, %{"game_id" => game_id}) do
-    render conn, "show.html", %{game_id: game_id}
+    conn
+    |> put_layout("game.html")
+    |> render("show.html", %{game_id: game_id})
   end
 end

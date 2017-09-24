@@ -89,7 +89,7 @@ defmodule Sengoku.GameTest do
 
   describe ".start_game" do
 
-    test "makes each active player owner of one tile" do
+    test "randomly distributes tiles to active players" do
       old_state = %{
         turn: 0,
         players: %{
@@ -104,7 +104,11 @@ defmodule Sengoku.GameTest do
           3 => %Tile{owner: nil},
           4 => %Tile{owner: nil},
           5 => %Tile{owner: nil},
-          6 => %Tile{owner: nil}
+          6 => %Tile{owner: nil},
+          7 => %Tile{owner: nil},
+          8 => %Tile{owner: nil},
+          9 => %Tile{owner: nil},
+          10 => %Tile{owner: nil}
         }
       }
 
@@ -113,7 +117,7 @@ defmodule Sengoku.GameTest do
       Enum.each(1..3, fn(player_id) ->
         assert Enum.count(new_state.tiles, fn({_id, tile}) ->
           tile.owner == player_id
-        end) == 1
+        end) == 2
       end)
 
       assert Enum.count(new_state.tiles, fn({_id, tile}) ->

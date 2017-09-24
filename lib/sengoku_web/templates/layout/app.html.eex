@@ -12,11 +12,9 @@
   </head>
 
   <body class="App">
-    <header class="AppHeader">
-      <h1>
-        <a href="/" class="Logo"><img src="<%= static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
-      </h1>
-    </header>
+    <h1>
+      <a href="/" class="Logo"><img src="<%= static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
+    </h1>
 
     <main role="main">
       <%= render @view_module, @view_template, assigns %>

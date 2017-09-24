@@ -18,11 +18,6 @@ body {
   margin: 0 auto;
 }
 
-.AppHeader {
-  position: relative;
-  z-index: 1;
-}
-
 .Icon {
   width: 1em;
   height: 1em;
@@ -178,6 +173,8 @@ body {
   width: 200px;
   max-width: 100%;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .Game {

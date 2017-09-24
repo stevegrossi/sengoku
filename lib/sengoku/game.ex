@@ -189,18 +189,23 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    state.tiles
-    |> Map.keys
-    |> Enum.reduce(state, &assign_tile/2)
+    player_ids = get_active_player_ids(state)
+    do_assign_tiles(state, player_ids)
   end
 
-  defp assign_tile(tile_id, state) do
-    player_id =
-      state
-      |> get_active_player_ids
-      |> Enum.random
+  defp do_assign_tiles(state, [player_id | rest]) do
+    try do
+      tile_id =
+        state
+        |> unowned_tile_ids
+        |> Enum.random
 
-    put_tile(state, tile_id, :owner, player_id)
+      new_state = put_tile(state, tile_id, :owner, player_id)
+      do_assign_tiles(new_state, rest ++ [player_id])
+
+    rescue
+      Enum.EmptyError -> state
+    end
   end
 
   defp deactivate_player_if_defeated(state, nil), do: state
@@ -282,5 +287,10 @@ defmodule Sengoku.Game do
     |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
     |> Enum.into(%{})
     |> Map.keys
+  end
+
+  def unowned_tile_ids(state) do
+    state.tiles
+    |> filter_tile_ids(&(is_nil(&1.owner)))
   end
 end

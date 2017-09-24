@@ -108,7 +108,7 @@ defmodule Sengoku.GameTest do
           7 => %Tile{owner: nil},
           8 => %Tile{owner: nil},
           9 => %Tile{owner: nil},
-          10 => %Tile{owner: nil}
+          # 10 => %Tile{owner: nil}
         }
       }
 
@@ -117,7 +117,7 @@ defmodule Sengoku.GameTest do
       Enum.each(1..3, fn(player_id) ->
         assert Enum.count(new_state.tiles, fn({_id, tile}) ->
           tile.owner == player_id
-        end) == 2
+        end) == 3
       end)
 
       assert Enum.count(new_state.tiles, fn({_id, tile}) ->

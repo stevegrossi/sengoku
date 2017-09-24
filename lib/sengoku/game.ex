@@ -110,8 +110,7 @@ defmodule Sengoku.Game do
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
-    current_player = state.players[current_player_id]
-    if current_player.unplaced_units > 0 do
+    if current_player(state).unplaced_units > 0 do
       tile = state.tiles[tile_id]
 
       if tile.owner == current_player_id do
@@ -296,5 +295,9 @@ defmodule Sengoku.Game do
   def get_unowned_tile_ids(state) do
     state.tiles
     |> filter_tile_ids(&(is_nil(&1.owner)))
+  end
+
+  def current_player(state) do
+    state.players[state.current_player_id]
   end
 end

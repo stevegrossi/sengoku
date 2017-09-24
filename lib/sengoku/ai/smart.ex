@@ -1,6 +1,8 @@
 defmodule Sengoku.AI.Smart do
   @behaviour Sengoku.AI
 
+  alias Sengoku.{Game}
+
   def take_action(state) do
     cond do
       has_unplaced_units?(state) -> place_unit(state)
@@ -11,7 +13,7 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp has_unplaced_units?(state) do
-    state.players[state.current_player_id].unplaced_units > 0
+    Game.current_player(state).unplaced_units > 0
   end
 
   defp place_unit(state) do

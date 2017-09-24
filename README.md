@@ -12,7 +12,7 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 ## Gameplay
 
 1. Players are randomly assigned a province at the start of the game.
-2. Each player receives 3 units at the start of each turn, plus one unit for every 3 provinces they hold.
+2. Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.
 3. On your turn you may attack neighboring provinces if you have the units. When attacking, you have a 50% chance of winning the battle. The loser of the battle loses one unit.
 4. At the end of your turn, you may move units from one of your provinces to one of its neighbors you own.
 5. A player is defeated when they no longer control any provinces.

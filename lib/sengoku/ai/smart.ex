@@ -95,38 +95,40 @@ defmodule Sengoku.AI.Smart do
 
   def can_move?(state) do
     state
-    |> tile_ids_with_friendly_neighbors
+    |> safe_owned_tiles
     |> length > 0
   end
 
   def move(state) do
-    tile_with_friendly_neighbor_id =
+    safe_owned_tile_id_with_most_units =
       state
-      |> tile_ids_with_friendly_neighbors
-      |> Enum.random
+      |> safe_owned_tiles
+      |> Enum.max_by(fn(tile_id) ->
+           state.tiles[tile_id].units
+         end)
 
-    tile_with_friendly_neighbor_units =
-      state.tiles[tile_with_friendly_neighbor_id].units
+    units_in_safe_owned_tile_id_with_most_units =
+      state.tiles[safe_owned_tile_id_with_most_units].units
 
     friendly_neighbor_id =
-      tile_with_friendly_neighbor_id
+      safe_owned_tile_id_with_most_units
       |> find_friendly_neighbor_id(state)
 
     %{
       type: "move",
-      from_id: tile_with_friendly_neighbor_id,
+      from_id: safe_owned_tile_id_with_most_units,
       to_id: friendly_neighbor_id,
-      count: tile_with_friendly_neighbor_units
+      count: units_in_safe_owned_tile_id_with_most_units
     }
   end
 
-  defp tile_ids_with_friendly_neighbors(state) do
+  defp safe_owned_tiles(state) do
     state.tiles
     |> filter_tile_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
          tile.units > 0 &&
          tile.neighbors
-         |> Enum.any?(fn(neighbor_id) ->
+         |> Enum.all?(fn(neighbor_id) ->
               neighbor = state.tiles[neighbor_id]
               neighbor.owner == state.current_player_id
             end)

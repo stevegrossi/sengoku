@@ -1,5 +1,5 @@
 defmodule Sengoku.Game do
-  alias Sengoku.{Tile, Player}
+  alias Sengoku.{Tile, Player, Token}
 
   @min_new_units 3
   @tiles_per_new_unit 3
@@ -78,7 +78,7 @@ defmodule Sengoku.Game do
         if is_nil(first_inactive_player_id) do
           {:error, :full}
         else
-          new_token = random_token(16)
+          new_token = Token.new(21)
           state =
             state
             |> put_in([:tokens, new_token], first_inactive_player_id)
@@ -260,13 +260,6 @@ defmodule Sengoku.Game do
     update_in(state, [:players, player_id], fn(%Player{} = player) ->
       Map.update!(player, key, func)
     end)
-  end
-
-  defp random_token(length) do
-    length
-    |> :crypto.strong_rand_bytes
-    |> Base.url_encode64
-    |> binary_part(0, length)
   end
 
   defp get_active_player_ids(state) do

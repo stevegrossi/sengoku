@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   alias Sengoku.{Tile, Player}
 
-  @base_new_units 3
+  @min_new_units 3
   @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
 
@@ -54,7 +54,7 @@ defmodule Sengoku.Game do
       |> filter_tile_ids(fn(tile) -> tile.owner == player_id end)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
-      |> Kernel.+(@base_new_units)
+      |> max(@min_new_units)
 
     state
     |> update_player(player_id, :unplaced_units, &(&1 + new_units_count))
@@ -189,27 +189,27 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    active_player_ids = get_active_player_ids(state)
-    Enum.reduce(active_player_ids, state, fn(player_id, state) ->
-      assign_tile(state, player_id)
-    end)
+    player_ids = get_active_player_ids(state)
+    available_tile_ids = get_unowned_tile_ids(state)
+
+    if length(available_tile_ids) >= length(player_ids) do
+      state
+      |> assign_random_tile_to_each(player_ids)
+      |> assign_tiles
+    else
+      state
+    end
   end
 
-  defp assign_tile(state, player_id) do
-    claimed_tile_ids =
-      state.tiles
-      |> filter_tile_ids(fn(tile) -> !is_nil(tile.owner) end)
-
-    available_tile_id =
-      state.tiles
-      |> filter_tile_ids(fn(tile) ->
-           is_nil(tile.owner) && (
-             tile.neighbors -- claimed_tile_ids == tile.neighbors
-           )
-         end)
+  def assign_random_tile_to_each(state, []), do: state
+  def assign_random_tile_to_each(state, [player_id | rest]) do
+    tile_id =
+      state
+      |> get_unowned_tile_ids
       |> Enum.random
 
-    put_tile(state, available_tile_id, :owner, player_id)
+    new_state = put_tile(state, tile_id, :owner, player_id)
+    assign_random_tile_to_each(new_state, rest)
   end
 
   defp deactivate_player_if_defeated(state, nil), do: state
@@ -291,5 +291,10 @@ defmodule Sengoku.Game do
     |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
     |> Enum.into(%{})
     |> Map.keys
+  end
+
+  def get_unowned_tile_ids(state) do
+    state.tiles
+    |> filter_tile_ids(&(is_nil(&1.owner)))
   end
 end

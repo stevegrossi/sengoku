@@ -1,11 +1,11 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
-  alias Sengoku.Game
+  alias Sengoku.{Game, Token}
   alias SengokuWeb.Endpoint
 
   def new(mode) do
-    game_id = random_token(7)
+    game_id = Token.new(21)
     start_link(game_id, mode)
     {:ok, game_id}
   end
@@ -116,12 +116,5 @@ defmodule Sengoku.GameServer do
 
   defp public_state(state) do
     Map.delete(state, :tokens)
-  end
-
-  defp random_token(length) do
-    length
-    |> :crypto.strong_rand_bytes
-    |> Base.url_encode64
-    |> binary_part(0, length)
   end
 end

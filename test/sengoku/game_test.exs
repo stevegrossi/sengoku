@@ -89,7 +89,7 @@ defmodule Sengoku.GameTest do
 
   describe ".start_game" do
 
-    test "randomly distributes tiles to active players" do
+    test "randomly and evenly distributes tiles to active players" do
       old_state = %{
         turn: 0,
         players: %{
@@ -108,7 +108,8 @@ defmodule Sengoku.GameTest do
           7 => %Tile{owner: nil},
           8 => %Tile{owner: nil},
           9 => %Tile{owner: nil},
-          # 10 => %Tile{owner: nil}
+          # Ensure one leftover that isn’t assigned:
+          10 => %Tile{owner: nil}
         }
       }
 

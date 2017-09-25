@@ -5,7 +5,7 @@ defmodule Sengoku.GameServer do
   alias SengokuWeb.Endpoint
 
   def new(mode) do
-    game_id = Token.new(21)
+    game_id = Token.new(8)
     start_link(game_id, mode)
     {:ok, game_id}
   end

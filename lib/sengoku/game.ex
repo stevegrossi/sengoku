@@ -78,7 +78,7 @@ defmodule Sengoku.Game do
         if is_nil(first_inactive_player_id) do
           {:error, :full}
         else
-          new_token = Token.new(21)
+          new_token = Token.new(16)
           state =
             state
             |> put_in([:tokens, new_token], first_inactive_player_id)

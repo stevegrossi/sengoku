@@ -1,6 +1,10 @@
 defmodule Sengoku.Token do
-  def new(length) do
-    length
+
+  @doc """
+  Returns a random hex string of binary length n. The hex length will be double that.
+  """
+  def new(n) do
+    n
     |> :crypto.strong_rand_bytes
     |> Base.encode16(case: :lower)
   end

@@ -166,7 +166,7 @@ defmodule Sengoku.GameTest do
 
   describe ".begin_turn" do
 
-    test "grants the current player 3 units plus 1 for every 3 owned territories" do
+    test "grants the current player 1 unit for every 3 owned territories" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
@@ -193,7 +193,7 @@ defmodule Sengoku.GameTest do
 
       new_state = old_state |> Game.begin_turn
 
-      assert new_state.players[1].unplaced_units == 7
+      assert new_state.players[1].unplaced_units == 4
     end
 
     test "grants the current player at least 3 unplaced units" do

@@ -9,6 +9,7 @@ const Players = (props) => {
                    className="Player"
                    current={props.currentPlayerId == player_id}
                    active={props.players[player_id].active}
+                   ai={props.players[player_id].ai}
                    unplacedArmies={props.players[player_id].unplaced_units} />
   })
 

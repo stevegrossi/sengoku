@@ -1,7 +1,9 @@
 defmodule Sengoku.GameServer do
   use GenServer
 
-  alias Sengoku.{Game, Token}
+  require Logger
+
+  alias Sengoku.{Game, Token, AI}
   alias SengokuWeb.Endpoint
 
   def new(mode) do
@@ -47,66 +49,77 @@ defmodule Sengoku.GameServer do
     end
   end
 
+  def handle_call(:get_state, _from, state) do
+    {:reply, public_state(state), state}
+  end
+
   def handle_cast({:action, _player_id, %{type: "start_game"}}, state) do
     new_state = Game.start_game(state)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
 
   # online
   def handle_cast({:action, player_id, %{type: "end_turn"}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.end_turn(state)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.place_unit(state, tile_id)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :online, current_player_id: player_id} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
 
   # hot_seat
   def handle_cast({:action, _player_id, %{type: "end_turn"}}, %{mode: :hot_seat} = state) do
     new_state = Game.end_turn(state)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, _player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :hot_seat} = state) do
     new_state = Game.place_unit(state, tile_id)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, _player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :hot_seat} = state) do
     new_state = Game.attack(state, from_id, to_id)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
   def handle_cast({:action, _player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :hot_seat} = state) do
     new_state = Game.move(state, from_id, to_id, count)
-    broadcast_state(new_state)
+    state_updated(new_state)
     {:noreply, new_state}
   end
 
   # catch-all
-  def handle_cast({:action, _player_id, _action}, state) do
+  def handle_cast({:action, player_id, action}, state) do
+    Logger.info("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
     {:noreply, state}
   end
 
-  def handle_call(:get_state, _from, state) do
-    {:reply, public_state(state), state}
+  def handle_info(:take_ai_move_if_necessary, state) do
+    if Game.current_player(state).ai && !state.winner_id do
+      Process.sleep(50)
+      action = AI.Smart.take_action(state)
+      action(state.id, state.current_player_id, action)
+    end
+    {:noreply, state}
   end
 
-  defp broadcast_state(state) do
+  defp state_updated(state) do
+    send self(), :take_ai_move_if_necessary
     Endpoint.broadcast("games:" <> state.id, "update", state)
   end
 

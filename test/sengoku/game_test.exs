@@ -17,14 +17,14 @@ defmodule Sengoku.GameTest do
 
   describe ".authenticate_player" do
 
-    test "with no token, registers the next inactive player and makes them active" do
+    test "with no token, replaces the first AI player" do
       token = nil
       old_state = %{
         mode: :online,
         turn: 0,
         players: %{
-          1 => %Player{active: true},
-          2 => %Player{active: false}
+          1 => %Player{ai: false},
+          2 => %Player{ai: true}
         },
         tokens: %{
           "foo" => 1
@@ -32,7 +32,7 @@ defmodule Sengoku.GameTest do
       }
 
       assert {:ok, {2, new_token}, new_state} = Game.authenticate_player(old_state, token)
-      assert new_state.players[2].active == true
+      assert new_state.players[2].ai == false
       assert new_state.tokens[new_token] == 2
     end
 
@@ -42,8 +42,8 @@ defmodule Sengoku.GameTest do
         mode: :online,
         turn: 1,
         players: %{
-          1 => %Player{active: true},
-          2 => %Player{active: false}
+          1 => %Player{ai: false},
+          2 => %Player{ai: true}
         },
         tokens: %{
           "foo" => 1
@@ -53,14 +53,14 @@ defmodule Sengoku.GameTest do
       assert {:error, :in_progress} = Game.authenticate_player(old_state, token)
     end
 
-    test "with no token, errors when no inactive players" do
+    test "with no token, errors when no AI players left" do
       token = nil
       old_state = %{
         mode: :online,
         turn: 0,
         players: %{
-          1 => %Player{active: true},
-          2 => %Player{active: true}
+          1 => %Player{ai: false},
+          2 => %Player{ai: false}
         },
         tokens: %{
           "foo" => 1,
@@ -77,8 +77,8 @@ defmodule Sengoku.GameTest do
         mode: :online,
         turn: 0,
         players: %{
-          1 => %Player{active: true},
-          2 => %Player{active: false}
+          1 => %Player{ai: false},
+          2 => %Player{ai: true}
         },
         tokens: %{ token => 1 }
       }

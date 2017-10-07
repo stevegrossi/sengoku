@@ -1,4 +1,6 @@
 defmodule Sengoku.Game do
+  require Logger
+
   alias Sengoku.{Tile, Player, Token}
 
   @min_new_units 3
@@ -11,7 +13,7 @@ defmodule Sengoku.Game do
       mode: :hot_seat,
       turn: 0,
       current_player_id: nil,
-      players: Player.initial_state(%{active: true}),
+      players: Player.initial_state(%{ai: false}),
       tiles: Tile.initial_state,
       winner_id: nil,
       tokens: %{}
@@ -23,7 +25,7 @@ defmodule Sengoku.Game do
       mode: :online,
       turn: 0,
       current_player_id: nil,
-      players: Player.initial_state(%{active: false}),
+      players: Player.initial_state(%{ai: true}),
       tiles: Tile.initial_state,
       winner_id: nil,
       tokens: %{}
@@ -39,6 +41,7 @@ defmodule Sengoku.Game do
       |> setup_first_turn
       |> begin_turn
     else
+      Logger.info("Tried to start game without enough players")
       state
     end
   end
@@ -70,20 +73,20 @@ defmodule Sengoku.Game do
       {:ok, {existing_player_id, token}, state}
     else
       if state.turn == 0 do
-        first_inactive_player_id =
+        first_available_player_id =
           state
-          |> get_inactive_player_ids
+          |> get_ai_player_ids
           |> List.first
 
-        if is_nil(first_inactive_player_id) do
+        if is_nil(first_available_player_id) do
           {:error, :full}
         else
           new_token = Token.new(16)
           state =
             state
-            |> put_in([:tokens, new_token], first_inactive_player_id)
-            |> put_player(first_inactive_player_id, :active, true)
-          {:ok, {first_inactive_player_id, new_token}, state}
+            |> put_in([:tokens, new_token], first_available_player_id)
+            |> put_player(first_available_player_id, :ai, false)
+          {:ok, {first_available_player_id, new_token}, state}
         end
       else
         {:error, :in_progress}
@@ -107,8 +110,7 @@ defmodule Sengoku.Game do
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
-    current_player = state.players[current_player_id]
-    if current_player.unplaced_units > 0 do
+    if current_player(state).unplaced_units > 0 do
       tile = state.tiles[tile_id]
 
       if tile.owner == current_player_id do
@@ -116,9 +118,11 @@ defmodule Sengoku.Game do
         |> update_player(current_player_id, :unplaced_units, &(&1 - 1))
         |> update_tile(tile_id, :units, &(&1 + 1))
       else
+        Logger.info("Tried to place unit in unowned tile")
         state
       end
     else
+      Logger.info("Tried to place unit when you have none")
       state
     end
   end
@@ -158,6 +162,7 @@ defmodule Sengoku.Game do
           |> update_tile(from_id, :units, &(&1 - 1))
       end
     else
+      Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
       state
     end
   end
@@ -174,6 +179,7 @@ defmodule Sengoku.Game do
       |> update_tile(to_id, :units, &(&1 + count))
       |> end_turn
     else
+      Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
   end
@@ -267,9 +273,9 @@ defmodule Sengoku.Game do
     |> filter_player_ids(&(&1.active))
   end
 
-  defp get_inactive_player_ids(state) do
+  defp get_ai_player_ids(state) do
     state.players
-    |> filter_player_ids(&(not &1.active))
+    |> filter_player_ids(&(&1.ai))
   end
 
   defp filter_player_ids(players_map, func) do
@@ -289,5 +295,9 @@ defmodule Sengoku.Game do
   def get_unowned_tile_ids(state) do
     state.tiles
     |> filter_tile_ids(&(is_nil(&1.owner)))
+  end
+
+  def current_player(state) do
+    state.players[state.current_player_id]
   end
 end

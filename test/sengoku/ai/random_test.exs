@@ -15,7 +15,7 @@ defmodule Sengoku.AI.RandomTest do
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
       }
     }
-    action = AI.take_action(state)
+    action = AI.Random.take_action(state)
 
     assert action == %{type: "place_unit", tile_id: 1}
   end
@@ -32,7 +32,7 @@ defmodule Sengoku.AI.RandomTest do
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
       }
     }
-    action = AI.take_action(state)
+    action = AI.Random.take_action(state)
 
     assert action == %{type: "attack", from_id: 1, to_id: 2}
   end
@@ -49,7 +49,7 @@ defmodule Sengoku.AI.RandomTest do
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
       }
     }
-    action = AI.take_action(state)
+    action = AI.Random.take_action(state)
 
     assert action == %{type: "end_turn"}
   end

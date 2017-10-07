@@ -30,7 +30,7 @@ body {
   margin: 0 0 1em;
   padding: 0;
   color: $white;
-  text-shadow: 0 -1px 1px rgba(0,0,0,.2);
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, .2);
 }
 
 .Player {
@@ -41,6 +41,19 @@ body {
   line-height: 1;
   justify-content: space-between;
   transition: padding 0.1s ease;
+
+  &-type {
+    font-size: .5em;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-left: 1em;
+    font-family: sans-serif;
+    font-weight: normal;
+    display: inline-block;
+    background: rgba(0, 0, 0, .1);
+    padding: .5em;
+    border-radius: .25em;
+  }
 
   &--current {
     padding-top: 1.5em;

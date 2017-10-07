@@ -13,7 +13,7 @@ defmodule Sengoku.Game do
       mode: :hot_seat,
       turn: 0,
       current_player_id: nil,
-      players: Player.initial_state(%{active: true}),
+      players: Player.initial_state(%{ai: false}),
       tiles: Tile.initial_state,
       winner_id: nil,
       tokens: %{}
@@ -25,7 +25,7 @@ defmodule Sengoku.Game do
       mode: :online,
       turn: 0,
       current_player_id: nil,
-      players: Player.initial_state(%{active: false}),
+      players: Player.initial_state(%{ai: true}),
       tiles: Tile.initial_state,
       winner_id: nil,
       tokens: %{}
@@ -73,20 +73,21 @@ defmodule Sengoku.Game do
       {:ok, {existing_player_id, token}, state}
     else
       if state.turn == 0 do
-        first_inactive_player_id =
+        first_available_player_id =
           state
-          |> get_inactive_player_ids
+          |> get_ai_player_ids
           |> List.first
 
-        if is_nil(first_inactive_player_id) do
+        if is_nil(first_available_player_id) do
           {:error, :full}
         else
           new_token = Token.new(16)
+          IO.puts("new_token: #{new_token}")
           state =
             state
-            |> put_in([:tokens, new_token], first_inactive_player_id)
-            |> put_player(first_inactive_player_id, :active, true)
-          {:ok, {first_inactive_player_id, new_token}, state}
+            |> put_in([:tokens, new_token], first_available_player_id)
+            |> put_player(first_available_player_id, :ai, false)
+          {:ok, {first_available_player_id, new_token}, state}
         end
       else
         {:error, :in_progress}
@@ -273,9 +274,9 @@ defmodule Sengoku.Game do
     |> filter_player_ids(&(&1.active))
   end
 
-  defp get_inactive_player_ids(state) do
+  defp get_ai_player_ids(state) do
     state.players
-    |> filter_player_ids(&(not &1.active))
+    |> filter_player_ids(&(&1.ai))
   end
 
   defp filter_player_ids(players_map, func) do

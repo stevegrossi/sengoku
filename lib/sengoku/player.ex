@@ -1,5 +1,5 @@
 defmodule Sengoku.Player do
-  defstruct unplaced_units: 0, active: false, ai: nil
+  defstruct unplaced_units: 0, active: true, ai: true
 
   def new(atts \\ %{}) do
     struct(__MODULE__, atts)
@@ -7,10 +7,10 @@ defmodule Sengoku.Player do
 
   def initial_state(atts \\ %{}) do
     %{
-      1 => new(Map.merge(atts, %{ai: :smart})),
-      2 => new(Map.merge(atts, %{ai: :random})),
-      3 => new(Map.merge(atts, %{ai: :random})),
-      4 => new(Map.merge(atts, %{ai: :random}))
+      1 => new(atts),
+      2 => new(atts),
+      3 => new(atts),
+      4 => new(atts)
     }
   end
 end

@@ -12,7 +12,12 @@ const Player = (props) => {
 
   return (
     <li className={classNames.join(' ')} style={styles}>
-      <b>{playerUI[props.id].name}</b>
+      <b>
+        {playerUI[props.id].name}
+        {props.ai &&
+          <small className="Player-type">AI</small>
+        }
+      </b>
       {props.active &&
         <span>
           {props.unplacedArmies}

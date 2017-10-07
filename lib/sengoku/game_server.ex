@@ -110,10 +110,9 @@ defmodule Sengoku.GameServer do
   end
 
   def handle_info(:take_ai_move_if_necessary, state) do
-    ai_type = Game.current_player(state).ai
-    unless is_nil(ai_type) || state.winner_id do
+    if Game.current_player(state).ai && !state.winner_id do
       Process.sleep(50)
-      action = AI.select(ai_type).take_action(state)
+      action = AI.Smart.take_action(state)
       action(state.id, state.current_player_id, action)
     end
     {:noreply, state}

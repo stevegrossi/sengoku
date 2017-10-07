@@ -105,7 +105,7 @@ defmodule Sengoku.GameServer do
 
   # catch-all
   def handle_cast({:action, player_id, action}, state) do
-    Logger.warn("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
+    Logger.info("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
     {:noreply, state}
   end
 

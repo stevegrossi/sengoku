@@ -6,8 +6,13 @@ $black: #000;
 $gray: #666;
 $red: #dc322f;
 
+html {
+  min-height: 100%;
+}
+
 body {
-  background: linear-gradient(rgba($bg, $bg-opacity), rgba($bg, $bg-opacity)),
+  min-height: 100%;
+  background: linear-gradient(rgba(mix($bg, $white, 90%), $bg-opacity), rgba($bg, $bg-opacity)),
               url('/images/waves.svg');
   color: $text;
   font-family: 'Crimson Text', serif;

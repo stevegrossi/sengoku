@@ -4,7 +4,7 @@ $text: #fff;
 $white: #fff;
 $black: #000;
 $gray: #666;
-$red: #dc322f;
+$red: #cc241d;
 $z-index-overlay: 10;
 $z-index-logo: 100;
 
@@ -132,28 +132,6 @@ body {
   font-size: 3em;
   text-shadow: 0 1px 2px $black;
   pointer-events: none;
-}
-
-.BorderRadio {
-  &-input {
-    display: none;
-  }
-
-  &-label {
-    display: block;
-    padding: 1em;
-    border-radius: .25em;
-    border: 1px solid transparent;
-    margin-bottom: .5em;
-    transition: all .2s ease-in;
-    cursor: pointer;
-
-    .BorderRadio-input:checked + & {
-      border-color: rgba(255,255,255,.75);
-      box-shadow: 0 0 5px rgba(255,255,255,.5);
-      background-color: rgba(255,255,255,.05);
-    }
-  }
 }
 
 .Button {

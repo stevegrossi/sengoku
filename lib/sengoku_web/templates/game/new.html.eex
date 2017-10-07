@@ -1,15 +1,4 @@
 <%= form_tag("/") do %>
-  <p>
-    <input class="BorderRadio-input" type="radio" name="mode" value="online" id="mode_online" checked="checked" />
-    <label class="BorderRadio-label" for="mode_online">
-      <strong>Online</strong>
-      <br><span class="db">Players join the game from different computers.</span>
-    </label>
-    <input class="BorderRadio-input" type="radio" name="mode" value="hot_seat" id="mode_hot_seat" />
-    <label class="BorderRadio-label" for="mode_hot_seat">
-      <strong>Hot Seat</strong>
-      <br><span class="db">Players take turns at the same computer.</span>
-    </label>
-  </p>
+  <p>Unite feudal Japan in this Risk-like strategy game!</p>
   <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
 <% end %>

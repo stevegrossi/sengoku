@@ -82,7 +82,6 @@ defmodule Sengoku.Game do
           {:error, :full}
         else
           new_token = Token.new(16)
-          IO.puts("new_token: #{new_token}")
           state =
             state
             |> put_in([:tokens, new_token], first_available_player_id)

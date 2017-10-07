@@ -7,14 +7,14 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 ## Features
 
 - Supports both online and hot-seat play.
-- 2-4 players
+- 2-4 players. Play against friends, the computer, or both.
 
 ## Gameplay
 
-1. Players are randomly assigned a province at the start of the game.
+1. Provinces are randomly divided amongst all players at the start of the game.
 2. Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.
-3. On your turn you may attack neighboring provinces if you have the units. When attacking, you have a 50% chance of winning the battle. The loser of the battle loses one unit.
-4. At the end of your turn, you may move units from one of your provinces to one of its neighbors you own.
+3. On your turn you may attack neighboring provinces. When attacking, you have a 50% chance of winning the battle. The loser of the battle loses one unit. If you defeat all units in a province, it becomes yours.
+4. At the end of your turn, you may move units from one of your provinces to one of its neighbors you control.
 5. A player is defeated when they no longer control any provinces.
 6. A player wins when all other players are defeated.
 
@@ -22,8 +22,8 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 
 - Make battle more strategic than just 50-50.
 - Provide feedback in the UI (perhaps in a log) of the results of actions like battle.
-- Add computer-controller players
 - Allow hot-seat games with fewer than 4 players
+- Let players choose their names
 
 ## Further-Out Ideas
 

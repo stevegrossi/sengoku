@@ -14,7 +14,17 @@ defmodule Sengoku.Player do
     })
   end
 
-  def filter_ids(state, func) do
+  def ai_ids(state) do
+    state
+    |> filter_ids(&(&1.ai))
+  end
+
+  def active_ids(state) do
+    state
+    |> filter_ids(&(&1.active))
+  end
+
+  defp filter_ids(state, func) do
     state.players
     |> Enum.filter(fn({_id, player}) -> func.(player) end)
     |> Enum.into(%{})

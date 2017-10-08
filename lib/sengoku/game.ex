@@ -21,8 +21,7 @@ defmodule Sengoku.Game do
   end
 
   def start_game(state) do
-    active_player_ids = get_active_player_ids(state)
-    if Enum.count(active_player_ids) > 1 do
+    if length(Player.active_ids(state)) > 1 do
       state
       |> assign_tiles
       |> increment_turn
@@ -60,7 +59,7 @@ defmodule Sengoku.Game do
       if state.turn == 0 do
         first_available_player_id =
           state
-          |> get_ai_player_ids
+          |> Player.ai_ids
           |> List.first
 
         if is_nil(first_available_player_id) do
@@ -80,7 +79,7 @@ defmodule Sengoku.Game do
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
-    active_player_ids = get_active_player_ids(state)
+    active_player_ids = Player.active_ids(state)
     next_player_id = Enum.at(active_player_ids, Enum.find_index(active_player_ids, fn(id) -> id == current_player_id end) + 1)
     case Enum.member?(active_player_ids, next_player_id) do
       true ->
@@ -180,7 +179,7 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    player_ids = get_active_player_ids(state)
+    player_ids = Player.active_ids(state)
     available_tile_ids = get_unowned_tile_ids(state)
 
     if length(available_tile_ids) >= length(player_ids) do
@@ -220,8 +219,8 @@ defmodule Sengoku.Game do
   end
 
   defp check_for_winner(state) do
-    active_player_ids = get_active_player_ids(state)
-    if Enum.count(active_player_ids) == 1 do
+    active_player_ids = Player.active_ids(state)
+    if length(active_player_ids) == 1 do
       state
       |> Map.put(:winner_id, hd(active_player_ids))
     else
@@ -251,16 +250,6 @@ defmodule Sengoku.Game do
     update_in(state, [:players, player_id], fn(%Player{} = player) ->
       Map.update!(player, key, func)
     end)
-  end
-
-  defp get_active_player_ids(state) do
-    state
-    |> Player.filter_ids(&(&1.active))
-  end
-
-  defp get_ai_player_ids(state) do
-    state
-    |> Player.filter_ids(&(&1.ai))
   end
 
   def get_unowned_tile_ids(state) do

@@ -33,4 +33,11 @@ defmodule Sengoku.Tile do
       24 => new([23])
     })
   end
+
+  def filter_ids(state, func) do
+    state.tiles
+    |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
+    |> Enum.into(%{})
+    |> Map.keys
+  end
 end

@@ -41,8 +41,8 @@ defmodule Sengoku.Game do
 
   defp grant_new_units(state, player_id) do
     new_units_count =
-      state.tiles
-      |> filter_tile_ids(fn(tile) -> tile.owner == player_id end)
+      state
+      |> Tile.filter_ids(fn(tile) -> tile.owner == player_id end)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
@@ -254,32 +254,18 @@ defmodule Sengoku.Game do
   end
 
   defp get_active_player_ids(state) do
-    state.players
-    |> filter_player_ids(&(&1.active))
+    state
+    |> Player.filter_ids(&(&1.active))
   end
 
   defp get_ai_player_ids(state) do
-    state.players
-    |> filter_player_ids(&(&1.ai))
-  end
-
-  defp filter_player_ids(players_map, func) do
-    players_map
-    |> Enum.filter(fn({_id, player}) -> func.(player) end)
-    |> Enum.into(%{})
-    |> Map.keys
-  end
-
-  defp filter_tile_ids(tiles_map, func) do
-    tiles_map
-    |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
-    |> Enum.into(%{})
-    |> Map.keys
+    state
+    |> Player.filter_ids(&(&1.ai))
   end
 
   def get_unowned_tile_ids(state) do
-    state.tiles
-    |> filter_tile_ids(&(is_nil(&1.owner)))
+    state
+    |> Tile.filter_ids(&(is_nil(&1.owner)))
   end
 
   def current_player(state) do

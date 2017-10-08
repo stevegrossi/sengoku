@@ -13,4 +13,11 @@ defmodule Sengoku.Player do
       4 => new()
     })
   end
+
+  def filter_ids(state, func) do
+    state.players
+    |> Enum.filter(fn({_id, player}) -> func.(player) end)
+    |> Enum.into(%{})
+    |> Map.keys
+  end
 end

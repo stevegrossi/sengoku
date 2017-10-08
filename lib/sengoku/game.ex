@@ -46,8 +46,7 @@ defmodule Sengoku.Game do
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 
-    state
-    |> update_player(player_id, :unplaced_units, &(&1 + new_units_count))
+    Player.grant_reinforcements(state, player_id, new_units_count)
   end
 
   def authenticate_player(state, token) do
@@ -69,7 +68,7 @@ defmodule Sengoku.Game do
           state =
             state
             |> put_in([:tokens, new_token], first_available_player_id)
-            |> put_player(first_available_player_id, :ai, false)
+            |> Player.update_attributes(first_available_player_id, %{ai: false})
           {:ok, {first_available_player_id, new_token}, state}
         end
       else
@@ -99,7 +98,7 @@ defmodule Sengoku.Game do
 
       if tile.owner == current_player_id do
         state
-        |> update_player(current_player_id, :unplaced_units, &(&1 - 1))
+        |> Player.use_reinforcement(current_player_id)
         |> update_tile(tile_id, :units, &(&1 + 1))
       else
         Logger.info("Tried to place unit in unowned tile")
@@ -204,17 +203,11 @@ defmodule Sengoku.Game do
 
   defp deactivate_player_if_defeated(state, nil), do: state
   defp deactivate_player_if_defeated(state, player_id) do
-    has_remaining_tiles =
-      state.tiles
-      |> Map.values
-      |> Enum.any?(fn(%Tile{} = tile) -> tile.owner == player_id end)
-
-    if has_remaining_tiles do
+    if length(Tile.owned_by(state, player_id)) > 0 do
       state
     else
       state
-      |> put_player(player_id, :active, false)
-      |> put_player(player_id, :unplaced_units, 0)
+      |> Player.deactivate(player_id)
     end
   end
 
@@ -237,18 +230,6 @@ defmodule Sengoku.Game do
   defp update_tile(state, tile_id, key, func) do
     update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
       Map.update!(tile, key, func)
-    end)
-  end
-
-  defp put_player(state, player_id, key, value) do
-    update_in(state, [:players, player_id], fn(%Player{} = player) ->
-      Map.put(player, key, value)
-    end)
-  end
-
-  defp update_player(state, player_id, key, func) do
-    update_in(state, [:players, player_id], fn(%Player{} = player) ->
-      Map.update!(player, key, func)
     end)
   end
 

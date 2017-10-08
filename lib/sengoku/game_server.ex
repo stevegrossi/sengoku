@@ -21,7 +21,7 @@ defmodule Sengoku.GameServer do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    {:ok, Game.initial_state(game_id)}
+    {:ok, Game.initialize_state(game_id)}
   end
 
   # API

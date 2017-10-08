@@ -5,8 +5,8 @@ defmodule Sengoku.Tile do
     %__MODULE__{neighbors: neighbors}
   end
 
-  def initial_state do
-    %{
+  def initialize_state(state) do
+    Map.put(state, :tiles, %{
        1 => new([2]),
        2 => new([1, 3, 4]),
        3 => new([2, 4]),
@@ -31,6 +31,6 @@ defmodule Sengoku.Tile do
       22 => new([20, 21, 23]),
       23 => new([17, 21, 22, 24]),
       24 => new([23])
-    }
+    })
   end
 end

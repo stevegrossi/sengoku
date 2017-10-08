@@ -3,10 +3,10 @@ defmodule Sengoku.GameTest do
 
   alias Sengoku.{Game, Player, Tile}
 
-  describe ".initial_state" do
+  describe ".initialize_state" do
 
     test "returns the state before the game begins" do
-      state = Game.initial_state("123")
+      state = Game.initialize_state("123")
 
       assert state.turn == 0
       assert state.current_player_id == nil

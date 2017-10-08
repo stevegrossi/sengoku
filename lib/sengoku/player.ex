@@ -5,12 +5,12 @@ defmodule Sengoku.Player do
     struct(__MODULE__, atts)
   end
 
-  def initial_state(atts \\ %{}) do
-    %{
-      1 => new(atts),
-      2 => new(atts),
-      3 => new(atts),
-      4 => new(atts)
-    }
+  def initialize_state(state) do
+    Map.put(state, :players, %{
+      1 => new(),
+      2 => new(),
+      3 => new(),
+      4 => new()
+    })
   end
 end

@@ -6,17 +6,18 @@ defmodule Sengoku.Game do
   @min_new_units 3
   @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
+  @initial_state %{
+    turn: 0,
+    current_player_id: nil,
+    winner_id: nil,
+    tokens: %{}
+  }
 
-  def initial_state(game_id) do
-    %{
-      id: game_id,
-      turn: 0,
-      current_player_id: nil,
-      players: Player.initial_state(%{ai: true}),
-      tiles: Tile.initial_state,
-      winner_id: nil,
-      tokens: %{}
-    }
+  def initialize_state(game_id) do
+    @initial_state
+    |> Map.put(:id, game_id)
+    |> Player.initialize_state
+    |> Tile.initialize_state
   end
 
   def start_game(state) do

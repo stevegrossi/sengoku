@@ -34,6 +34,16 @@ defmodule Sengoku.Tile do
     })
   end
 
+  def owned_by(state, player_id) do
+    state
+    |> filter_ids(&(&1.owner == player_id))
+  end
+
+  def unowned_ids(state) do
+    state
+    |> filter_ids(&(is_nil(&1.owner)))
+  end
+
   def filter_ids(state, func) do
     state.tiles
     |> Enum.filter(fn({_id, tile}) -> func.(tile) end)

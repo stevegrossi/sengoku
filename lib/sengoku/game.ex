@@ -41,7 +41,7 @@ defmodule Sengoku.Game do
   defp grant_new_units(state, player_id) do
     new_units_count =
       state
-      |> Tile.filter_ids(fn(tile) -> tile.owner == player_id end)
+      |> Tile.owned_by(player_id)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
@@ -180,7 +180,7 @@ defmodule Sengoku.Game do
 
   defp assign_tiles(state) do
     player_ids = Player.active_ids(state)
-    available_tile_ids = get_unowned_tile_ids(state)
+    available_tile_ids = Tile.unowned_ids(state)
 
     if length(available_tile_ids) >= length(player_ids) do
       state
@@ -195,7 +195,7 @@ defmodule Sengoku.Game do
   def assign_random_tile_to_each(state, [player_id | rest]) do
     tile_id =
       state
-      |> get_unowned_tile_ids
+      |> Tile.unowned_ids
       |> Enum.random
 
     new_state = put_tile(state, tile_id, :owner, player_id)
@@ -250,11 +250,6 @@ defmodule Sengoku.Game do
     update_in(state, [:players, player_id], fn(%Player{} = player) ->
       Map.update!(player, key, func)
     end)
-  end
-
-  def get_unowned_tile_ids(state) do
-    state
-    |> Tile.filter_ids(&(is_nil(&1.owner)))
   end
 
   def current_player(state) do

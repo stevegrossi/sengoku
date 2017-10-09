@@ -41,7 +41,7 @@ defmodule Sengoku.GameServer do
   # Server
 
   def handle_call({:authenticate_player, token}, _from, state) do
-    case Game.authenticate_player(state, token) do
+    case Authentication.authenticate_player(state, token) do
       {:ok, {player_id, token}, new_state} ->
         {:reply, {:ok, player_id, token}, new_state}
       {:error, error} ->

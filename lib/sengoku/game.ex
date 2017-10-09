@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Tile, Player, Token}
+  alias Sengoku.{Tile, Player}
 
   @min_new_units 3
   @tiles_per_new_unit 3
@@ -10,7 +10,6 @@ defmodule Sengoku.Game do
     turn: 0,
     current_player_id: nil,
     winner_id: nil,
-    tokens: %{}
   }
 
   def initialize_state(game_id) do
@@ -18,6 +17,7 @@ defmodule Sengoku.Game do
     |> Map.put(:id, game_id)
     |> Player.initialize_state
     |> Tile.initialize_state
+    |> Authentication.initialize_state
   end
 
   def start_game(state) do
@@ -47,34 +47,6 @@ defmodule Sengoku.Game do
       |> max(@min_new_units)
 
     Player.grant_reinforcements(state, player_id, new_units_count)
-  end
-
-  def authenticate_player(state, token) do
-    existing_player_id = state.tokens[token]
-
-    if existing_player_id do
-      {:ok, {existing_player_id, token}, state}
-    else
-      if state.turn == 0 do
-        first_available_player_id =
-          state
-          |> Player.ai_ids
-          |> List.first
-
-        if is_nil(first_available_player_id) do
-          {:error, :full}
-        else
-          new_token = Token.new(16)
-          state =
-            state
-            |> put_in([:tokens, new_token], first_available_player_id)
-            |> Player.update_attributes(first_available_player_id, %{ai: false})
-          {:ok, {first_available_player_id, new_token}, state}
-        end
-      else
-        {:error, :in_progress}
-      end
-    end
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do

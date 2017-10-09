@@ -34,9 +34,27 @@ defmodule Sengoku.Tile do
     })
   end
 
+  def update_attributes(state, tile_id, %{} = new_atts) do
+    update_in(state, [:tiles, tile_id], fn(tile) ->
+      Map.merge(tile, new_atts)
+    end)
+  end
+
   def owned_by(state, player_id) do
     state
     |> filter_ids(&(&1.owner == player_id))
+  end
+
+  def set_owner(state, tile_id, player_id) do
+    update_in(state, [:tiles, tile_id], fn(tile) ->
+      Map.put(tile, :owner, player_id)
+    end)
+  end
+
+  def adjust_units(state, tile_id, count) do
+    update_in(state, [:tiles, tile_id], fn(tile) ->
+      Map.update!(tile, :units, &(&1 + count))
+    end)
   end
 
   def unowned_ids(state) do

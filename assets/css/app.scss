@@ -196,8 +196,12 @@ body {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, .5);
-  padding: 1em;
+  padding: 0 1em;
   border-radius: 0 0 .75em;
+
+  & > * {
+    margin: 1em 0;
+  }
 }
 
 .Board {

@@ -78,8 +78,20 @@ class Game extends React.Component {
     this.action('start_game')
   }
 
-  canStartGame() {
-    return Object.values(this.state.players).filter((player) => player.active).length > 1
+  joinAsPlayer() {
+    const payload = {
+      name: prompt('What is your name?'),
+      token: localStorage.getItem('games:' + this.state.id + ':token')
+    }
+    const game_id = this.state.id
+    this.props.channel.push('join_as_player', payload)
+      .receive('ok', (response) => {
+        if (response.error) {
+          console.error(response.error)
+        } else {
+          localStorage.setItem('games:' + game_id + ':token', response.token)
+        }
+      })
   }
 
   render() {
@@ -98,7 +110,10 @@ class Game extends React.Component {
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
           }
           {this.state.turn == 0 &&
-            <button className="Button" disabled={!this.canStartGame()} onClick={this.startGame.bind(this)}>Start Game</button>
+            <button className="Button" onClick={this.joinAsPlayer.bind(this)}>Join Game</button>
+          }
+          {this.state.turn == 0 &&
+            <button className="Button" onClick={this.startGame.bind(this)}>Start Game</button>
           }
         </div>
         {this.state.tiles &&

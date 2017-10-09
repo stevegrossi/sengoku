@@ -85,14 +85,14 @@ class Game extends React.Component {
   render() {
     return (
       <div className="Game">
+        {this.state.winner_id &&
+          <div className="Overlay">
+            {playerUI[this.state.winner_id].name} wins!
+          </div>
+        }
         <div className="Display">
           {this.state.players &&
             <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
-          }
-          {this.state.winner_id &&
-            <div className="Overlay">
-              {playerUI[this.state.winner_id].name} wins!
-            </div>
           }
           {this.state.turn > 0 &&
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>

@@ -18,6 +18,15 @@ class Game extends React.Component {
     this.props.channel.on('update', new_state => {
       self.setState(new_state)
     })
+    if (this.canJoinGame()) this.joinAsPlayer()
+  }
+
+  token() {
+    return localStorage.getItem('games:' + this.props.id + ':token')
+  }
+
+  canJoinGame() {
+    return !this.token()
   }
 
   tileClicked(id, e) {
@@ -81,9 +90,9 @@ class Game extends React.Component {
   joinAsPlayer() {
     const payload = {
       name: prompt('What is your name?'),
-      token: localStorage.getItem('games:' + this.state.id + ':token')
+      token: this.token()
     }
-    const game_id = this.state.id
+    const game_id = this.props.id
     this.props.channel.push('join_as_player', payload)
       .receive('ok', (response) => {
         if (response.error) {
@@ -109,7 +118,7 @@ class Game extends React.Component {
           {this.state.turn > 0 &&
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
           }
-          {this.state.turn == 0 &&
+          {this.state.turn == 0 && this.canJoinGame() &&
             <button className="Button" onClick={this.joinAsPlayer.bind(this)}>Join Game</button>
           }
           {this.state.turn == 0 &&

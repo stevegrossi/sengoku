@@ -18,6 +18,7 @@ defmodule Sengoku.Game do
     |> Player.initialize_state
     |> Tile.initialize_state
     |> Authentication.initialize_state
+    |> Region.initialize_state
   end
 
   def start_game(state) do

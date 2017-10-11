@@ -88,8 +88,10 @@ class Game extends React.Component {
   }
 
   joinAsPlayer() {
+    const name = prompt('What is your name?')
+    if (!name) return
     const payload = {
-      name: prompt('What is your name?'),
+      name: name,
       token: this.token()
     }
     const game_id = this.props.id

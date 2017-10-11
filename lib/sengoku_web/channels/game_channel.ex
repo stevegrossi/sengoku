@@ -9,9 +9,9 @@ defmodule SengokuWeb.GameChannel do
     {:ok, socket}
   end
 
-  def handle_in("join_as_player", %{"token" => token}, socket) do
+  def handle_in("join_as_player", %{"token" => token, "name" => name}, socket) do
     game_id = socket.assigns[:game_id]
-    case GameServer.authenticate_player(game_id, token) do
+    case GameServer.authenticate_player(game_id, token, name) do
       {:ok, player_id, token} ->
         socket = assign(socket, :player_id, player_id)
         send self(), :after_join

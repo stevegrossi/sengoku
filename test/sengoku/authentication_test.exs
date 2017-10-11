@@ -6,7 +6,6 @@ defmodule Sengoku.AuthenticationTest do
   describe ".authenticate_player" do
 
     test "with no token, replaces the first AI player" do
-      token = nil
       old_state = %{
         turn: 0,
         players: %{
@@ -18,8 +17,9 @@ defmodule Sengoku.AuthenticationTest do
         }
       }
 
-      assert {:ok, {2, new_token}, new_state} = Authentication.authenticate_player(old_state, token)
+      assert {:ok, {2, new_token}, new_state} = Authentication.authenticate_player(old_state, nil, "Steve")
       assert new_state.players[2].ai == false
+      assert new_state.players[2].name == "Steve"
       assert new_state.tokens[new_token] == 2
     end
 
@@ -36,7 +36,7 @@ defmodule Sengoku.AuthenticationTest do
         }
       }
 
-      assert {:error, :in_progress} = Authentication.authenticate_player(old_state, token)
+      assert {:error, :in_progress} = Authentication.authenticate_player(old_state, token, "Steve")
     end
 
     test "with no token, errors when no AI players left" do
@@ -53,7 +53,7 @@ defmodule Sengoku.AuthenticationTest do
         }
       }
 
-      assert {:error, :full} = Authentication.authenticate_player(old_state, token)
+      assert {:error, :full} = Authentication.authenticate_player(old_state, token, "Steve")
     end
 
     test "with a token, returns the existing player_id for the token" do
@@ -67,7 +67,7 @@ defmodule Sengoku.AuthenticationTest do
         tokens: %{ token => 1 }
       }
 
-      assert {:ok, {1, ^token}, ^old_state} = Authentication.authenticate_player(old_state, token)
+      assert {:ok, {1, ^token}, ^old_state} = Authentication.authenticate_player(old_state, token, "Steve")
     end
   end
 end

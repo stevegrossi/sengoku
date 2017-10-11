@@ -5,7 +5,7 @@ defmodule Authentication do
     Map.put(state, :tokens, %{})
   end
 
-  def authenticate_player(state, token) do
+  def authenticate_player(state, token, name) do
     existing_player_id = state.tokens[token]
 
     if existing_player_id do
@@ -24,7 +24,7 @@ defmodule Authentication do
           state =
             state
             |> put_in([:tokens, new_token], first_available_player_id)
-            |> Player.update_attributes(first_available_player_id, %{ai: false})
+            |> Player.update_attributes(first_available_player_id, %{ai: false, name: name})
           {:ok, {first_available_player_id, new_token}, state}
         end
       else

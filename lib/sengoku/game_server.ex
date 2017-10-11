@@ -26,8 +26,8 @@ defmodule Sengoku.GameServer do
 
   # API
 
-  def authenticate_player(game_id, token) do
-    GenServer.call(via_tuple(game_id), {:authenticate_player, token})
+  def authenticate_player(game_id, token, name) do
+    GenServer.call(via_tuple(game_id), {:authenticate_player, token, name})
   end
 
   def action(game_id, player_id, %{type: _type} = action) do
@@ -40,8 +40,8 @@ defmodule Sengoku.GameServer do
 
   # Server
 
-  def handle_call({:authenticate_player, token}, _from, state) do
-    case Authentication.authenticate_player(state, token) do
+  def handle_call({:authenticate_player, token, name}, _from, state) do
+    case Authentication.authenticate_player(state, token, name) do
       {:ok, {player_id, token}, new_state} ->
         {:reply, {:ok, player_id, token}, new_state}
       {:error, error} ->

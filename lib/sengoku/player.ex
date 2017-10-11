@@ -1,5 +1,5 @@
 defmodule Sengoku.Player do
-  defstruct unplaced_units: 0, active: true, ai: true
+  defstruct unplaced_units: 0, active: true, ai: true, name: nil
 
   def new(atts \\ %{}) do
     struct(__MODULE__, atts)
@@ -7,10 +7,10 @@ defmodule Sengoku.Player do
 
   def initialize_state(state) do
     Map.put(state, :players, %{
-      1 => new(),
-      2 => new(),
-      3 => new(),
-      4 => new()
+      1 => new(%{name: "Player 1"}),
+      2 => new(%{name: "Player 2"}),
+      3 => new(%{name: "Player 3"}),
+      4 => new(%{name: "Player 4"})
     })
   end
 

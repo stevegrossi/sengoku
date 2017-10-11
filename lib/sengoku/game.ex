@@ -1,40 +1,27 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Tile, Player, Token}
+  alias Sengoku.{Tile, Player}
 
   @min_new_units 3
   @tiles_per_new_unit 3
   @battle_outcomes ~w(attacker defender)a
+  @initial_state %{
+    turn: 0,
+    current_player_id: nil,
+    winner_id: nil,
+  }
 
-  def initial_state(game_id, :hot_seat) do
-    %{
-      id: game_id,
-      mode: :hot_seat,
-      turn: 0,
-      current_player_id: nil,
-      players: Player.initial_state(%{ai: false}),
-      tiles: Tile.initial_state,
-      winner_id: nil,
-      tokens: %{}
-    }
-  end
-  def initial_state(game_id, :online) do
-    %{
-      id: game_id,
-      mode: :online,
-      turn: 0,
-      current_player_id: nil,
-      players: Player.initial_state(%{ai: true}),
-      tiles: Tile.initial_state,
-      winner_id: nil,
-      tokens: %{}
-    }
+  def initialize_state(game_id) do
+    @initial_state
+    |> Map.put(:id, game_id)
+    |> Player.initialize_state
+    |> Tile.initialize_state
+    |> Authentication.initialize_state
   end
 
   def start_game(state) do
-    active_player_ids = get_active_player_ids(state)
-    if Enum.count(active_player_ids) > 1 do
+    if length(Player.active_ids(state)) > 1 do
       state
       |> assign_tiles
       |> increment_turn
@@ -53,49 +40,17 @@ defmodule Sengoku.Game do
 
   defp grant_new_units(state, player_id) do
     new_units_count =
-      state.tiles
-      |> filter_tile_ids(fn(tile) -> tile.owner == player_id end)
+      state
+      |> Tile.owned_by(player_id)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 
-    state
-    |> update_player(player_id, :unplaced_units, &(&1 + new_units_count))
-  end
-
-  def authenticate_player(%{mode: :hot_seat} = state, _token) do
-    {:ok, {nil, nil}, state}
-  end
-  def authenticate_player(%{mode: :online} = state, token) do
-    existing_player_id = state.tokens[token]
-
-    if existing_player_id do
-      {:ok, {existing_player_id, token}, state}
-    else
-      if state.turn == 0 do
-        first_available_player_id =
-          state
-          |> get_ai_player_ids
-          |> List.first
-
-        if is_nil(first_available_player_id) do
-          {:error, :full}
-        else
-          new_token = Token.new(16)
-          state =
-            state
-            |> put_in([:tokens, new_token], first_available_player_id)
-            |> put_player(first_available_player_id, :ai, false)
-          {:ok, {first_available_player_id, new_token}, state}
-        end
-      else
-        {:error, :in_progress}
-      end
-    end
+    Player.grant_reinforcements(state, player_id, new_units_count)
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
-    active_player_ids = get_active_player_ids(state)
+    active_player_ids = Player.active_ids(state)
     next_player_id = Enum.at(active_player_ids, Enum.find_index(active_player_ids, fn(id) -> id == current_player_id end) + 1)
     case Enum.member?(active_player_ids, next_player_id) do
       true ->
@@ -115,8 +70,8 @@ defmodule Sengoku.Game do
 
       if tile.owner == current_player_id do
         state
-        |> update_player(current_player_id, :unplaced_units, &(&1 - 1))
-        |> update_tile(tile_id, :units, &(&1 + 1))
+        |> Player.use_reinforcement(current_player_id)
+        |> Tile.adjust_units(tile_id, 1)
       else
         Logger.info("Tried to place unit in unowned tile")
         state
@@ -148,18 +103,17 @@ defmodule Sengoku.Game do
         :attacker ->
           if state.tiles[to_id].units <= 1 do
             state
-            |> update_tile(from_id, :units, &(&1 - 1))
-            |> put_tile(to_id, :owner, current_player_id)
-            |> put_tile(to_id, :units, 1)
+            |> Tile.adjust_units(from_id, -1)
+            |> Tile.update_attributes(to_id, %{owner: current_player_id, units: 1})
             |> deactivate_player_if_defeated(defender_id)
             |> check_for_winner()
           else
             state
-            |> update_tile(to_id, :units, &(&1 - 1))
+            |> Tile.adjust_units(to_id, -1)
           end
         :defender ->
           state
-          |> update_tile(from_id, :units, &(&1 - 1))
+          |> Tile.adjust_units(from_id, -1)
       end
     else
       Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
@@ -175,8 +129,8 @@ defmodule Sengoku.Game do
       from_id in state.tiles[to_id].neighbors
     ) do
       state
-      |> update_tile(from_id, :units, &(&1 - count))
-      |> update_tile(to_id, :units, &(&1 + count))
+      |> Tile.adjust_units(from_id, -count)
+      |> Tile.adjust_units(to_id, count)
       |> end_turn
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
@@ -195,8 +149,8 @@ defmodule Sengoku.Game do
   end
 
   defp assign_tiles(state) do
-    player_ids = get_active_player_ids(state)
-    available_tile_ids = get_unowned_tile_ids(state)
+    player_ids = Player.active_ids(state)
+    available_tile_ids = Tile.unowned_ids(state)
 
     if length(available_tile_ids) >= length(player_ids) do
       state
@@ -211,90 +165,30 @@ defmodule Sengoku.Game do
   def assign_random_tile_to_each(state, [player_id | rest]) do
     tile_id =
       state
-      |> get_unowned_tile_ids
+      |> Tile.unowned_ids
       |> Enum.random
 
-    new_state = put_tile(state, tile_id, :owner, player_id)
+    new_state = Tile.set_owner(state, tile_id, player_id)
     assign_random_tile_to_each(new_state, rest)
   end
 
   defp deactivate_player_if_defeated(state, nil), do: state
   defp deactivate_player_if_defeated(state, player_id) do
-    has_remaining_tiles =
-      state.tiles
-      |> Map.values
-      |> Enum.any?(fn(%Tile{} = tile) -> tile.owner == player_id end)
-
-    if has_remaining_tiles do
-      state
+    if Tile.owned_by(state, player_id) == [] do
+      Player.deactivate(state, player_id)
     else
       state
-      |> put_player(player_id, :active, false)
-      |> put_player(player_id, :unplaced_units, 0)
     end
   end
 
   defp check_for_winner(state) do
-    active_player_ids = get_active_player_ids(state)
-    if Enum.count(active_player_ids) == 1 do
+    active_player_ids = Player.active_ids(state)
+    if length(active_player_ids) == 1 do
       state
       |> Map.put(:winner_id, hd(active_player_ids))
     else
       state
     end
-  end
-
-  defp put_tile(state, tile_id, key, value) do
-    update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
-      Map.put(tile, key, value)
-    end)
-  end
-
-  defp update_tile(state, tile_id, key, func) do
-    update_in(state, [:tiles, tile_id], fn(%Tile{} = tile) ->
-      Map.update!(tile, key, func)
-    end)
-  end
-
-  defp put_player(state, player_id, key, value) do
-    update_in(state, [:players, player_id], fn(%Player{} = player) ->
-      Map.put(player, key, value)
-    end)
-  end
-
-  defp update_player(state, player_id, key, func) do
-    update_in(state, [:players, player_id], fn(%Player{} = player) ->
-      Map.update!(player, key, func)
-    end)
-  end
-
-  defp get_active_player_ids(state) do
-    state.players
-    |> filter_player_ids(&(&1.active))
-  end
-
-  defp get_ai_player_ids(state) do
-    state.players
-    |> filter_player_ids(&(&1.ai))
-  end
-
-  defp filter_player_ids(players_map, func) do
-    players_map
-    |> Enum.filter(fn({_id, player}) -> func.(player) end)
-    |> Enum.into(%{})
-    |> Map.keys
-  end
-
-  defp filter_tile_ids(tiles_map, func) do
-    tiles_map
-    |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
-    |> Enum.into(%{})
-    |> Map.keys
-  end
-
-  def get_unowned_tile_ids(state) do
-    state.tiles
-    |> filter_tile_ids(&(is_nil(&1.owner)))
   end
 
   def current_player(state) do

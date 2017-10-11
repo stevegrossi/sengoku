@@ -18,6 +18,15 @@ class Game extends React.Component {
     this.props.channel.on('update', new_state => {
       self.setState(new_state)
     })
+    if (this.canJoinGame()) this.joinAsPlayer()
+  }
+
+  token() {
+    return localStorage.getItem('games:' + this.props.id + ':token')
+  }
+
+  canJoinGame() {
+    return !this.token()
   }
 
   tileClicked(id, e) {
@@ -78,8 +87,22 @@ class Game extends React.Component {
     this.action('start_game')
   }
 
-  canStartGame() {
-    return Object.values(this.state.players).filter((player) => player.active).length > 1
+  joinAsPlayer() {
+    const name = prompt('What is your name?')
+    if (!name) return
+    const payload = {
+      name: name,
+      token: this.token()
+    }
+    const game_id = this.props.id
+    this.props.channel.push('join_as_player', payload)
+      .receive('ok', (response) => {
+        if (response.error) {
+          console.error(response.error)
+        } else {
+          localStorage.setItem('games:' + game_id + ':token', response.token)
+        }
+      })
   }
 
   render() {
@@ -97,8 +120,11 @@ class Game extends React.Component {
           {this.state.turn > 0 &&
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
           }
+          {this.state.turn == 0 && this.canJoinGame() &&
+            <button className="Button" onClick={this.joinAsPlayer.bind(this)}>Join Game</button>
+          }
           {this.state.turn == 0 &&
-            <button className="Button" disabled={!this.canStartGame()} onClick={this.startGame.bind(this)}>Start Game</button>
+            <button className="Button" onClick={this.startGame.bind(this)}>Start Game</button>
           }
         </div>
         {this.state.tiles &&

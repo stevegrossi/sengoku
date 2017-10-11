@@ -6,28 +6,28 @@ defmodule Sengoku.GameServer do
   alias Sengoku.{Game, Token, AI}
   alias SengokuWeb.Endpoint
 
-  def new(mode) do
+  def new do
     game_id = Token.new(8)
-    start_link(game_id, mode)
+    start_link(game_id)
     {:ok, game_id}
   end
 
-  def start_link(game_id, mode) do
-    GenServer.start_link(__MODULE__, {game_id, mode})
+  def start_link(game_id) do
+    GenServer.start_link(__MODULE__, game_id)
   end
 
-  def init({game_id, mode}) do
+  def init(game_id) do
     case Registry.register(:game_server_registry, game_id, :ok) do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    {:ok, Game.initial_state(game_id, mode)}
+    {:ok, Game.initialize_state(game_id)}
   end
 
   # API
 
-  def authenticate_player(game_id, token) do
-    GenServer.call(via_tuple(game_id), {:authenticate_player, token})
+  def authenticate_player(game_id, token, name) do
+    GenServer.call(via_tuple(game_id), {:authenticate_player, token, name})
   end
 
   def action(game_id, player_id, %{type: _type} = action) do
@@ -40,8 +40,8 @@ defmodule Sengoku.GameServer do
 
   # Server
 
-  def handle_call({:authenticate_player, token}, _from, state) do
-    case Game.authenticate_player(state, token) do
+  def handle_call({:authenticate_player, token, name}, _from, state) do
+    case Authentication.authenticate_player(state, token, name) do
       {:ok, {player_id, token}, new_state} ->
         {:reply, {:ok, player_id, token}, new_state}
       {:error, error} ->
@@ -58,52 +58,26 @@ defmodule Sengoku.GameServer do
     state_updated(new_state)
     {:noreply, new_state}
   end
-
-  # online
-  def handle_cast({:action, player_id, %{type: "end_turn"}}, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "end_turn"}}, %{current_player_id: player_id} = state) do
     new_state = Game.end_turn(state)
     state_updated(new_state)
     {:noreply, new_state}
   end
-  def handle_cast({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, %{current_player_id: player_id} = state) do
     new_state = Game.place_unit(state, tile_id)
     state_updated(new_state)
     {:noreply, new_state}
   end
-  def handle_cast({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{current_player_id: player_id} = state) do
     new_state = Game.attack(state, from_id, to_id)
     state_updated(new_state)
     {:noreply, new_state}
   end
-  def handle_cast({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :online, current_player_id: player_id} = state) do
+  def handle_cast({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{current_player_id: player_id} = state) do
     new_state = Game.move(state, from_id, to_id, count)
     state_updated(new_state)
     {:noreply, new_state}
   end
-
-  # hot_seat
-  def handle_cast({:action, _player_id, %{type: "end_turn"}}, %{mode: :hot_seat} = state) do
-    new_state = Game.end_turn(state)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, _player_id, %{type: "place_unit", tile_id: tile_id}}, %{mode: :hot_seat} = state) do
-    new_state = Game.place_unit(state, tile_id)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, _player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{mode: :hot_seat} = state) do
-    new_state = Game.attack(state, from_id, to_id)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, _player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{mode: :hot_seat} = state) do
-    new_state = Game.move(state, from_id, to_id, count)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-
-  # catch-all
   def handle_cast({:action, player_id, action}, state) do
     Logger.info("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
     {:noreply, state}

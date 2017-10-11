@@ -9,12 +9,10 @@ if (game_id && game_container) {
   const socket = new Socket('/socket', {params: {}})
   socket.connect()
 
-  let game_token = localStorage.getItem('games:' + game_id + ':token')
-  const channel = socket.channel('games:' + game_id, {token: game_token})
+  const channel = socket.channel('games:' + game_id, {})
   channel.join()
     .receive('ok', resp => {
       console.log('Joined game ' + game_id, resp)
-      localStorage.setItem('games:' + game_id + ':token', resp.token)
       ReactDOM.render(<Game id={game_id} channel={channel} />, game_container)
     })
     .receive('error', resp => {

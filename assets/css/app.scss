@@ -4,7 +4,7 @@ $text: #fff;
 $white: #fff;
 $black: #000;
 $gray: #666;
-$red: #dc322f;
+$red: #cc241d;
 $z-index-overlay: 10;
 $z-index-logo: 100;
 
@@ -134,28 +134,6 @@ body {
   pointer-events: none;
 }
 
-.BorderRadio {
-  &-input {
-    display: none;
-  }
-
-  &-label {
-    display: block;
-    padding: 1em;
-    border-radius: .25em;
-    border: 1px solid transparent;
-    margin-bottom: .5em;
-    transition: all .2s ease-in;
-    cursor: pointer;
-
-    .BorderRadio-input:checked + & {
-      border-color: rgba(255,255,255,.75);
-      box-shadow: 0 0 5px rgba(255,255,255,.5);
-      background-color: rgba(255,255,255,.05);
-    }
-  }
-}
-
 .Button {
   border: 0;
   padding: .5em;
@@ -218,8 +196,12 @@ body {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, .5);
-  padding: 1em;
+  padding: 0 1em;
   border-radius: 0 0 .75em;
+
+  & > * {
+    margin: 1em 0;
+  }
 }
 
 .Board {

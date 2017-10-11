@@ -13,7 +13,7 @@ const Player = (props) => {
   return (
     <li className={classNames.join(' ')} style={styles}>
       <b>
-        {playerUI[props.id].name}
+        {props.name}
         {props.ai &&
           <small className="Player-type">AI</small>
         }

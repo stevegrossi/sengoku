@@ -1,7 +1,7 @@
 defmodule Sengoku.AI.Smart do
   @behaviour Sengoku.AI
 
-  alias Sengoku.{Game}
+  alias Sengoku.{Game, Tile}
 
   def take_action(state) do
     cond do
@@ -49,8 +49,8 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp tile_ids_with_attackable_neighbors(state) do
-    state.tiles
-    |> filter_tile_ids(fn(tile) ->
+    state
+    |> Tile.filter_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
          tile.units > 1 &&
          tile.neighbors
@@ -71,8 +71,8 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp owned_border_tile_ids(state) do
-    state.tiles
-    |> filter_tile_ids(fn(tile) ->
+    state
+    |> Tile.filter_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
          tile.neighbors
          |> Enum.any?(fn(neighbor_id) ->
@@ -80,13 +80,6 @@ defmodule Sengoku.AI.Smart do
               neighbor.owner !== tile.owner
             end)
        end)
-  end
-
-  defp filter_tile_ids(tiles_map, func) do
-    tiles_map
-    |> Enum.filter(fn({_id, tile}) -> func.(tile) end)
-    |> Enum.into(%{})
-    |> Map.keys
   end
 
   defp end_turn do
@@ -123,8 +116,8 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp safe_owned_tiles(state) do
-    state.tiles
-    |> filter_tile_ids(fn(tile) ->
+    state
+    |> Tile.filter_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
          tile.units > 0 &&
          tile.neighbors

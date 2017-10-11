@@ -3,87 +3,14 @@ defmodule Sengoku.GameTest do
 
   alias Sengoku.{Game, Player, Tile}
 
-  describe ".initial_state" do
+  describe ".initialize_state" do
 
     test "returns the state before the game begins" do
-      state = Game.initial_state("123", :hot_seat)
+      state = Game.initialize_state("123")
 
-      assert state.mode == :hot_seat
       assert state.turn == 0
       assert state.current_player_id == nil
       assert state.winner_id == nil
-    end
-  end
-
-  describe ".authenticate_player" do
-
-    test "with no token, replaces the first AI player" do
-      token = nil
-      old_state = %{
-        mode: :online,
-        turn: 0,
-        players: %{
-          1 => %Player{ai: false},
-          2 => %Player{ai: true}
-        },
-        tokens: %{
-          "foo" => 1
-        }
-      }
-
-      assert {:ok, {2, new_token}, new_state} = Game.authenticate_player(old_state, token)
-      assert new_state.players[2].ai == false
-      assert new_state.tokens[new_token] == 2
-    end
-
-    test "with no token, prevents adding new players when the game is in progress" do
-      token = nil
-      old_state = %{
-        mode: :online,
-        turn: 1,
-        players: %{
-          1 => %Player{ai: false},
-          2 => %Player{ai: true}
-        },
-        tokens: %{
-          "foo" => 1
-        }
-      }
-
-      assert {:error, :in_progress} = Game.authenticate_player(old_state, token)
-    end
-
-    test "with no token, errors when no AI players left" do
-      token = nil
-      old_state = %{
-        mode: :online,
-        turn: 0,
-        players: %{
-          1 => %Player{ai: false},
-          2 => %Player{ai: false}
-        },
-        tokens: %{
-          "foo" => 1,
-          "bar" => 2
-        }
-      }
-
-      assert {:error, :full} = Game.authenticate_player(old_state, token)
-    end
-
-    test "with a token, returns the existing player_id for the token" do
-      token = "abcdef"
-      old_state = %{
-        mode: :online,
-        turn: 0,
-        players: %{
-          1 => %Player{ai: false},
-          2 => %Player{ai: true}
-        },
-        tokens: %{ token => 1 }
-      }
-
-      assert {:ok, {1, ^token}, ^old_state} = Game.authenticate_player(old_state, token)
     end
   end
 

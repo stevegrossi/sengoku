@@ -24,7 +24,6 @@ Up to 4 players: play against friends online, the computer, or both.
 
 ## Further-Out Ideas
 
-- Unit bonuses for holding all tiles in a region.
 - Instead of units, players gain currency which can be used to purchase units, or potentially territory upgrades like:
  - Stables grant an additional move per turn.
  - Mines grant extra currency per turn.

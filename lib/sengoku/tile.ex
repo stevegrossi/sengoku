@@ -8,10 +8,10 @@ defmodule Sengoku.Tile do
   def initialize_state(state) do
     Map.put(state, :tiles, %{
        1 => new([2]),
-       2 => new([1, 3, 4]),
+       2 => new([1, 3, 4, 5]),
        3 => new([2, 4]),
        4 => new([2, 3, 5, 8]),
-       5 => new([4, 6, 7, 8]),
+       5 => new([2, 4, 6, 7, 8]),
        6 => new([5, 7]),
        7 => new([5, 6, 8, 10, 11, 12]),
        8 => new([4, 5, 7, 9, 10]),

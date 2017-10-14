@@ -10,6 +10,7 @@ Up to 4 players: play against friends online, the computer, or both.
 
 - Provinces are randomly divided amongst all players at the start of the game.
 - Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.
+- Receive bonus units for holding all provinces within a marked region.
 - On your turn you may attack neighboring provinces. When attacking, you have a 50% chance of winning the battle. The loser of the battle loses one unit. If you defeat all units in a province, it becomes yours.
 - At the end of your turn, you may move units from one of your provinces to one of its neighbors you control.
 - A player is defeated when they no longer control any provinces.

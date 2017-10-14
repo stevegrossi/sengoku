@@ -5,7 +5,6 @@ $white: #fff;
 $black: #000;
 $gray: #666;
 $red: #cc241d;
-$tile-default: #d4c098;
 $z-index-overlay: 10;
 $z-index-logo: 100;
 
@@ -80,17 +79,6 @@ body {
 .Tile {
   stroke: $black;
   stroke-width: 0.75;
-  fill: $tile-default;
-
-  &-count {
-    fill: $white;
-    font-size: 10px;
-    cursor: default;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-  }
 
   &-highlight {
     opacity: 0;
@@ -118,14 +106,14 @@ body {
     }
   }
 }
-
-.Region {
-  &--1 { fill: mix(#f9f5d7, $white, 100%); }
-  &--2 { fill: mix(#ebdbb2, $white, 100%); }
-  &--3 { fill: mix(#bdae93, $white, 100%); }
-  &--4 { fill: mix(#928374, $white, 100%); }
-  &--5 { fill: mix(#7c6f64, $white, 100%); }
-  &--6 { fill: mix(#504945, $white, 100%); }
+.Tile-count {
+  fill: $black;
+  font-size: 10px;
+  cursor: default;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .Overlay {

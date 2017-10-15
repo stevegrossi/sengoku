@@ -1,4 +1,4 @@
-defmodule Authentication do
+defmodule Sengoku.Authentication do
   alias Sengoku.{Player, Token}
 
   def initialize_state(state) do

@@ -3,7 +3,7 @@ defmodule Sengoku.GameServer do
 
   require Logger
 
-  alias Sengoku.{Game, Token, AI}
+  alias Sengoku.{Authentication, Game, Token, AI}
   alias SengokuWeb.Endpoint
 
   @ai_think_time 100 # ms

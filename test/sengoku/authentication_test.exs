@@ -1,7 +1,7 @@
 defmodule Sengoku.AuthenticationTest do
   use ExUnit.Case, async: true
 
-  alias Sengoku.{Player}
+  alias Sengoku.{Authentication, Player}
 
   describe ".authenticate_player" do
 

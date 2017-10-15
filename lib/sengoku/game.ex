@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Tile, Player, Region}
+  alias Sengoku.{Authentication, Tile, Player, Region}
 
   @min_new_units 3
   @tiles_per_new_unit 3

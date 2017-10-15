@@ -1,7 +1,7 @@
 defmodule Sengoku.AI.SmartTest do
   use ExUnit.Case, async: true
 
-  alias Sengoku.{AI, Player, Tile}
+  alias Sengoku.{AI, Player, Tile, Region}
 
   test "places a unit when unplaced units" do
     state = %{
@@ -13,6 +13,10 @@ defmodule Sengoku.AI.SmartTest do
       tiles: %{
         1 => %Tile{owner: 1, units: 1, neighbors: [2]},
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
+      },
+      regions: %{
+        1 => %Region{value: 1, tile_ids: [1]},
+        2 => %Region{value: 1, tile_ids: [2]},
       }
     }
     action = AI.Smart.take_action(state)
@@ -30,6 +34,10 @@ defmodule Sengoku.AI.SmartTest do
       tiles: %{
         1 => %Tile{owner: 1, units: 2, neighbors: [2]},
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
+      },
+      regions: %{
+        1 => %Region{value: 1, tile_ids: [1]},
+        2 => %Region{value: 1, tile_ids: [2]},
       }
     }
     action = AI.Smart.take_action(state)
@@ -52,5 +60,36 @@ defmodule Sengoku.AI.SmartTest do
     action = AI.Smart.take_action(state)
 
     assert action == %{type: "end_turn"}
+  end
+
+  describe "get_preferred_regions/1" do
+
+     test "returns regions sorted by the percentage you control, favoring smaller regions" do
+      state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1},
+          2 => %Tile{owner: 2},
+          3 => %Tile{owner: 2},
+          4 => %Tile{owner: 1},
+          5 => %Tile{owner: 2},
+          6 => %Tile{owner: 1},
+          7 => %Tile{owner: 1},
+          8 => %Tile{owner: 2},
+          9 => %Tile{owner: 2}
+        },
+        regions: %{
+          1 => %Region{value: 1, tile_ids: [1, 2, 3]},
+          2 => %Region{value: 1, tile_ids: [4, 5]},
+          3 => %Region{value: 1, tile_ids: [6, 7, 8, 9]}
+        }
+      }
+
+      assert AI.Smart.get_preferred_regions(state) == [
+        %Region{value: 1, tile_ids: [4, 5]}, # 2
+        %Region{value: 1, tile_ids: [6, 7, 8, 9]}, # 3
+        %Region{value: 1, tile_ids: [1, 2, 3]} # 1
+      ]
+    end
   end
 end

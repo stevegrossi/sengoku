@@ -17,10 +17,12 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp place_unit(state) do
+    preferred_regions = get_preferred_regions(state)
     tile_id =
       state
       |> owned_border_tile_ids
-      |> Enum.random
+      |> sort_tile_ids_by_region_preference(preferred_regions)
+      |> List.first
 
     %{type: "place_unit", tile_id: tile_id}
   end
@@ -32,10 +34,12 @@ defmodule Sengoku.AI.Smart do
   end
 
   defp attack(state) do
+    preferred_regions = get_preferred_regions(state)
     tile_with_attackable_neighbor_id =
       state
       |> tile_ids_with_attackable_neighbors
-      |> Enum.random
+      |> sort_tile_ids_by_region_preference(preferred_regions)
+      |> List.first
 
     attackable_neighbor_id =
       tile_with_attackable_neighbor_id
@@ -80,6 +84,28 @@ defmodule Sengoku.AI.Smart do
               neighbor.owner !== tile.owner
             end)
        end)
+  end
+
+  defp sort_tile_ids_by_region_preference(tile_ids, region_preference) do
+    Enum.sort(tile_ids, fn(tile_id_1, tile_id_2) ->
+      tile_index(region_preference, tile_id_1) < tile_index(region_preference, tile_id_2)
+    end)
+  end
+
+  defp tile_index(regions, tile_id) do
+    Enum.find_index(regions, fn(region) ->
+      tile_id in region.tile_ids
+    end)
+  end
+
+  # Returns regions sorted by how close you are to owning it
+  def get_preferred_regions(%{current_player_id: current_player_id} = state) do
+    owned_tile_ids = Tile.ids_owned_by(state, current_player_id)
+    state.regions
+    |> Enum.sort(fn({_id_1, region_1}, {_id_2, region_2}) ->
+         length(region_2.tile_ids -- owned_tile_ids) > length(region_1.tile_ids -- owned_tile_ids)
+       end)
+    |> Enum.map(fn({_id, region}) -> region end)
   end
 
   defp end_turn do

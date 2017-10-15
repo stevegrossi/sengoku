@@ -8,17 +8,17 @@ defmodule Sengoku.Tile do
   def initialize_state(state) do
     Map.put(state, :tiles, %{
        1 => new([2]),
-       2 => new([1, 3, 4]),
+       2 => new([1, 3, 4, 5]),
        3 => new([2, 4]),
        4 => new([2, 3, 5, 8]),
-       5 => new([4, 6, 7, 8]),
+       5 => new([2, 4, 6, 7, 8]),
        6 => new([5, 7]),
-       7 => new([5, 6, 8, 10, 11, 12]),
+       7 => new([5, 6, 8, 10, 11]),
        8 => new([4, 5, 7, 9, 10]),
        9 => new([8, 10]),
       10 => new([7, 8, 9, 12, 13]),
       11 => new([7, 12]),
-      12 => new([7, 10, 11, 13, 14, 15, 16]),
+      12 => new([10, 11, 13, 14, 15, 16]),
       13 => new([10, 12, 14]),
       14 => new([12, 13, 16, 17]),
       15 => new([12, 16]),
@@ -40,7 +40,7 @@ defmodule Sengoku.Tile do
     end)
   end
 
-  def owned_by(state, player_id) do
+  def ids_owned_by(state, player_id) do
     state
     |> filter_ids(&(&1.owner == player_id))
   end

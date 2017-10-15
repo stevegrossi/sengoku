@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Tile, Player}
+  alias Sengoku.{Tile, Player, Region}
 
   @min_new_units 3
   @tiles_per_new_unit 3
@@ -18,6 +18,7 @@ defmodule Sengoku.Game do
     |> Player.initialize_state
     |> Tile.initialize_state
     |> Authentication.initialize_state
+    |> Region.initialize_state
   end
 
   def start_game(state) do
@@ -36,17 +37,34 @@ defmodule Sengoku.Game do
   def begin_turn(%{current_player_id: current_player_id} = state) do
     state
     |> grant_new_units(current_player_id)
+    |> grant_region_bonuses(current_player_id)
   end
 
   defp grant_new_units(state, player_id) do
     new_units_count =
       state
-      |> Tile.owned_by(player_id)
+      |> Tile.ids_owned_by(player_id)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 
     Player.grant_reinforcements(state, player_id, new_units_count)
+  end
+
+  defp grant_region_bonuses(state, player_id) do
+    owned_tile_ids = Tile.ids_owned_by(state, player_id)
+    case Region.containing_tile_ids(state, owned_tile_ids) do
+      [] ->
+        state
+      regions ->
+        bonus =
+          Enum.reduce(regions, 0, fn(region, acc) ->
+            acc + region.value
+          end)
+
+        state
+        |> Player.grant_reinforcements(player_id, bonus)
+    end
   end
 
   def end_turn(%{current_player_id: current_player_id} = state) do
@@ -174,7 +192,7 @@ defmodule Sengoku.Game do
 
   defp deactivate_player_if_defeated(state, nil), do: state
   defp deactivate_player_if_defeated(state, player_id) do
-    if Tile.owned_by(state, player_id) == [] do
+    if Tile.ids_owned_by(state, player_id) == [] do
       Player.deactivate(state, player_id)
     else
       state

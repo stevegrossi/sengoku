@@ -152,6 +152,40 @@ defmodule Sengoku.GameTest do
 
       assert new_state.players[2].unplaced_units == 3
     end
+
+    test "grants a bonus for owning all tiles in a region" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 2},
+          2 => %Tile{owner: 1},
+          3 => %Tile{owner: 1},
+          4 => %Tile{owner: 1},
+          5 => %Tile{owner: 1},
+          6 => %Tile{owner: 1},
+          7 => %Tile{owner: 1},
+          8 => %Tile{owner: 1},
+          9 => %Tile{owner: 1},
+          10 => %Tile{owner: 1},
+          11 => %Tile{owner: 1},
+          12 => %Tile{owner: 1},
+          13 => %Tile{owner: 1},
+          14 => %Tile{owner: 1},
+          15 => %Tile{owner: 1},
+        },
+        regions: %{
+          1 => %{value: 2, tile_ids: [5, 6, 7, 8]},
+          2 => %{value: 3, tile_ids: [1, 2, 3, 4]}
+        },
+        players: %{
+          1 => %Player{unplaced_units: 0}
+        }
+      }
+
+      new_state = Game.begin_turn(old_state)
+
+      assert new_state.players[1].unplaced_units == 6
+    end
   end
 
   describe ".end_turn" do

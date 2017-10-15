@@ -6,6 +6,8 @@ defmodule Sengoku.GameServer do
   alias Sengoku.{Game, Token, AI}
   alias SengokuWeb.Endpoint
 
+  @ai_think_time 100 # ms
+
   def new do
     game_id = Token.new(8)
     start_link(game_id)
@@ -85,7 +87,7 @@ defmodule Sengoku.GameServer do
 
   def handle_info(:take_ai_move_if_necessary, state) do
     if Game.current_player(state).ai && !state.winner_id do
-      Process.sleep(50)
+      Process.sleep(@ai_think_time)
       action = AI.Smart.take_action(state)
       action(state.id, state.current_player_id, action)
     end

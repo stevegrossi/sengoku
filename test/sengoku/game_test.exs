@@ -337,23 +337,6 @@ defmodule Sengoku.GameTest do
       assert new_state.players[1].active == true
     end
 
-    test "does nothing when the last unowned tile is taken" do
-      old_state = %{
-        current_player_id: 1,
-        players: %{
-          1 => %Player{active: true, unplaced_units: 5},
-        },
-        tiles: %{
-          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{units: 1, owner: nil, neighbors: [1]}
-        }
-      }
-
-      new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].owner == 1
-      assert new_state.players[1].active == true
-    end
-
     test "when only one player remains active, they win!" do
       old_state = %{
         winner_id: nil,

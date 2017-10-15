@@ -96,12 +96,12 @@ body {
     transition: all .1s ease-in;
 
     &--major {
-      stroke-width: 5;
+      stroke-width: 7;
       stroke: rgba(255, 255, 255, .4);
     }
 
     &--minor {
-      stroke-width: 5;
+      stroke-width: 7;
       stroke: rgba(255, 255, 255, .2);
     }
   }

@@ -137,7 +137,7 @@ defmodule Sengoku.AI.Smart do
       type: "move",
       from_id: safe_owned_tile_id_with_most_units,
       to_id: friendly_neighbor_id,
-      count: units_in_safe_owned_tile_id_with_most_units
+      count: units_in_safe_owned_tile_id_with_most_units - 1
     }
   end
 
@@ -145,7 +145,7 @@ defmodule Sengoku.AI.Smart do
     state
     |> Tile.filter_ids(fn(tile) ->
          tile.owner == state.current_player_id &&
-         tile.units > 0 &&
+         tile.units > 1 &&
          tile.neighbors
          |> Enum.all?(fn(neighbor_id) ->
               neighbor = state.tiles[neighbor_id]

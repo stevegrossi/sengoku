@@ -8,8 +8,7 @@ defmodule SengokuWeb.GameChannel do
     if token do
       case GameServer.authenticate_player(game_id, token) do
         {:ok, player_id, token} ->
-          socket = assign(socket, :player_id, player_id)
-          {:reply, {:ok, %{token: token}}, socket}
+          {:reply, {:ok, %{token: token}}, assign(socket, :player_id, player_id)}
         {:error, reason} ->
           {:reply, {:ok, %{error: reason}}, socket}
       end

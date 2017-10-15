@@ -28,7 +28,7 @@ defmodule Sengoku.GameServer do
 
   # API
 
-  def authenticate_player(game_id, token, name) do
+  def authenticate_player(game_id, token, name \\ nil) do
     GenServer.call(via_tuple(game_id), {:authenticate_player, token, name})
   end
 

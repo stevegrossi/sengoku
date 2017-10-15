@@ -15,9 +15,7 @@ class Game extends React.Component {
 
   componentDidMount() {
     const self = this;
-    this.props.channel.on('update', new_state => {
-      self.setState(new_state)
-    })
+    this.props.channel.on('update', (new_state) => self.setState(new_state))
     if (this.canJoinGame()) this.joinAsPlayer()
   }
 

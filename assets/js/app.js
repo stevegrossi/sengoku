@@ -9,7 +9,8 @@ if (game_id && game_container) {
   const socket = new Socket('/socket', {params: {}})
   socket.connect()
 
-  const channel = socket.channel('games:' + game_id, {})
+  const token = localStorage.getItem('games:' + game_id + ':token')
+  const channel = socket.channel('games:' + game_id, { token: token })
   channel.join()
     .receive('ok', resp => {
       console.log('Joined game ' + game_id, resp)

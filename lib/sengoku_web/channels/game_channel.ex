@@ -44,6 +44,6 @@ defmodule SengokuWeb.GameChannel do
   end
 
   defp atomize_keys(%{} = map) do
-    for {key, val} <- map, into: %{}, do: {String.to_atom(key), val}
+    for {key, val} <- map, into: %{}, do: {String.to_existing_atom(key), val}
   end
 end

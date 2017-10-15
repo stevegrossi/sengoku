@@ -38,7 +38,8 @@ class Game extends React.Component {
       // Moving or attacking
       if (player_owns_tile && this.state.selectedTileId !== id) {
         // Moving
-        const unitCount = prompt('How many units do you wish to move? (This will end your turn.)')
+        const maxMovableUnits = this.state.tiles[this.state.selectedTileId].units - 1
+        const unitCount = prompt('How many units do you wish to move? (Max: ' + maxMovableUnits + ') This will end your turn.')
         this.action('move', {
           from_id: this.state.selectedTileId,
           to_id: id,

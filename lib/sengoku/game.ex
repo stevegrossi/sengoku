@@ -106,7 +106,7 @@ defmodule Sengoku.Game do
     defender_id = to_tile.owner
 
     if (
-      from_tile.units > 0 &&
+      from_tile.units > 1 &&
       from_tile.owner == current_player_id &&
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
@@ -143,7 +143,7 @@ defmodule Sengoku.Game do
     if (
       state.tiles[from_id].owner == current_player_id &&
       state.tiles[to_id].owner == current_player_id &&
-      count <= state.tiles[from_id].units &&
+      count < state.tiles[from_id].units &&
       from_id in state.tiles[to_id].neighbors
     ) do
       state

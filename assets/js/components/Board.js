@@ -45,37 +45,6 @@ const Board = (props) => {
     )
   })
 
-  // const tiles = Object.keys(props.tiles).map(Number).map((id) => {
-  //   const data = props.tiles[id]
-  //   const tile = boardData[id]
-  //   const is_selected = props.selectedTileId == id
-  //   const neighbor_of_selected = selectedNeighbors && selectedNeighbors.indexOf(id) > -1
-  //   let borderClassNames = ['Tile-border']
-  //   is_selected && borderClassNames.push('Tile-border--major')
-  //   neighbor_of_selected && borderClassNames.push('Tile-border--minor')
-
-  //   return (
-  //     <g key={id}
-  //        className="Tile"
-  //        transform={tile.translate}
-  //        fill={playerUI[data.owner] && playerUI[data.owner].color || '#d4c098'}
-  //        onClick={(e) => props.tileClicked(id, e)}>
-
-  //       <g className="Tile-background">{tile.path}</g>
-  //       <clipPath id={'clip-path-' + id}>{tile.path}</clipPath>
-  //       <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + id + ')'} fill="transparent" strokeWidth="5" stroke="rgba(255,255,255,.5)">{tile.path}</g>
-  //       {data.units > 0 &&
-  //         <text className="Tile-count"
-  //               stroke="none"
-  //               x={tile.tx}
-  //               y={tile.ty}
-  //               textAnchor="middle">{data.units}</text>
-  //       }
-  //       <g className="Tile-highlight">{tile.path}</g>
-  //     </g>
-  //   )
-  // })
-
   return (
     <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <defs>

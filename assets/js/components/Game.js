@@ -110,7 +110,7 @@ class Game extends React.Component {
       <div className="Game">
         {this.state.winner_id &&
           <div className="Overlay">
-            {playerUI[this.state.winner_id].name} wins!
+            {this.state.players[this.state.winner_id].name || 'Player ' + this.state.winner_id} wins!
           </div>
         }
         <div className="Display">

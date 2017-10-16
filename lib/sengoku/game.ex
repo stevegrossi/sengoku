@@ -118,7 +118,7 @@ defmodule Sengoku.Game do
       state
       |> Tile.adjust_units(from_id, -attacker_losses)
       |> Tile.adjust_units(to_id, -defender_losses)
-      |> check_for_capture(from_id, to_id)
+      |> check_for_capture(from_id, to_id, attacking_units)
       |> deactivate_player_if_defeated(defender_id)
       |> check_for_winner()
     else
@@ -126,12 +126,12 @@ defmodule Sengoku.Game do
     end
   end
 
-  defp check_for_capture(state, from_id, to_id) do
+  defp check_for_capture(state, from_id, to_id, attacking_units) do
     if state.tiles[to_id].units == 0 do
       state
-      |> Tile.adjust_units(from_id, -1)
+      |> Tile.adjust_units(from_id, -attacking_units)
       |> Tile.set_owner(to_id, state.current_player_id)
-      # |> put_tile(to_id, :units, 1)
+      |> Tile.adjust_units(to_id, attacking_units)
     else
       Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
       state

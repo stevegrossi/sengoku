@@ -118,7 +118,7 @@ defmodule Sengoku.Game do
       state
       |> Tile.adjust_units(from_id, -attacker_losses)
       |> Tile.adjust_units(to_id, -defender_losses)
-      |> check_for_capture(from_id, to_id, attacking_units)
+      |> check_for_capture(from_id, to_id, min(attacking_units, 3))
       |> deactivate_player_if_defeated(defender_id)
       |> check_for_winner()
     else

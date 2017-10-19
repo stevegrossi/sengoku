@@ -1,11 +1,10 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Authentication, Tile, Player, Region}
+  alias Sengoku.{Authentication, Tile, Player, Region, Battle}
 
   @min_new_units 3
   @tiles_per_new_unit 3
-  @battle_outcomes ~w(attacker defender)a
   @initial_state %{
     turn: 0,
     current_player_id: nil,
@@ -104,35 +103,35 @@ defmodule Sengoku.Game do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
     defender_id = to_tile.owner
+    attacking_units = from_tile.units - 1
+    defending_units = to_tile.units
 
     if (
-      from_tile.units > 1 &&
+      attacking_units > 0 &&
       from_tile.owner == current_player_id &&
       defender_id != current_player_id &&
       to_id in from_tile.neighbors
     ) do
-      outcome =
-        cond do
-          not is_nil(outcome) -> outcome
-          state.tiles[to_id].units == 0 -> :attacker
-          true -> Enum.random(@battle_outcomes)
-        end
-      case outcome do
-        :attacker ->
-          if state.tiles[to_id].units <= 1 do
-            state
-            |> Tile.adjust_units(from_id, -1)
-            |> Tile.update_attributes(to_id, %{owner: current_player_id, units: 1})
-            |> deactivate_player_if_defeated(defender_id)
-            |> check_for_winner()
-          else
-            state
-            |> Tile.adjust_units(to_id, -1)
-          end
-        :defender ->
-          state
-          |> Tile.adjust_units(from_id, -1)
-      end
+      {attacker_losses, defender_losses} =
+        outcome || Battle.decide(attacking_units, defending_units)
+
+      state
+      |> Tile.adjust_units(from_id, -attacker_losses)
+      |> Tile.adjust_units(to_id, -defender_losses)
+      |> check_for_capture(from_id, to_id, min(attacking_units, 3))
+      |> deactivate_player_if_defeated(defender_id)
+      |> check_for_winner()
+    else
+      state
+    end
+  end
+
+  defp check_for_capture(state, from_id, to_id, attacking_units) do
+    if state.tiles[to_id].units == 0 do
+      state
+      |> Tile.adjust_units(from_id, -attacking_units)
+      |> Tile.set_owner(to_id, state.current_player_id)
+      |> Tile.adjust_units(to_id, attacking_units)
     else
       Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
       state

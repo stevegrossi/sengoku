@@ -284,18 +284,22 @@ defmodule Sengoku.GameTest do
 
   describe ".attack" do
 
-    test "when the attacker wins, the defender loses an unit" do
+    test "attackers and defenders lose units" do
       old_state = %{
         current_player_id: 1,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
         tiles: %{
-          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
+          1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].units == 1
+      new_state = Game.attack(old_state, 1, 2, {1, 1})
       assert new_state.tiles[1].units == 2
+      assert new_state.tiles[2].units == 1
     end
 
     test "when the attacker defeats the last defender, captures the territory and moves one unit in" do
@@ -311,9 +315,9 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
-      assert new_state.tiles[2].units == 1
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.tiles[1].units == 1
+      assert new_state.tiles[2].units == 1
       assert new_state.tiles[2].owner == 1
     end
 
@@ -330,7 +334,7 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.tiles[2].owner == 1
       assert new_state.players[2].active == false
       assert new_state.players[2].unplaced_units == 0
@@ -351,24 +355,10 @@ defmodule Sengoku.GameTest do
         }
       }
 
-      new_state = Game.attack(old_state, 1, 2, :attacker)
+      new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.players[2].active == false
       assert new_state.players[1].active == true
       assert new_state.winner_id == 1
-    end
-
-    test "when the defender wins, the attacker loses a unit" do
-      old_state = %{
-        current_player_id: 1,
-        tiles: %{
-          1 => %Tile{units: 2, owner: 1, neighbors: [2]},
-          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
-        }
-      }
-
-      new_state = Game.attack(old_state, 1, 2, :defender)
-      assert new_state.tiles[1].units == 1
-      assert new_state.tiles[2].units == 2
     end
 
     test "changes nothing if Player has 1 unit in origin" do

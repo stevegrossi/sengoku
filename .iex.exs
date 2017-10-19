@@ -1,1 +1,1 @@
-alias Sengoku.{Game, Tile, Player, GameServer}
+alias Sengoku.{Game, Tile, Player, GameServer, Battle}

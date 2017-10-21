@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
 import Board from './Board'
 import Players from './Players'
-import playerUI from '../playerUI'
 
 class Game extends React.Component {
   constructor(props) {
@@ -129,6 +128,7 @@ class Game extends React.Component {
         {this.state.tiles &&
           <Board tiles={this.state.tiles}
                  regions={this.state.regions}
+                 players={this.state.players}
                  tileClicked={this.tileClicked.bind(this)}
                  cancelSelection={this.cancelSelection.bind(this)}
                  selectedTileId={this.state.selectedTileId} />

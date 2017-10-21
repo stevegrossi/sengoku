@@ -1,6 +1,5 @@
 import React from 'react'
 import boardData from '../boardData'
-import playerUI from '../playerUI'
 
 const Board = (props) => {
   const selectedNeighbors = props.selectedTileId && props.tiles[props.selectedTileId].neighbors
@@ -24,7 +23,7 @@ const Board = (props) => {
             <g key={tileId}
                className="Tile"
                transform={tile.translate}
-               fill={playerUI[data.owner] && playerUI[data.owner].color || '#d4c098'}
+               fill={data.owner && props.players[data.owner].color || '#d4c098'}
                onClick={(e) => props.tileClicked(tileId, e)}>
 
               <g className="Tile-background">{tile.path}</g>

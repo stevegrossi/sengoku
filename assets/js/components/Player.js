@@ -1,9 +1,8 @@
 import React from 'react'
-import playerUI from '../playerUI'
 
 const Player = (props) => {
   const styles = {
-    backgroundColor: playerUI[props.id].color,
+    backgroundColor: props.color,
   }
 
   let classNames = ['Player']

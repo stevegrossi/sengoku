@@ -8,6 +8,7 @@ const Players = (props) => {
                    id={player_id}
                    className="Player"
                    current={props.currentPlayerId == player_id}
+                   color={props.players[player_id].color}
                    active={props.players[player_id].active}
                    ai={props.players[player_id].ai}
                    name={props.players[player_id].name}

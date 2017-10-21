@@ -126,7 +126,8 @@ class Game extends React.Component {
           }
         </div>
         {this.state.tiles &&
-          <Board tiles={this.state.tiles}
+          <Board board={this.state.board}
+                 tiles={this.state.tiles}
                  regions={this.state.regions}
                  players={this.state.players}
                  tileClicked={this.tileClicked.bind(this)}

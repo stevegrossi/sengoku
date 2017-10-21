@@ -12,7 +12,7 @@ const Board = (props) => {
          filter="url(#groupoutline)"
          children={region.tile_ids.map((tileId) => {
           const data = props.tiles[tileId]
-          const tile = boardData[tileId]
+          const tile = boardData[props.board][tileId]
           const is_selected = props.selectedTileId == tileId
           const neighbor_of_selected = selectedNeighbors && selectedNeighbors.indexOf(tileId) > -1
           let borderClassNames = ['Tile-border']
@@ -59,8 +59,7 @@ const Board = (props) => {
           </feMerge>
         </filter>
       </defs>
-      <g id="japan"
-         stroke="none"
+      <g stroke="none"
          strokeWidth="1"
          fill="none"
          fillRule="evenodd"

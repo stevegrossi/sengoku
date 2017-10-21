@@ -11,11 +11,11 @@ defmodule Sengoku.Game do
     winner_id: nil,
   }
 
-  def initialize_state(game_id) do
+  def initialize_state(game_id, %{"board" => board}) do
     @initial_state
     |> Map.put(:id, game_id)
     |> Player.initialize_state
-    |> Tile.initialize_state
+    |> Tile.initialize_state(board)
     |> Authentication.initialize_state
     |> Region.initialize_state
   end

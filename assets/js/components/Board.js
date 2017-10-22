@@ -28,7 +28,7 @@ const Board = (props) => {
 
               <g className="Tile-background">{tile.path}</g>
               <clipPath id={'clip-path-' + tileId}>{tile.path}</clipPath>
-              <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + tileId + ')'} fill="transparent" dWidth="5">{tile.path}</g>
+              <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + tileId + ')'} fill="transparent">{tile.path}</g>
               {data.units > 0 &&
                 <text className="Tile-count"
                       stroke="none"

@@ -154,6 +154,7 @@ defmodule Sengoku.AI.Smart do
        end)
   end
 
+  # TODO: this should prioritize tiles with hostile neighbors
   defp find_friendly_neighbor_id(tile_id, state) do
     state.tiles[tile_id].neighbors
     |> Enum.filter(fn(neighbor_id) ->

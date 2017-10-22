@@ -9,8 +9,9 @@
     <li>A player is defeated when they no longer control any provinces.</li>
     <li>A player wins when all other players are defeated.</li>
   </ul>
-  <p>Board:
-    <label><input type="radio" name="board" value="japan" checked /> Japan</label>
+  <p>Map:
+    <label><input type="radio" name="board" value="japan" /> Japan</label>
+    <label><input type="radio" name="board" value="earth" checked /> Earth</label>
   </p>
   <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
 <% end %>

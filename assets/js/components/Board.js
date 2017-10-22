@@ -45,7 +45,7 @@ const Board = (props) => {
   })
 
   return (
-    <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 800 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="groupoutline">
           <feMorphology in="SourceGraphic" operator="dilate" radius="1"/>

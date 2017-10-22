@@ -19,7 +19,10 @@ defmodule Sengoku.Player do
       1 => new(%{name: "Player 1", color: @colors[1]}),
       2 => new(%{name: "Player 2", color: @colors[2]}),
       3 => new(%{name: "Player 3", color: @colors[3]}),
-      4 => new(%{name: "Player 4", color: @colors[4]})
+      4 => new(%{name: "Player 4", color: @colors[4]}),
+      # Extras for Earth
+      5 => new(%{name: "Player 5", color: @colors[5]}),
+      6 => new(%{name: "Player 6", color: @colors[6]})
     })
   end
 

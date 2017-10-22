@@ -1,1 +1,4 @@
-<script>window.game_id = '<%= @game_id %>';</script>
+<script>
+  window.game_id = '<%= @game_id %>'
+  window.logo_src = '<%= static_path(@conn, "/images/sengoku.svg") %>'
+</script>

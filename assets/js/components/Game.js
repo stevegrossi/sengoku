@@ -112,6 +112,9 @@ class Game extends React.Component {
           </div>
         }
         <div className="Display">
+          <h1 className="Logo">
+            <a href="/"><img src={window.logo_src} alt="Sengoku" /></a>
+          </h1>
           {this.state.players &&
             <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
           }
@@ -126,7 +129,8 @@ class Game extends React.Component {
           }
         </div>
         {this.state.tiles &&
-          <Board tiles={this.state.tiles}
+          <Board board={this.state.board}
+                 tiles={this.state.tiles}
                  regions={this.state.regions}
                  players={this.state.players}
                  tileClicked={this.tileClicked.bind(this)}

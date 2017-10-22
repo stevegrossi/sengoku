@@ -1,7 +1,7 @@
 defmodule Sengoku.Game do
   require Logger
 
-  alias Sengoku.{Authentication, Tile, Player, Region, Battle}
+  alias Sengoku.{Authentication, Tile, Player, Region, Battle, Board}
 
   @min_new_units 3
   @tiles_per_new_unit 3
@@ -11,13 +11,17 @@ defmodule Sengoku.Game do
     winner_id: nil,
   }
 
-  def initialize_state(game_id) do
+  def initialize_state(game_id, %{"board" => board}) do
+    initialize_state(game_id, Board.new(board))
+  end
+  def initialize_state(game_id, %Board{} = board) do
     @initial_state
     |> Map.put(:id, game_id)
-    |> Player.initialize_state
-    |> Tile.initialize_state
+    |> Map.put(:board, board.name)
+    |> Player.initialize_state(board.players_count)
+    |> Tile.initialize_state(board.tiles)
     |> Authentication.initialize_state
-    |> Region.initialize_state
+    |> Region.initialize_state(board.regions)
   end
 
   def start_game(state) do

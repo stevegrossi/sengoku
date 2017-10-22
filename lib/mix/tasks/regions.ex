@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Regions do
     IO.puts "Region | Value | Tiles | Border Tiles | “Free” Tiles | Value %"
     IO.puts "-------|-------|-------|--------------|--------------|--------"
 
-    Enum.each(Region.stats, fn({id, value, tiles_count, border_tiles_count, free_tiles, value_ratio}) ->
+    Enum.each(Region.stats("japan"), fn({id, value, tiles_count, border_tiles_count, free_tiles, value_ratio}) ->
       [
         String.pad_leading(Integer.to_string(id), 6),
         String.pad_leading(Integer.to_string(value), 5),

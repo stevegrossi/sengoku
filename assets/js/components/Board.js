@@ -12,7 +12,7 @@ const Board = (props) => {
          filter="url(#groupoutline)"
          children={region.tile_ids.map((tileId) => {
           const data = props.tiles[tileId]
-          const tile = boardData[tileId]
+          const tile = boardData[props.board][tileId]
           const is_selected = props.selectedTileId == tileId
           const neighbor_of_selected = selectedNeighbors && selectedNeighbors.indexOf(tileId) > -1
           let borderClassNames = ['Tile-border']
@@ -28,7 +28,7 @@ const Board = (props) => {
 
               <g className="Tile-background">{tile.path}</g>
               <clipPath id={'clip-path-' + tileId}>{tile.path}</clipPath>
-              <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + tileId + ')'} fill="transparent" strokeWidth="5" stroke="rgba(255,255,255,.5)">{tile.path}</g>
+              <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + tileId + ')'} fill="transparent">{tile.path}</g>
               {data.units > 0 &&
                 <text className="Tile-count"
                       stroke="none"
@@ -45,10 +45,10 @@ const Board = (props) => {
   })
 
   return (
-    <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 415 251" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 800 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="groupoutline">
-          <feMorphology in="SourceGraphic" operator="dilate" radius="1"/>
+          <feMorphology in="SourceGraphic" operator="dilate" radius="2"/>
           <feColorMatrix values="0 0 0 0 0
                                  0 0 0 0 0
                                  0 0 0 0 0
@@ -59,9 +59,7 @@ const Board = (props) => {
           </feMerge>
         </filter>
       </defs>
-      <g id="japan"
-         stroke="none"
-         strokeWidth="1"
+      <g stroke="none"
          fill="none"
          fillRule="evenodd"
          children={regions}

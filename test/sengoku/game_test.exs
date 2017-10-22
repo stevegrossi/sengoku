@@ -6,7 +6,7 @@ defmodule Sengoku.GameTest do
   describe ".initialize_state" do
 
     test "returns the state before the game begins" do
-      state = Game.initialize_state("123")
+      state = Game.initialize_state("123", %{"board" => "japan"})
 
       assert state.turn == 0
       assert state.current_player_id == nil

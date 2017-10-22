@@ -8,22 +8,22 @@ defmodule Sengoku.GameServer do
 
   @ai_think_time 100 # ms
 
-  def new do
+  def new(%{} = options) do
     game_id = Token.new(8)
-    start_link(game_id)
+    start_link(game_id, options)
     {:ok, game_id}
   end
 
-  def start_link(game_id) do
-    GenServer.start_link(__MODULE__, game_id)
+  def start_link(game_id, options) do
+    GenServer.start_link(__MODULE__, {game_id, options})
   end
 
-  def init(game_id) do
+  def init({game_id, options}) do
     case Registry.register(:game_server_registry, game_id, :ok) do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
-    {:ok, Game.initialize_state(game_id)}
+    {:ok, Game.initialize_state(game_id, options)}
   end
 
   # API

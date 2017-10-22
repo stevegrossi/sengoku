@@ -11,16 +11,17 @@ defmodule Sengoku.Game do
     winner_id: nil,
   }
 
-  def initialize_state(game_id, %{"board" => board_name}) do
-    board = Board.new(board_name)
-
+  def initialize_state(game_id, %{"board" => board}) do
+    initialize_state(game_id, Board.new(board))
+  end
+  def initialize_state(game_id, %Board{} = board) do
     @initial_state
     |> Map.put(:id, game_id)
-    |> Map.put(:board, board)
+    |> Map.put(:board, board.name)
     |> Player.initialize_state(board.players_count)
-    |> Tile.initialize_state(board_name)
+    |> Tile.initialize_state(board.tiles)
     |> Authentication.initialize_state
-    |> Region.initialize_state(board_name)
+    |> Region.initialize_state(board.regions)
   end
 
   def start_game(state) do

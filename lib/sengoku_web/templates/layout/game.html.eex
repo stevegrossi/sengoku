@@ -12,10 +12,6 @@
   </head>
 
   <body>
-    <h1 class="Logo">
-      <a href="/"><img src="<%= static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
-    </h1>
-
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <defs>
         <g id="icon-unit" fill="#fff">

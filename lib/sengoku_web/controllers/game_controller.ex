@@ -7,7 +7,7 @@ defmodule SengokuWeb.GameController do
     render conn, "new.html"
   end
 
-  def create(conn, %{"board" => _board, "players" => _players} = options) do
+  def create(conn, %{"board" => _board} = options) do
     {:ok, game_id} = GameServer.new(options)
     redirect conn, to: "/#{game_id}"
   end

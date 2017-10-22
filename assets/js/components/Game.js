@@ -113,7 +113,7 @@ class Game extends React.Component {
         }
         <div className="Display">
           <h1 className="Logo">
-            <a href="/"><img src="images/sengoku.svg" alt="Sengoku" /></a>
+            <a href="/"><img src={window.logo_src} alt="Sengoku" /></a>
           </h1>
           {this.state.players &&
             <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />

@@ -174,7 +174,6 @@ body {
   display: block;
   width: 200px;
   max-width: 100%;
-  margin: 0 auto;
   position: relative;
   z-index: $z-index-logo;
 }
@@ -201,7 +200,7 @@ body {
   padding: 0 1em;
 
   & > * {
-    margin: 1em 0;
+    margin: 1em auto;
   }
 }
 

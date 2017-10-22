@@ -48,7 +48,7 @@ const Board = (props) => {
     <svg className="Board" onClick={props.cancelSelection} viewBox="0 0 800 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="groupoutline">
-          <feMorphology in="SourceGraphic" operator="dilate" radius="1"/>
+          <feMorphology in="SourceGraphic" operator="dilate" radius="2"/>
           <feColorMatrix values="0 0 0 0 0
                                  0 0 0 0 0
                                  0 0 0 0 0

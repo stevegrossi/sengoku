@@ -36,7 +36,7 @@ defmodule Sengoku.Region do
     state =
       %{}
       |> initialize_state(board)
-      |> Sengoku.Tile.initialize_state
+      |> Sengoku.Tile.initialize_state(board)
 
     Enum.map(state.regions, fn({id, region}) ->
       border_tile_count =

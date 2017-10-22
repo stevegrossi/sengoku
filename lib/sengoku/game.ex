@@ -15,7 +15,7 @@ defmodule Sengoku.Game do
     @initial_state
     |> Map.put(:id, game_id)
     |> Map.put(:board, board)
-    |> Player.initialize_state
+    |> Player.initialize_state(6)
     |> Tile.initialize_state(board)
     |> Authentication.initialize_state
     |> Region.initialize_state(board)

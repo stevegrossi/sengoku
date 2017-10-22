@@ -14,16 +14,12 @@ defmodule Sengoku.Player do
     struct(__MODULE__, atts)
   end
 
-  def initialize_state(state) do
-    Map.put(state, :players, %{
-      1 => new(%{name: "Player 1", color: @colors[1]}),
-      2 => new(%{name: "Player 2", color: @colors[2]}),
-      3 => new(%{name: "Player 3", color: @colors[3]}),
-      4 => new(%{name: "Player 4", color: @colors[4]}),
-      # Extras for Earth
-      5 => new(%{name: "Player 5", color: @colors[5]}),
-      6 => new(%{name: "Player 6", color: @colors[6]})
-    })
+  def initialize_state(state, count) when is_integer(count) do
+    Map.put(state, :players, Enum.reduce(1..count, %{}, &add_player/2))
+  end
+
+  defp add_player(id, map) do
+    Map.put(map, id, new(%{name: "Player #{id}", color: @colors[id]}))
   end
 
   def update_attributes(state, player_id, %{} = new_atts) do

@@ -70,19 +70,26 @@ defmodule Sengoku.Game do
     end
   end
 
-  def end_turn(%{current_player_id: current_player_id} = state) do
-    active_player_ids = Player.active_ids(state)
-    next_player_id = Enum.at(active_player_ids, Enum.find_index(active_player_ids, fn(id) -> id == current_player_id end) + 1)
-    case Enum.member?(active_player_ids, next_player_id) do
-      true ->
-        state
-          |> Map.put(:current_player_id, next_player_id)
-      false ->
-        state
-        |> Map.update!(:turn, &(&1 + 1))
-        |> Map.put(:current_player_id, hd(active_player_ids))
-    end
+  def end_turn(state) do
+    state
+    |> rotate_current_player()
     |> begin_turn()
+  end
+
+  defp rotate_current_player(%{current_player_id: current_player_id} = state) do
+    active_player_ids = Player.active_ids(state)
+    next_player_id =
+      active_player_ids
+      |> Enum.at(Enum.find_index(active_player_ids, &(&1 == current_player_id)) + 1)
+
+    if next_player_id in active_player_ids do
+      state
+      |> Map.put(:current_player_id, next_player_id)
+    else
+      state
+      |> Map.update!(:turn, &(&1 + 1))
+      |> Map.put(:current_player_id, hd(active_player_ids))
+    end
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do

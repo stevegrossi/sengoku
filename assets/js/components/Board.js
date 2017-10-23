@@ -1,27 +1,19 @@
 import React from 'react'
-import Tile from './Tile'
-import boardData from '../boardData'
+import Region from './Region'
 
 const Board = (props) => {
   const selectedNeighbors = props.selectedTileId && props.tiles[props.selectedTileId].neighbors
-  const regionIds = Object.keys(props.regions).map(Number)
 
-  const regions = regionIds.map((regionId) => {
-    const region = props.regions[regionId]
+  const regions = Object.keys(props.regions).map(Number).map((regionId) => {
     return (
-      <g key={regionId}
-         filter="url(#groupoutline)"
-         children={region.tile_ids.map((tileId) =>
-          <Tile key={tileId}
-                id={tileId}
-                data={props.tiles[tileId]}
-                tile={boardData[props.board][tileId]}
-                tileClicked={props.tileClicked}
-                isSelected={props.selectedTileId == tileId}
-                isNeighborOfSelected={selectedNeighbors && selectedNeighbors.indexOf(tileId) > -1}
-                players={props.players}
-          />
-         )}
+      <Region key={regionId}
+              tileIds={props.regions[regionId].tile_ids}
+              tiles={props.tiles}
+              board={props.board}
+              tileClicked={props.tileClicked}
+              selectedTileId={props.selectedTileId}
+              players={props.players}
+              selectedNeighbors={selectedNeighbors}
       />
     )
   })

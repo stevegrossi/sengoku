@@ -51,7 +51,7 @@ class Game extends React.Component {
       }
     } else {
       if (player_owns_tile) {
-        if (this.state.players[this.state.current_player_id].unplaced_units > 0) {
+        if (this.state.current_player_id && this.state.players[this.state.current_player_id].unplaced_units > 0) {
           // Placing units
           this.action('place_unit', { tile_id: id })
           e.stopPropagation()

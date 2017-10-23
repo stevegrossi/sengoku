@@ -1,4 +1,5 @@
 import React from 'react'
+import Tile from './Tile'
 import boardData from '../boardData'
 
 const Board = (props) => {
@@ -10,36 +11,17 @@ const Board = (props) => {
     return (
       <g key={regionId}
          filter="url(#groupoutline)"
-         children={region.tile_ids.map((tileId) => {
-          const data = props.tiles[tileId]
-          const tile = boardData[props.board][tileId]
-          const is_selected = props.selectedTileId == tileId
-          const neighbor_of_selected = selectedNeighbors && selectedNeighbors.indexOf(tileId) > -1
-          let borderClassNames = ['Tile-border']
-          is_selected && borderClassNames.push('Tile-border--major')
-          neighbor_of_selected && borderClassNames.push('Tile-border--minor')
-
-          return (
-            <g key={tileId}
-               className="Tile"
-               transform={tile.translate}
-               fill={data.owner && props.players[data.owner].color || '#d4c098'}
-               onClick={(e) => props.tileClicked(tileId, e)}>
-
-              <g className="Tile-background">{tile.path}</g>
-              <clipPath id={'clip-path-' + tileId}>{tile.path}</clipPath>
-              <g className={borderClassNames.join(' ')} clipPath={'url(#clip-path-' + tileId + ')'} fill="transparent">{tile.path}</g>
-              {data.units > 0 &&
-                <text className="Tile-count"
-                      stroke="none"
-                      x={tile.tx}
-                      y={tile.ty}
-                      textAnchor="middle">{data.units}</text>
-              }
-              <g className="Tile-highlight">{tile.path}</g>
-            </g>
-          )
-         })}
+         children={region.tile_ids.map((tileId) =>
+          <Tile key={tileId}
+                id={tileId}
+                data={props.tiles[tileId]}
+                tile={boardData[props.board][tileId]}
+                tileClicked={props.tileClicked}
+                isSelected={props.selectedTileId == tileId}
+                isNeighborOfSelected={selectedNeighbors && selectedNeighbors.indexOf(tileId) > -1}
+                players={props.players}
+          />
+         )}
       />
     )
   })

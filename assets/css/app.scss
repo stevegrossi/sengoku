@@ -122,19 +122,22 @@ h2 {
           user-select: none;
 }
 
-.Overlay {
+.Modal {
   background: rgba($black, .75);
   position: fixed;
   top: 0;
-  width: 100%;
-  left: 0;
+  width: 80%;
+  left: 20%;
   z-index: $z-index-overlay;
   height: 100%;
   display: flex;
-  color: $white;
-  font-weight: bold;
   align-items: center;
   justify-content: center;
+}
+
+.GameOver {
+  color: $white;
+  font-weight: bold;
   font-size: 3em;
   text-shadow: 0 1px 2px $black;
   pointer-events: none;
@@ -242,3 +245,47 @@ h2 {
     }
   }
 }
+
+.MoveForm {
+  min-width: 50%;
+
+  &-slider {
+    display: flex;
+    font-size: 4em;
+    text-shadow: 0 1px 3px $black;
+
+    & > * {
+      margin: .5em;
+    }
+  }
+
+  &-setter {
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+  }
+
+  &-input {
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  &-actions {
+    display: flex;
+    justify-content: space-between;
+    // The "Submit" button must be first in the DOM so that it’s
+    // triggered on pressing [Enter], but it should appear last
+    // in the row, hence the reversed order.
+    flex-direction: row-reverse;
+
+    & > * {
+      margin-right: 1em;
+
+      &:first-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+

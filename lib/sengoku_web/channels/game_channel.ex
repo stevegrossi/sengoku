@@ -36,7 +36,6 @@ defmodule SengokuWeb.GameChannel do
     {:noreply, socket}
   end
 
-  # not necessary after joining socket, only after joining game, right?
   def handle_info(:after_join, socket) do
     state = GameServer.get_state(socket.assigns[:game_id])
     broadcast socket, "update", state

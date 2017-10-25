@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
 import Board from './Board'
 import Players from './Players'
+import MoveForm from './MoveForm'
 
 class Game extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       selectedTileId: null,
+      movingTo: null
     }
   }
 
@@ -35,14 +37,7 @@ class Game extends React.Component {
       // Moving or attacking
       if (player_owns_tile && this.state.selectedTileId !== id) {
         // Moving
-        const maxMovableUnits = this.state.tiles[this.state.selectedTileId].units - 1
-        const unitCount = prompt('How many units do you wish to move? (Max: ' + maxMovableUnits + ') This will end your turn.')
-        this.action('move', {
-          from_id: this.state.selectedTileId,
-          to_id: id,
-          count: parseInt(unitCount)
-        })
-        this.cancelSelection()
+        this.setState({ movingTo: id })
         e.stopPropagation()
       } else if (this.state.selectedTileId !== id) {
         // Attacking
@@ -66,7 +61,10 @@ class Game extends React.Component {
   }
 
   cancelSelection() {
-    this.setState({ selectedTileId: null })
+    this.setState({
+      selectedTileId: null,
+      movingTo: null
+    })
   }
 
   action(type, payload) {
@@ -103,13 +101,33 @@ class Game extends React.Component {
       })
   }
 
+  cancelMove(event) {
+    this.setState({ movingTo: false })
+    event.preventDefault()
+  }
+
+  submitMove(unitCount) {
+    this.action('move', {
+      from_id: this.state.selectedTileId,
+      to_id: this.state.movingTo,
+      count: parseInt(unitCount)
+    })
+    this.cancelSelection()
+  }
+
   render() {
     return (
       <div className="Game">
         {this.state.winner_id &&
-          <div className="Overlay">
+          <div className="Modal GameOver">
             {this.state.players[this.state.winner_id].name || 'Player ' + this.state.winner_id} wins!
           </div>
+        }
+        {this.state.movingTo &&
+          <MoveForm maxUnits={this.state.tiles[this.state.selectedTileId].units - 1}
+                    cancelMove={this.cancelMove.bind(this)}
+                    submitMove={this.submitMove.bind(this)}
+          />
         }
         <div className="Display">
           <h1 className="Logo">

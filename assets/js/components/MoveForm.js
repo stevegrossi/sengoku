@@ -1,5 +1,7 @@
 import React from 'react'
 
+const KEYCODE_ESCAPE = 27
+
 class MoveForm extends React.Component {
 
   constructor(props) {
@@ -7,6 +9,18 @@ class MoveForm extends React.Component {
     this.state = {
       value: props.maxUnits
     }
+  }
+
+  handleKeyup(event) {
+    if (event.keyCode === KEYCODE_ESCAPE) this.props.cancelMove(event)
+  }
+
+  componentDidMount() {
+    window.addEventListener("keyup", this.handleKeyup.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keyup", this.handleKeyup);
   }
 
   handleSubmit(event) {

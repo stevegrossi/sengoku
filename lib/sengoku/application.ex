@@ -1,4 +1,8 @@
 defmodule Sengoku.Application do
+  @moduledoc """
+  The top-level OTP application.
+  """
+
   use Application
 
   # See https://hexdocs.pm/elixir/Application.html

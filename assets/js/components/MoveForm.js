@@ -10,7 +10,6 @@ class MoveForm extends React.Component {
   }
 
   handleSubmit(event) {
-    console.log('moving units', this.state.value)
     this.props.submitMove(this.state.value);
     event.preventDefault()
   }
@@ -19,10 +18,20 @@ class MoveForm extends React.Component {
     this.setState({ value: event.target.value })
   }
 
+  halfMaxUnits() {
+    return Math.floor(this.props.maxUnits / 2)
+  }
+
+  moveHalf(event) {
+    this.props.submitMove(this.halfMaxUnits())
+    event.preventDefault()
+  }
+
   render() {
     return (
       <div className="Modal">
         <form className="MoveForm" onSubmit={this.handleSubmit.bind(this)}>
+          <h2>Move how many?</h2>
           <div className="MoveForm-slider">
             <span>0</span>
             <input className="MoveForm-input"
@@ -40,6 +49,12 @@ class MoveForm extends React.Component {
                    type="submit"
                    value={'Move ' + this.state.value}
             />
+            <button className="Button Button--primary"
+                    type="submit"
+                    onClick={this.moveHalf.bind(this)}
+            >
+              Move {this.halfMaxUnits()} (half)
+            </button>
             <button className="Button"
                     onClick={this.props.cancelMove}
                     children={'Cancel'}

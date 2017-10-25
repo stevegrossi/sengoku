@@ -1,4 +1,7 @@
 defmodule Sengoku.Battle do
+  @moduledoc """
+  Responsible for the logic of one Player attacking another’s neighboring Tile.
+  """
 
   def decide(attacker_count, defender_count) do
     attacker_rolls =

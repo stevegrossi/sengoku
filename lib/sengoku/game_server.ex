@@ -1,4 +1,9 @@
 defmodule Sengoku.GameServer do
+  @moduledoc """
+  A GenServer responsible for maintaining the entire state of a single game,
+  including dispatching players’ actions to change that state.
+  """
+
   use GenServer
 
   require Logger

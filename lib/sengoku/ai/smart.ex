@@ -1,4 +1,8 @@
 defmodule Sengoku.AI.Smart do
+  @moduledoc """
+  An AI that chooses moves procedurally, more-or-less as a human would.
+  """
+
   @behaviour Sengoku.AI
 
   alias Sengoku.{Game, Tile}

@@ -1,4 +1,9 @@
 defmodule Sengoku.Region do
+  @moduledoc """
+  The struct and behavior of the domain-model Region, which is a grouping of
+  Tiles on the board, controlling all of which grants a bonus.
+  """
+
   @enforce_keys [:value, :tile_ids]
   defstruct [:value, :tile_ids]
 
@@ -15,6 +20,11 @@ defmodule Sengoku.Region do
   end
   def containing_tile_ids(_, _), do: []
 
+  @doc """
+  Not game logic, but this provides information about the costs and benefits of
+  controlling each region which can be helpful to ensure balance when designing
+  regions on new boards.
+  """
   def stats(board) do
     state =
       %{}

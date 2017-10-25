@@ -1,4 +1,8 @@
 defmodule SengokuWeb.GameChannel do
+  @moduledoc """
+  The interface between the browser and the GameServer.
+  """
+
   use SengokuWeb, :channel
 
   alias Sengoku.GameServer

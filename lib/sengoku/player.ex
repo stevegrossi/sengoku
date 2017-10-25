@@ -1,4 +1,9 @@
 defmodule Sengoku.Player do
+  @moduledoc """
+  The struct and behavior of the domain-model Player, which corresponds to a
+  human- or computer-controller actor in the game.
+  """
+
   defstruct unplaced_units: 0, active: true, ai: true, name: nil, color: nil
 
   @colors %{

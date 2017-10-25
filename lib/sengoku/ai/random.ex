@@ -1,4 +1,9 @@
 defmodule Sengoku.AI.Random do
+  @moduledoc """
+  An AI that chooses moves more-or-less randomly.
+  A baseline against which to test other AIs.
+  """
+
   @behaviour Sengoku.AI
 
   alias Sengoku.{Game, Tile}

@@ -1,4 +1,9 @@
 defmodule Sengoku.Game do
+  @moduledoc """
+  Primarily responsible for all state transitions of the GameServer’s state,
+  which in practice means the rules of the game.
+  """
+
   require Logger
 
   alias Sengoku.{Authentication, Tile, Player, Region, Battle, Board}
@@ -117,12 +122,11 @@ defmodule Sengoku.Game do
     attacking_units = from_tile.units - 1
     defending_units = to_tile.units
 
-    if (
-      attacking_units > 0 &&
-      from_tile.owner == current_player_id &&
-      defender_id != current_player_id &&
-      to_id in from_tile.neighbors
-    ) do
+    if attacking_units > 0 &&
+       from_tile.owner == current_player_id &&
+       defender_id != current_player_id &&
+       to_id in from_tile.neighbors
+    do
       {attacker_losses, defender_losses} =
         outcome || Battle.decide(attacking_units, defending_units)
 
@@ -150,12 +154,11 @@ defmodule Sengoku.Game do
   end
 
   def move(%{current_player_id: current_player_id} = state, from_id, to_id, count) do
-    if (
-      state.tiles[from_id].owner == current_player_id &&
-      state.tiles[to_id].owner == current_player_id &&
-      count < state.tiles[from_id].units &&
-      from_id in state.tiles[to_id].neighbors
-    ) do
+    if state.tiles[from_id].owner == current_player_id &&
+       state.tiles[to_id].owner == current_player_id &&
+       count < state.tiles[from_id].units &&
+       from_id in state.tiles[to_id].neighbors
+    do
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)

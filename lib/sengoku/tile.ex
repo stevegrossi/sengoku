@@ -1,4 +1,9 @@
 defmodule Sengoku.Tile do
+  @moduledoc """
+  The struct and behavior of the domain-model Tile, which corresponds to a
+  controllable territory on the game board.
+  """
+
   defstruct owner: nil, units: 1, neighbors: []
 
   def new(neighbors) do

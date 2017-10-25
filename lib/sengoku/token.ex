@@ -1,4 +1,7 @@
 defmodule Sengoku.Token do
+  @moduledoc """
+  A helper module for generating random tokens for identifying protected resources.
+  """
 
   @doc """
   Returns a random hex string of binary length n. The hex length will be double that.

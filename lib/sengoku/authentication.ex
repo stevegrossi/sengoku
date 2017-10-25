@@ -1,4 +1,9 @@
 defmodule Sengoku.Authentication do
+  @moduledoc """
+  Responible for token-based authentication to determine which human players
+  correspond to which integer player IDs in the GameServer’s state.
+  """
+
   alias Sengoku.{Player, Token}
 
   def initialize_state(state) do

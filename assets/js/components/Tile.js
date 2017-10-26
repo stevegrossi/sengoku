@@ -14,9 +14,15 @@ const Tile = (props) => {
        fill={props.data.owner && props.players[props.data.owner].color || '#d4c098'}
        onClick={(e) => props.tileClicked(props.id, e)}
     >
-      <g className="Tile-background">{props.tile.path}</g>
-      <clipPath id={'clip-path-' + props.id}>{props.tile.path}</clipPath>
-      <g className={borderClassName(props)} clipPath={'url(#clip-path-' + props.id + ')'} fill="transparent">{props.tile.path}</g>
+      <g className="Tile-background">
+        <use xlinkHref={'#path-' + props.id} />
+      </g>
+      <clipPath id={'clip-path-' + props.id}>
+        <use xlinkHref={'#path-' + props.id} />
+      </clipPath>
+      <g className={borderClassName(props)} clipPath={'url(#clip-path-' + props.id + ')'} fill="transparent">
+        <use xlinkHref={'#path-' + props.id} />
+      </g>
       {props.data.units > 0 &&
         <text className="Tile-count"
               stroke="none"
@@ -24,7 +30,9 @@ const Tile = (props) => {
               y={props.tile.ty}
               textAnchor="middle">{props.data.units}</text>
       }
-      <g className="Tile-highlight">{props.tile.path}</g>
+      <g className="Tile-highlight">
+        <use xlinkHref={'#path-' + props.id} />
+      </g>
     </g>
   )
 }

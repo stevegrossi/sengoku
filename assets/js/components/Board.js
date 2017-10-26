@@ -1,5 +1,6 @@
 import React from 'react'
 import Region from './Region'
+import boardData from '../boardData'
 
 const Board = (props) => {
   const selectedNeighbors = props.selectedTileId && props.tiles[props.selectedTileId].neighbors
@@ -32,6 +33,7 @@ const Board = (props) => {
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        {boardData[props.board].defs}
       </defs>
       <g stroke="none"
          fill="none"

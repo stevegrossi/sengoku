@@ -14,9 +14,6 @@ const Tile = (props) => {
        fill={props.data.owner && props.players[props.data.owner].color || '#d4c098'}
        onClick={(e) => props.tileClicked(props.id, e)}
     >
-      <defs>
-        {props.tile.path}
-      </defs>
       <g className="Tile-background">
         <use xlinkHref={'#path-' + props.id} />
       </g>

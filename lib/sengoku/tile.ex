@@ -48,4 +48,8 @@ defmodule Sengoku.Tile do
     |> Enum.into(%{})
     |> Map.keys
   end
+
+  def owned_by_player_id?(tile, player_id) do
+    tile.owner == player_id
+  end
 end

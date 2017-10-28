@@ -137,6 +137,7 @@ defmodule Sengoku.Game do
       |> deactivate_player_if_defeated(defender_id)
       |> check_for_winner()
     else
+      Logger.info("Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_id}`")
       state
     end
   end
@@ -148,7 +149,6 @@ defmodule Sengoku.Game do
       |> Tile.set_owner(to_id, state.current_player_id)
       |> Tile.adjust_units(to_id, attacking_units)
     else
-      Logger.info("Invalid attack from `#{from_id}` to `#{to_id}`")
       state
     end
   end

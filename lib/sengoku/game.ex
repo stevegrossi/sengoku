@@ -42,25 +42,25 @@ defmodule Sengoku.Game do
     end
   end
 
-  def begin_turn(%{current_player_id: current_player_id} = state) do
+  def begin_turn(state) do
     state
-    |> grant_new_units(current_player_id)
-    |> grant_region_bonuses(current_player_id)
+    |> grant_new_units()
+    |> grant_region_bonuses()
   end
 
-  defp grant_new_units(state, player_id) do
+  defp grant_new_units(%{current_player_id: current_player_id} = state) do
     new_units_count =
       state
-      |> Tile.ids_owned_by(player_id)
+      |> Tile.ids_owned_by(current_player_id)
       |> length
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 
-    Player.grant_reinforcements(state, player_id, new_units_count)
+    Player.grant_reinforcements(state, current_player_id, new_units_count)
   end
 
-  defp grant_region_bonuses(state, player_id) do
-    owned_tile_ids = Tile.ids_owned_by(state, player_id)
+  defp grant_region_bonuses(%{current_player_id: current_player_id} = state) do
+    owned_tile_ids = Tile.ids_owned_by(state, current_player_id)
     case Region.containing_tile_ids(state, owned_tile_ids) do
       [] ->
         state
@@ -71,7 +71,7 @@ defmodule Sengoku.Game do
           end)
 
         state
-        |> Player.grant_reinforcements(player_id, bonus)
+        |> Player.grant_reinforcements(current_player_id, bonus)
     end
   end
 

@@ -24,7 +24,7 @@ defmodule Sengoku.AI.Smart do
     preferred_regions = get_preferred_regions(state)
     tile_id =
       state
-      |> owned_border_tile_ids
+      |> owned_border_tile_ids()
       |> sort_tile_ids_by_region_preference(preferred_regions)
       |> List.first
 
@@ -33,7 +33,7 @@ defmodule Sengoku.AI.Smart do
 
   defp has_attackable_neighbor?(state) do
     state
-    |> tile_ids_with_attackable_neighbors
+    |> tile_ids_with_attackable_neighbors()
     |> length > 0
   end
 
@@ -41,7 +41,7 @@ defmodule Sengoku.AI.Smart do
     preferred_regions = get_preferred_regions(state)
     tile_with_attackable_neighbor_id =
       state
-      |> tile_ids_with_attackable_neighbors
+      |> tile_ids_with_attackable_neighbors()
       |> sort_tile_ids_by_region_preference(preferred_regions)
       |> List.first
 
@@ -118,20 +118,20 @@ defmodule Sengoku.AI.Smart do
 
   def can_move?(state) do
     state
-    |> safe_owned_tiles
-    |> length > 0
+    |> safe_owned_tiles()
+    |> length() > 0
   end
 
   def move(state) do
     safe_owned_tile_id_with_most_units =
       state
-      |> safe_owned_tiles
+      |> safe_owned_tiles()
       |> Enum.max_by(fn(tile_id) ->
-           state.tiles[tile_id].units
+           Tile.get(state, tile_id).units
          end)
 
     units_in_safe_owned_tile_id_with_most_units =
-      state.tiles[safe_owned_tile_id_with_most_units].units
+      Tile.get(state, safe_owned_tile_id_with_most_units).units
 
     friendly_neighbor_id =
       safe_owned_tile_id_with_most_units

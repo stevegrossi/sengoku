@@ -101,7 +101,7 @@ defmodule Sengoku.Game do
     if current_player(state).unplaced_units > 0 do
       tile = state.tiles[tile_id]
 
-      if tile.owner == current_player_id do
+      if Tile.owned_by_player_id?(tile, current_player_id) do
         state
         |> Player.use_reinforcement(current_player_id)
         |> Tile.adjust_units(tile_id, 1)

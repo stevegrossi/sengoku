@@ -32,10 +32,10 @@ defmodule Sengoku.Game do
   def start_game(state) do
     if length(Player.active_ids(state)) > 1 do
       state
-      |> assign_tiles
-      |> increment_turn
-      |> setup_first_turn
-      |> begin_turn
+      |> assign_tiles()
+      |> increment_turn()
+      |> setup_first_turn()
+      |> begin_turn()
     else
       Logger.info("Tried to start game without enough players")
       state
@@ -52,7 +52,7 @@ defmodule Sengoku.Game do
     new_units_count =
       state
       |> Tile.ids_owned_by(current_player_id)
-      |> length
+      |> length()
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 

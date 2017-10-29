@@ -56,36 +56,35 @@ defmodule Sengoku.AI.Smart do
     }
   end
 
-  defp tile_ids_with_attackable_neighbors(state) do
+  defp tile_ids_with_attackable_neighbors(%{current_player_id: current_player_id} = state) do
     state
     |> Tile.filter_ids(fn(tile) ->
-         tile.owner == state.current_player_id &&
-         tile.units > 1 &&
-         tile.neighbors
-         |> Enum.any?(fn(neighbor_id) ->
-              neighbor = state.tiles[neighbor_id]
-              neighbor.owner !== state.current_player_id
-            end)
+         Tile.owned_by_player_id?(tile, current_player_id) and
+         tile.units > 1 and
+         Enum.any?(tile.neighbors, fn(neighbor_id) ->
+           neighbor = Tile.get(state, neighbor_id)
+           !Tile.owned_by_player_id?(tile, neighbor.owner)
+         end)
        end)
   end
 
-  defp find_attackable_neighbor_id(tile_id, state) do
-    state.tiles[tile_id].neighbors
+  defp find_attackable_neighbor_id(tile_id, %{current_player_id: current_player_id} = state) do
+    Tile.get(state, tile_id).neighbors
     |> Enum.filter(fn(neighbor_id) ->
-         neighbor = state.tiles[neighbor_id]
-         neighbor.owner !== state.current_player_id
+         neighbor = Tile.get(state, neighbor_id)
+         !Tile.owned_by_player_id?(neighbor, current_player_id)
        end)
     |> Enum.random
   end
 
-  defp owned_border_tile_ids(state) do
+  defp owned_border_tile_ids(%{current_player_id: current_player_id} = state) do
     state
     |> Tile.filter_ids(fn(tile) ->
-         tile.owner == state.current_player_id &&
+         Tile.owned_by_player_id?(tile, current_player_id) and
          tile.neighbors
          |> Enum.any?(fn(neighbor_id) ->
-              neighbor = state.tiles[neighbor_id]
-              neighbor.owner !== tile.owner
+              neighbor = Tile.get(state, neighbor_id)
+              !Tile.owned_by_player_id?(neighbor, tile.owner)
             end)
        end)
   end
@@ -152,7 +151,7 @@ defmodule Sengoku.AI.Smart do
          tile.units > 1 &&
          tile.neighbors
          |> Enum.all?(fn(neighbor_id) ->
-              neighbor = state.tiles[neighbor_id]
+              neighbor = Tile.get(state, neighbor_id)
               neighbor.owner == state.current_player_id
             end)
        end)
@@ -160,9 +159,9 @@ defmodule Sengoku.AI.Smart do
 
   # TODO: this should prioritize tiles with hostile neighbors
   defp find_friendly_neighbor_id(tile_id, state) do
-    state.tiles[tile_id].neighbors
+    Tile.get(state, tile_id).neighbors
     |> Enum.filter(fn(neighbor_id) ->
-         neighbor = state.tiles[neighbor_id]
+         neighbor = Tile.get(state, neighbor_id)
          neighbor.owner == state.current_player_id
        end)
     |> Enum.random

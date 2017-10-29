@@ -33,7 +33,7 @@ defmodule Sengoku.AI.SmartTest do
       },
       tiles: %{
         1 => %Tile{owner: 1, units: 2, neighbors: [2]},
-        2 => %Tile{owner: nil, units: 1, neighbors: [1]}
+        2 => %Tile{owner: 2, units: 1, neighbors: [1]}
       },
       regions: %{
         1 => %Region{value: 1, tile_ids: [1]},

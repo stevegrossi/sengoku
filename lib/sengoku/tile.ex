@@ -49,7 +49,11 @@ defmodule Sengoku.Tile do
     |> Map.keys
   end
 
-  def owned_by_player_id?(tile, player_id) do
-    tile.owner == player_id
+  def owned_by_player_id?(%__MODULE__{owner: owner}, player_id) do
+    owner == player_id
+  end
+
+  def get(state, tile_id) do
+    state.tiles[tile_id]
   end
 end

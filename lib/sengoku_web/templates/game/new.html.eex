@@ -1,25 +1,30 @@
-<%= form_tag("/") do %>
-  <h2>Play</h2>
-  <p>Up to 4 players: play against friends online, the computer, or both.</p>
-  <ul>
-    <li>Provinces are randomly divided amongst all players at the start of the game.</li>
-    <li>Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.</li>
-    <li>Receive bonus units for holding all provinces within a marked region.</li>
-    <li>On your turn you may attack neighboring provinces. If you defeat all units in a province, it becomes yours.</li>
-    <li>At the end of your turn, you may move units from one of your provinces to one of its neighbors you control.</li>
-    <li>A player is defeated when they no longer control any provinces.</li>
-    <li>A player wins when all other players are defeated.</li>
-  </ul>
-  <h2>Map</h2>
-  <p>
-    <input class="BorderRadio-input" id="board_japan" type="radio" name="board" value="japan" checked />
-    <label class="BorderRadio-label" for="board_japan">
-      <b>Japan</b><br>4 players
-    </label>
-    <input class="BorderRadio-input" id="board_earth" type="radio" name="board" value="earth" />
-    <label class="BorderRadio-label" for="board_earth">
-      <b>Earth</b><br>6 players
-    </label>
-  </p>
-  <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
-<% end %>
+<div class="NewGameForm">
+  <section>
+    <h2>Play</h2>
+    <p>Up to 4 players: play against friends online, the computer, or both.</p>
+    <ul>
+      <li>Provinces are randomly divided amongst all players at the start of the game.</li>
+      <li>Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.</li>
+      <li>Receive bonus units for holding all provinces within a marked region.</li>
+      <li>On your turn you may attack neighboring provinces. If you defeat all units in a province, it becomes yours.</li>
+      <li>At the end of your turn, you may move units from one of your provinces to one of its neighbors you control.</li>
+      <li>A player is defeated when they no longer control any provinces.</li>
+      <li>A player wins when all other players are defeated.</li>
+    </ul>
+  </section>
+
+  <%= form_tag("/") do %>
+    <h2>Map</h2>
+    <p>
+      <input class="BorderRadio-input" id="board_japan" type="radio" name="board" value="japan" checked />
+      <label class="BorderRadio-label" for="board_japan">
+        <b>Japan</b><br>4 players
+      </label>
+      <input class="BorderRadio-input" id="board_earth" type="radio" name="board" value="earth" />
+      <label class="BorderRadio-label" for="board_earth">
+        <b>Earth</b><br>6 players
+      </label>
+    </p>
+    <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
+  <% end %>
+</div>

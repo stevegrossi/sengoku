@@ -29,6 +29,23 @@ defmodule Sengoku.Game do
     |> Region.initialize_state(board.regions)
   end
 
+  def handle_action(state, %{type: "end_turn"}) do
+    end_turn(state)
+  end
+  def handle_action(state, %{type: "place_unit", tile_id: tile_id}) do
+    place_unit(state, tile_id)
+  end
+  def handle_action(state, %{type: "attack", from_id: from_id, to_id: to_id}) do
+    attack(state, from_id, to_id)
+  end
+  def handle_action(state, %{type: "move", from_id: from_id, to_id: to_id, count: count}) do
+    move(state, from_id, to_id, count)
+  end
+  def handle_action(state, action) do
+    Logger.info("Unrecognized action `#{inspect(action)}`")
+    state
+  end
+
   def start_game(state) do
     if length(Player.active_ids(state)) > 1 do
       state

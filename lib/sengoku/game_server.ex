@@ -65,29 +65,15 @@ defmodule Sengoku.GameServer do
     state_updated(new_state)
     {:noreply, new_state}
   end
-  def handle_cast({:action, player_id, %{type: "end_turn"}}, %{current_player_id: player_id} = state) do
-    new_state = Game.end_turn(state)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, player_id, %{type: "place_unit", tile_id: tile_id}}, %{current_player_id: player_id} = state) do
-    new_state = Game.place_unit(state, tile_id)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, player_id, %{type: "attack", from_id: from_id, to_id: to_id}}, %{current_player_id: player_id} = state) do
-    new_state = Game.attack(state, from_id, to_id)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, player_id, %{type: "move", from_id: from_id, to_id: to_id, count: count}}, %{current_player_id: player_id} = state) do
-    new_state = Game.move(state, from_id, to_id, count)
-    state_updated(new_state)
-    {:noreply, new_state}
-  end
-  def handle_cast({:action, player_id, action}, state) do
-    Logger.info("Unrecognized action `#{inspect(action)}` by player `#{player_id}`")
-    {:noreply, state}
+  def handle_cast({:action, player_id, %{} = action}, state) do
+    if player_id == state.current_player_id do
+      new_state = Game.handle_action(state, action)
+      state_updated(new_state)
+      {:noreply, new_state}
+    else
+      Logger.info("It’s not your turn, player " <> Integer.to_string(player_id))
+      {:noreply, state}
+    end
   end
 
   def handle_info(:take_ai_move_if_necessary, state) do

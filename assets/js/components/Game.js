@@ -17,15 +17,15 @@ class Game extends React.Component {
   componentDidMount() {
     const self = this;
     this.props.channel.on('update', (new_state) => self.setState(new_state))
-    if (this.canJoinGame()) this.joinAsPlayer()
+    this.joinAsPlayer()
   }
 
-  token() {
+  getToken() {
     return localStorage.getItem('games:' + this.props.id + ':token')
   }
 
   canJoinGame() {
-    return !this.token()
+    return !this.getToken()
   }
 
   tileClicked(id, e) {
@@ -84,12 +84,31 @@ class Game extends React.Component {
   }
 
   joinAsPlayer() {
+    const token = this.getToken()
+    if (token) {
+      this.rejoin(token)
+    } else {
+      this.joinForFirstTime()
+    }
+  }
+
+  rejoin(token) {
+    this.authenticate({
+      token: token,
+      name: null
+    })
+  }
+
+  joinForFirstTime() {
     const name = prompt('What is your name?')
     if (!name) return
-    const payload = {
+    this.authenticate({
       name: name,
-      token: this.token()
-    }
+      token: null
+    })
+  }
+
+  authenticate(payload) {
     const game_id = this.props.id
     this.props.channel.push('join_as_player', payload)
       .receive('ok', (response) => {

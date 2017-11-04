@@ -6,7 +6,7 @@ Unite feudal Japan in this Risk-like strategy game! (This is extremely alpha and
 
 ## Gameplay
 
-Up to 4 players: play against friends online, the computer, or both.
+Up to 6 players: play against friends online, the computer, or both.
 
 - Provinces are randomly divided amongst all players at the start of the game.
 - Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.

@@ -1,7 +1,7 @@
 <div class="NewGameForm">
   <section>
     <h2>Play</h2>
-    <p>Up to 4 players: play against friends online, the computer, or both.</p>
+    <p>Up to 6 players: play against friends online, the computer, or both.</p>
     <ul>
       <li>Provinces are randomly divided amongst all players at the start of the game.</li>
       <li>Each player receives one unit for every 3 provinces they hold (with a minimum of 3) at the start of each turn.</li>

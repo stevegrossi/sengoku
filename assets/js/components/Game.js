@@ -120,7 +120,7 @@ class Game extends React.Component {
       <div className="Game">
         {this.state.winner_id &&
           <div className="Modal GameOver">
-            {this.state.players[this.state.winner_id].name || 'Player ' + this.state.winner_id} wins!
+            {this.state.players[this.state.winner_id].name} wins!
           </div>
         }
         {this.state.movingTo &&

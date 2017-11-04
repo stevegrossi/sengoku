@@ -71,7 +71,11 @@ defmodule Sengoku.GameServer do
       state_updated(new_state)
       {:noreply, new_state}
     else
-      Logger.info("It’s not your turn, player " <> Integer.to_string(player_id))
+      if is_nil(player_id) do
+        Logger.info("You’re not even playing.")
+      else
+        Logger.info("It’s not your turn, player " <> Integer.to_string(player_id))
+      end
       {:noreply, state}
     end
   end

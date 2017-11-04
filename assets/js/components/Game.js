@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Socket } from 'phoenix'
+import Token from '../token'
 import Board from './Board'
 import Players from './Players'
 import MoveForm from './MoveForm'
@@ -20,12 +21,8 @@ class Game extends React.Component {
     this.joinAsPlayer()
   }
 
-  getToken() {
-    return localStorage.getItem('games:' + this.props.id + ':token')
-  }
-
   canJoinGame() {
-    return !this.getToken()
+    return !Token.get(this.props.id)
   }
 
   tileClicked(id, e) {
@@ -84,7 +81,7 @@ class Game extends React.Component {
   }
 
   joinAsPlayer() {
-    const token = this.getToken()
+    const token = Token.get(this.props.id)
     if (token) {
       this.rejoin(token)
     } else {
@@ -115,7 +112,7 @@ class Game extends React.Component {
         if (response.error) {
           console.error(response.error)
         } else {
-          localStorage.setItem('games:' + game_id + ':token', response.token)
+          Token.set(game_id, response.token)
         }
       })
   }

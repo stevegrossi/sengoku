@@ -11,7 +11,7 @@ defmodule Sengoku.GameServer do
   alias Sengoku.{Authentication, Game, Token, AI}
   alias SengokuWeb.Endpoint
 
-  @ai_think_time 100 # ms
+  @ai_think_time 250 # ms
 
   def new(%{} = options) do
     game_id = Token.new(8)

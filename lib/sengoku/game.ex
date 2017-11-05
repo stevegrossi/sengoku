@@ -14,6 +14,7 @@ defmodule Sengoku.Game do
     turn: 0,
     current_player_id: nil,
     winner_id: nil,
+    required_move: nil
   }
 
   def initialize_state(game_id, %{"board" => board}) do
@@ -189,10 +190,18 @@ defmodule Sengoku.Game do
        count < state.tiles[from_id].units &&
        from_id in state.tiles[to_id].neighbors
     do
-      state
-      |> Tile.adjust_units(from_id, -count)
-      |> Tile.adjust_units(to_id, count)
-      |> end_turn
+      if is_nil(state.required_move) do
+        state
+        |> Tile.adjust_units(from_id, -count)
+        |> Tile.adjust_units(to_id, count)
+        |> end_turn
+      else
+        # validate min, right?
+        state
+        |> Tile.adjust_units(from_id, -count)
+        |> Tile.adjust_units(to_id, count)
+        |> Map.put(:required_move, nil)
+      end
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state

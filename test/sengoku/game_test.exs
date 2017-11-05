@@ -452,6 +452,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 4)
@@ -471,6 +472,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -488,6 +490,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -505,6 +508,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -522,6 +526,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -539,6 +544,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 6)
@@ -556,6 +562,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 5)
@@ -573,10 +580,38 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0},
         },
+        required_move: nil
       }
 
       new_state = Game.move(old_state, 1, 1, 3)
       assert new_state == old_state
+    end
+
+    test "required moves unsets :required_move from state and does not end turn" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+        required_move: %{
+          from: 1,
+          to: 2,
+          min: 3,
+          max: 4
+        }
+      }
+
+      new_state = Game.move(old_state, 1, 2, 3)
+
+      assert new_state.tiles[1].units == 2
+      assert new_state.tiles[2].units == 3
+      assert is_nil(new_state.required_move)
+      assert new_state.current_player_id == 1
     end
   end
 end

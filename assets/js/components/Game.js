@@ -136,6 +136,16 @@ class Game extends React.Component {
     this.cancelSelection()
   }
 
+  submitRequiredMove(unitCount) {
+    const { from_id, to_id } = this.state.required_move
+    this.action('move', {
+      from_id: from_id,
+      to_id: to_id,
+      count: parseInt(unitCount)
+    })
+    this.cancelSelection()
+  }
+
   showInstructions() {
     const { players, playerId, current_player_id, selectedTileId } = this.state
     if (playerId === current_player_id) {
@@ -162,6 +172,12 @@ class Game extends React.Component {
           <MoveForm maxUnits={this.state.tiles[this.state.selectedTileId].units - 1}
                     cancelMove={this.cancelMove.bind(this)}
                     submitMove={this.submitMove.bind(this)}
+          />
+        }
+        {this.state.required_move && this.state.current_player_id === this.state.playerId &&
+          <MoveForm minUnits={this.state.required_move.min}
+                    maxUnits={this.state.required_move.max}
+                    submitMove={this.submitRequiredMove.bind(this)}
           />
         }
         <div className="Display">

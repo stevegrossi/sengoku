@@ -16,10 +16,12 @@ class MoveForm extends React.Component {
   }
 
   componentDidMount() {
+    if (!this.props.cancelMove) return
     window.addEventListener("keyup", this.handleKeyup.bind(this));
   }
 
   componentWillUnmount() {
+    if (!this.props.cancelMove) return
     window.removeEventListener("keyup", this.handleKeyup);
   }
 
@@ -47,10 +49,10 @@ class MoveForm extends React.Component {
         <form className="MoveForm" onSubmit={this.handleSubmit.bind(this)}>
           <h2>Move how many?</h2>
           <div className="MoveForm-slider">
-            <span>0</span>
+            <span>{this.props.minUnits}</span>
             <input className="MoveForm-input"
                    type="range"
-                   min={0}
+                   min={this.props.minUnits}
                    max={this.props.maxUnits}
                    value={this.state.value}
                    onChange={this.handleChange.bind(this)}
@@ -63,21 +65,29 @@ class MoveForm extends React.Component {
                    type="submit"
                    value={'Move ' + this.state.value}
             />
-            <button className="Button Button--primary"
-                    type="submit"
-                    onClick={this.moveHalf.bind(this)}
-            >
-              Move {this.halfMaxUnits()} (half)
-            </button>
-            <button className="Button"
-                    onClick={this.props.cancelMove}
-                    children={'Cancel'}
-            />
+            {this.halfMaxUnits() >= this.props.minUnits &&
+              <button className="Button Button--primary"
+                      type="submit"
+                      onClick={this.moveHalf.bind(this)}
+              >
+                Move {this.halfMaxUnits()} (half)
+              </button>
+            }
+            {this.props.cancelMove &&
+              <button className="Button"
+                      onClick={this.props.cancelMove}
+                      children={'Cancel'}
+              />
+            }
           </div>
         </form>
       </div>
     )
   }
 }
+
+MoveForm.defaultProps = {
+  minUnits: 0
+};
 
 export default MoveForm

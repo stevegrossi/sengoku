@@ -17,7 +17,8 @@ defmodule Sengoku.AI.SmartTest do
       regions: %{
         1 => %Region{value: 1, tile_ids: [1]},
         2 => %Region{value: 1, tile_ids: [2]},
-      }
+      },
+      required_move: nil
     }
     action = AI.Smart.take_action(state)
 
@@ -38,11 +39,65 @@ defmodule Sengoku.AI.SmartTest do
       regions: %{
         1 => %Region{value: 1, tile_ids: [1]},
         2 => %Region{value: 1, tile_ids: [2]},
-      }
+      },
+      required_move: nil
     }
     action = AI.Smart.take_action(state)
 
     assert action == %{type: "attack", from_id: 1, to_id: 2}
+  end
+
+  test "moves the maximum number of units away from non-border tiles" do
+    state = %{
+      current_player_id: 1,
+      players: %{
+        1 => %Player{unplaced_units: 0, active: true, ai: true},
+        2 => %Player{unplaced_units: 0, active: true, ai: true}
+      },
+      tiles: %{
+        1 => %Tile{owner: 1, units: 7, neighbors: [2]},
+        2 => %Tile{owner: 1, units: 1, neighbors: [1, 3]},
+        3 => %Tile{owner: 2, units: 1, neighbors: [2]}
+      },
+      required_move: nil
+    }
+
+    action = AI.Smart.take_action(state)
+    assert action == %{
+      type: "move",
+      from_id: 1,
+      to_id: 2,
+      count: 6
+    }
+  end
+
+  test "makes a required move when necessary" do
+    state = %{
+      current_player_id: 1,
+      players: %{
+        1 => %Player{unplaced_units: 0, active: true, ai: true},
+        2 => %Player{unplaced_units: 0, active: true, ai: true}
+      },
+      tiles: %{
+        1 => %Tile{owner: 1, units: 0, neighbors: [2]},
+        2 => %Tile{owner: 1, units: 5, neighbors: [1, 3]},
+        3 => %Tile{owner: 2, units: 1, neighbors: [2]}
+      },
+      required_move: %{
+        from_id: 2,
+        to_id: 1,
+        min: 3,
+        max: 4
+      }
+    }
+
+    action = AI.Smart.take_action(state)
+    assert action == %{
+      type: "move",
+      from_id: 2,
+      to_id: 1,
+      count: 4
+    }
   end
 
   test "ends turn when no other action" do
@@ -55,7 +110,8 @@ defmodule Sengoku.AI.SmartTest do
       tiles: %{
         1 => %Tile{owner: 1, units: 1, neighbors: [2]},
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
-      }
+      },
+      required_move: nil
     }
     action = AI.Smart.take_action(state)
 

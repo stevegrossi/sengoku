@@ -136,6 +136,20 @@ class Game extends React.Component {
     this.cancelSelection()
   }
 
+  showInstructions() {
+    const { players, playerId, current_player_id, selectedTileId } = this.state
+    if (playerId === current_player_id) {
+      const unplacedUnits = players[current_player_id].unplaced_units
+      if (unplacedUnits > 0) {
+        return `You have ${unplacedUnits} soldiers to place. Click on one of your territories to place a soldier.`
+      } else if (!selectedTileId) {
+        return 'Select one of your territories to attack or move from, or end your turn.'
+      } else {
+        return 'Select an adjacent territory attack or move into.'
+      }
+    }
+  }
+
   render() {
     return (
       <div className="Game">
@@ -166,6 +180,7 @@ class Game extends React.Component {
           {this.state.turn == 0 &&
             <button className="Button" onClick={this.startGame.bind(this)}>Start Game</button>
           }
+          {this.state.playerId && this.showInstructions()}
         </div>
         {this.state.tiles &&
           <Board board={this.state.board}

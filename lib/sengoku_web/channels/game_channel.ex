@@ -18,7 +18,7 @@ defmodule SengokuWeb.GameChannel do
     case GameServer.authenticate_player(game_id, token, name) do
       {:ok, player_id, token} ->
         send self(), :after_join
-        {:reply, {:ok, %{token: token}}, assign(socket, :player_id, player_id)}
+        {:reply, {:ok, %{token: token, player_id: player_id}}, assign(socket, :player_id, player_id)}
       {:error, reason} ->
         {:reply, {:ok, %{error: reason}}, socket}
     end

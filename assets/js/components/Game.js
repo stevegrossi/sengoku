@@ -11,7 +11,8 @@ class Game extends React.Component {
     super(props)
     this.state = {
       selectedTileId: null,
-      movingTo: null
+      movingTo: null,
+      playerId: null
     }
   }
 
@@ -27,6 +28,8 @@ class Game extends React.Component {
 
   tileClicked(id, e) {
     console.log('tileClicked', id)
+    if (this.state.playerId !== this.state.current_player_id) return
+
     const player_owns_tile =
       this.state.tiles[id].owner == this.state.current_player_id
 
@@ -107,12 +110,14 @@ class Game extends React.Component {
 
   authenticate(payload) {
     const game_id = this.props.id
+    const self = this
     this.props.channel.push('join_as_player', payload)
       .receive('ok', (response) => {
         if (response.error) {
           console.error(response.error)
         } else {
           Token.set(game_id, response.token)
+          self.setState({ playerId: response.player_id })
         }
       })
   }

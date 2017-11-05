@@ -240,7 +240,8 @@ defmodule Sengoku.GameTest do
         },
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
-        }
+        },
+        required_move: nil
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -257,7 +258,8 @@ defmodule Sengoku.GameTest do
         },
         tiles: %{
           1 => %Tile{owner: 99, units: 4}
-        }
+        },
+        required_move: nil
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -273,6 +275,26 @@ defmodule Sengoku.GameTest do
         },
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
+        },
+        required_move: nil
+      }
+
+      new_state = old_state |> Game.place_unit(1)
+
+      assert new_state == old_state
+    end
+
+    test "changes nothing if a required_move is pending" do
+      old_state = %{
+        current_player_id: 1,
+        players: %{
+          1 => %Player{unplaced_units: 2},
+        },
+        tiles: %{
+          1 => %Tile{owner: 1, units: 4}
+        },
+        required_move: %{
+          # Not nil
         }
       }
 
@@ -294,7 +316,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {1, 1})
@@ -312,7 +335,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 2})
@@ -331,7 +355,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 21, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -356,7 +381,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 2, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -377,7 +403,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 2, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -392,7 +419,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -405,7 +433,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 1, owner: 2, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -418,7 +447,8 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 1, neighbors: [1]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -431,10 +461,31 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [3]},
           2 => %Tile{units: 1, owner: 2, neighbors: [3]}
-        }
+        },
+        required_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
+      assert new_state == old_state
+    end
+
+    test "changes nothing if a required_move is pending" do
+      old_state = %{
+        current_player_id: 1,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
+        tiles: %{
+          1 => %Tile{units: 3, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
+        },
+        required_move: %{
+          # Not nil
+        }
+      }
+
+      new_state = Game.attack(old_state, 1, 2, {1, 1})
       assert new_state == old_state
     end
   end
@@ -587,7 +638,7 @@ defmodule Sengoku.GameTest do
       assert new_state == old_state
     end
 
-    test "required moves unsets :required_move from state and does not end turn" do
+    test "required moves do not end turn" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
@@ -599,8 +650,8 @@ defmodule Sengoku.GameTest do
           2 => %Player{active: true, unplaced_units: 0},
         },
         required_move: %{
-          from: 1,
-          to: 2,
+          from_id: 1,
+          to_id: 2,
           min: 3,
           max: 4
         }
@@ -612,6 +663,77 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[2].units == 3
       assert is_nil(new_state.required_move)
       assert new_state.current_player_id == 1
+    end
+
+    test "required moves enforce the minimum" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+        required_move: %{
+          from_id: 1,
+          to_id: 2,
+          min: 3,
+          max: 4
+        }
+      }
+
+      new_state = Game.move(old_state, 1, 2, 2)
+      assert new_state == old_state
+    end
+
+    test "required moves do not allow moves from other origins" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1, 3]},
+          3 => %Tile{owner: 1, units: 5, neighbors: [1, 2]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+        required_move: %{
+          from_id: 1,
+          to_id: 2,
+          min: 3,
+          max: 4
+        }
+      }
+
+      new_state = Game.move(old_state, 3, 2, 3)
+      assert new_state == old_state
+    end
+
+    test "required moves do not allow moves to other destinations" do
+      old_state = %{
+        current_player_id: 1,
+        tiles: %{
+          1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1]},
+          3 => %Tile{owner: 1, units: 2, neighbors: [1]},
+        },
+        players: %{
+          1 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0},
+        },
+        required_move: %{
+          from_id: 1,
+          to_id: 2,
+          min: 3,
+          max: 4
+        }
+      }
+
+      new_state = Game.move(old_state, 1, 3, 3)
+      assert new_state == old_state
     end
   end
 end

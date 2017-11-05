@@ -116,7 +116,9 @@ defmodule Sengoku.Game do
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
-    if current_player(state).unplaced_units > 0 do
+    if current_player(state).unplaced_units > 0 and
+       is_nil(state.required_move)
+    do
       tile = state.tiles[tile_id]
 
       if Tile.owned_by_player_id?(tile, current_player_id) do
@@ -140,10 +142,11 @@ defmodule Sengoku.Game do
     attacking_units = from_tile.units - 1
     defending_units = to_tile.units
 
-    if attacking_units > 0 &&
-       from_tile.owner == current_player_id &&
-       defender_id != current_player_id &&
-       to_id in from_tile.neighbors
+    if attacking_units > 0 and
+       from_tile.owner == current_player_id and
+       defender_id != current_player_id and
+       to_id in from_tile.neighbors and
+       is_nil(state.required_move)
     do
       {attacker_losses, defender_losses} =
         outcome || Battle.decide(attacking_units, defending_units)
@@ -185,10 +188,18 @@ defmodule Sengoku.Game do
   end
 
   def move(%{current_player_id: current_player_id} = state, from_id, to_id, count) do
-    if state.tiles[from_id].owner == current_player_id &&
-       state.tiles[to_id].owner == current_player_id &&
-       count < state.tiles[from_id].units &&
-       from_id in state.tiles[to_id].neighbors
+    if state.tiles[from_id].owner == current_player_id and
+       state.tiles[to_id].owner == current_player_id and
+       count < state.tiles[from_id].units and
+       from_id in state.tiles[to_id].neighbors and
+       (
+        is_nil(state.required_move) or
+        (
+          from_id == state.required_move.from_id and
+          to_id == state.required_move.to_id and
+          count >= state.required_move.min
+        )
+       )
     do
       if is_nil(state.required_move) do
         state

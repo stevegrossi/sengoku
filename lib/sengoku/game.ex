@@ -161,10 +161,23 @@ defmodule Sengoku.Game do
 
   defp check_for_capture(state, from_id, to_id, attacking_units) do
     if state.tiles[to_id].units == 0 do
-      state
-      |> Tile.adjust_units(from_id, -attacking_units)
-      |> Tile.set_owner(to_id, state.current_player_id)
-      |> Tile.adjust_units(to_id, attacking_units)
+      movable_units = state.tiles[from_id].units - 1
+      if movable_units > attacking_units do
+        state
+        |> Tile.set_owner(to_id, state.current_player_id)
+        |> Tile.adjust_units(to_id, 0)
+        |> Map.put(:required_move, %{
+             from_id: from_id,
+             to_id: to_id,
+             min: 3,
+             max: movable_units
+           })
+      else
+        state
+        |> Tile.adjust_units(from_id, -attacking_units)
+        |> Tile.set_owner(to_id, state.current_player_id)
+        |> Tile.adjust_units(to_id, attacking_units)
+      end
     else
       state
     end

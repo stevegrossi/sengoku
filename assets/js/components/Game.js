@@ -36,7 +36,7 @@ class Game extends React.Component {
 
     if (this.state.selectedTileId) {
       // Moving or attacking
-      if (player_owns_tile && this.state.selectedTileId !== id) {
+      if (player_owns_tile && this.state.selectedTileId !== id && this.state.tiles[this.state.selectedTileId].units > 1) {
         // Moving
         this.setState({ movingTo: id })
         e.stopPropagation()
@@ -148,13 +148,15 @@ class Game extends React.Component {
   }
 
   showInstructions() {
-    const { players, playerId, current_player_id, selectedTileId } = this.state
+    const { players, playerId, current_player_id, selectedTileId, tiles } = this.state
     if (playerId === current_player_id) {
       const unplacedUnits = players[current_player_id].unplaced_units
       if (unplacedUnits > 0) {
         return `You have ${unplacedUnits} units to place. Click on one of your territories to place a unit.`
       } else if (!selectedTileId) {
         return 'Select one of your territories to attack or move from, or end your turn.'
+      } else if (tiles[selectedTileId].units === 1) {
+        return 'You must have more than 1 unit in a territory to move or attack.'
       } else {
         return 'Select an adjacent territory attack or move into.'
       }

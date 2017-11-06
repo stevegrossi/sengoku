@@ -28,26 +28,27 @@ class Game extends React.Component {
 
   tileClicked(id, e) {
     console.log('tileClicked', id)
-    if (this.state.playerId !== this.state.current_player_id) return
-    if (this.state.winner_id) return
+    const { playerId, current_player_id, winner_id } = this.state
+    if (playerId !== current_player_id) return
+    if (winner_id) return
 
-    const player_owns_tile =
-      this.state.tiles[id].owner == this.state.current_player_id
+    const { selectedTileId, tiles, players } = this.state
+    const player_owns_tile = tiles[id].owner == current_player_id
 
-    if (this.state.selectedTileId) {
+    if (selectedTileId) {
       // Moving or attacking
-      if (player_owns_tile && this.state.selectedTileId !== id && this.state.tiles[this.state.selectedTileId].units > 1) {
+      if (player_owns_tile && selectedTileId !== id && tiles[selectedTileId].units > 1) {
         // Moving
         this.setState({ movingTo: id })
         e.stopPropagation()
-      } else if (this.state.selectedTileId !== id) {
+      } else if (selectedTileId !== id) {
         // Attacking
-        this.action('attack', { from_id: this.state.selectedTileId, to_id: id })
+        this.action('attack', { from_id: selectedTileId, to_id: id })
         e.stopPropagation()
       }
     } else {
       if (player_owns_tile) {
-        if (this.state.current_player_id && this.state.players[this.state.current_player_id].unplaced_units > 0) {
+        if (current_player_id && players[current_player_id].unplaced_units > 0) {
           // Placing units
           this.action('place_unit', { tile_id: id })
           e.stopPropagation()
@@ -129,9 +130,10 @@ class Game extends React.Component {
   }
 
   submitMove(unitCount) {
+    const { selectedTileId, movingTo } = this.state
     this.action('move', {
-      from_id: this.state.selectedTileId,
-      to_id: this.state.movingTo,
+      from_id: selectedTileId,
+      to_id: movingTo,
       count: parseInt(unitCount)
     })
     this.cancelSelection()
@@ -164,22 +166,33 @@ class Game extends React.Component {
   }
 
   render() {
+    const {
+      current_player_id,
+      winner_id,
+      players,
+      movingTo,
+      selectedTileId,
+      tiles,
+      required_move,
+      playerId,
+      turn
+    } = this.state
     return (
       <div className="Game">
-        {this.state.winner_id &&
+        {winner_id &&
           <div className="Modal GameOver">
-            {this.state.players[this.state.winner_id].name} wins!
+            {players[winner_id].name} wins!
           </div>
         }
-        {this.state.movingTo &&
-          <MoveForm maxUnits={this.state.tiles[this.state.selectedTileId].units - 1}
+        {movingTo &&
+          <MoveForm maxUnits={tiles[selectedTileId].units - 1}
                     cancelMove={this.cancelMove.bind(this)}
                     submitMove={this.submitMove.bind(this)}
           />
         }
-        {this.state.required_move && this.state.current_player_id === this.state.playerId && !this.state.winner_id &&
-          <MoveForm minUnits={this.state.required_move.min}
-                    maxUnits={this.state.required_move.max}
+        {required_move && current_player_id === playerId && !winner_id &&
+          <MoveForm minUnits={required_move.min}
+                    maxUnits={required_move.max}
                     submitMove={this.submitRequiredMove.bind(this)}
           />
         }
@@ -187,19 +200,19 @@ class Game extends React.Component {
           <h1 className="Logo">
             <a href="/"><img src={window.logo_src} alt="Sengoku" /></a>
           </h1>
-          {this.state.players &&
-            <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
+          {players &&
+            <Players players={players} currentPlayerId={current_player_id} />
           }
-          {this.state.turn > 0 && !this.state.winner_id &&
+          {turn > 0 && !winner_id &&
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
           }
-          {this.state.turn == 0 && this.canJoinGame() &&
+          {turn === 0 && this.canJoinGame() &&
             <button className="Button" onClick={this.joinAsPlayer.bind(this)}>Join Game</button>
           }
-          {this.state.turn == 0 &&
+          {turn === 0 &&
             <button className="Button" onClick={this.startGame.bind(this)}>Start Game</button>
           }
-          {this.state.playerId && !this.state.winner_id &&
+          {playerId && !winner_id &&
             this.showInstructions()
           }
         </div>

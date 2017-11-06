@@ -187,32 +187,30 @@ defmodule Sengoku.Game do
     end
   end
 
-  def move(%{current_player_id: current_player_id} = state, from_id, to_id, count) do
-    if state.tiles[from_id].owner == current_player_id and
-       state.tiles[to_id].owner == current_player_id and
-       count < state.tiles[from_id].units and
-       from_id in state.tiles[to_id].neighbors and
-       (
-        is_nil(state.required_move) or
-        (
-          from_id == state.required_move.from_id and
-          to_id == state.required_move.to_id and
-          count >= state.required_move.min
-        )
-       )
+  def move(%{required_move: %{}} = state, from_id, to_id, count) do
+    if from_id == state.required_move.from_id and
+       to_id == state.required_move.to_id and
+       count >= state.required_move.min
     do
-      if is_nil(state.required_move) do
-        state
-        |> Tile.adjust_units(from_id, -count)
-        |> Tile.adjust_units(to_id, count)
-        |> end_turn
-      else
-        # validate min, right?
-        state
+      state
         |> Tile.adjust_units(from_id, -count)
         |> Tile.adjust_units(to_id, count)
         |> Map.put(:required_move, nil)
-      end
+    else
+      Logger.info("Invalid required move of `#{count}` units from `#{from_id}` to `#{to_id}`")
+      state
+    end
+  end
+  def move(%{required_move: nil, current_player_id: current_player_id} = state, from_id, to_id, count) do
+    if state.tiles[from_id].owner == current_player_id and
+       state.tiles[to_id].owner == current_player_id and
+       count < state.tiles[from_id].units and
+       from_id in state.tiles[to_id].neighbors
+    do
+      state
+      |> Tile.adjust_units(from_id, -count)
+      |> Tile.adjust_units(to_id, count)
+      |> end_turn
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state

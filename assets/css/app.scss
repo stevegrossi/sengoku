@@ -10,6 +10,10 @@ $z-index-logo: 100;
 
 * {
   box-sizing: border-box;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 html {
@@ -120,10 +124,6 @@ h2 {
   fill: $black;
   font-size: 21px;
   cursor: default;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
 }
 
 .Modal {

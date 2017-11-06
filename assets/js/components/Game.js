@@ -29,6 +29,7 @@ class Game extends React.Component {
   tileClicked(id, e) {
     console.log('tileClicked', id)
     if (this.state.playerId !== this.state.current_player_id) return
+    if (this.state.winner_id) return
 
     const player_owns_tile =
       this.state.tiles[id].owner == this.state.current_player_id
@@ -174,7 +175,7 @@ class Game extends React.Component {
                     submitMove={this.submitMove.bind(this)}
           />
         }
-        {this.state.required_move && this.state.current_player_id === this.state.playerId &&
+        {this.state.required_move && this.state.current_player_id === this.state.playerId && !this.state.winner_id &&
           <MoveForm minUnits={this.state.required_move.min}
                     maxUnits={this.state.required_move.max}
                     submitMove={this.submitRequiredMove.bind(this)}
@@ -187,7 +188,7 @@ class Game extends React.Component {
           {this.state.players &&
             <Players players={this.state.players} currentPlayerId={this.state.current_player_id} />
           }
-          {this.state.turn > 0 &&
+          {this.state.turn > 0 && !this.state.winner_id &&
             <button className="Button" onClick={this.endTurn.bind(this)}>End Turn</button>
           }
           {this.state.turn == 0 && this.canJoinGame() &&
@@ -196,7 +197,9 @@ class Game extends React.Component {
           {this.state.turn == 0 &&
             <button className="Button" onClick={this.startGame.bind(this)}>Start Game</button>
           }
-          {this.state.playerId && this.showInstructions()}
+          {this.state.playerId && !this.state.winner_id &&
+            this.showInstructions()
+          }
         </div>
         {this.state.tiles &&
           <Board board={this.state.board}

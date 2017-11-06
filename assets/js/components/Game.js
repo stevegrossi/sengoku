@@ -152,7 +152,7 @@ class Game extends React.Component {
     if (playerId === current_player_id) {
       const unplacedUnits = players[current_player_id].unplaced_units
       if (unplacedUnits > 0) {
-        return `You have ${unplacedUnits} soldiers to place. Click on one of your territories to place a soldier.`
+        return `You have ${unplacedUnits} units to place. Click on one of your territories to place a unit.`
       } else if (!selectedTileId) {
         return 'Select one of your territories to attack or move from, or end your turn.'
       } else {

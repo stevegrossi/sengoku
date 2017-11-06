@@ -10,6 +10,7 @@ defmodule Sengoku.AI.Smart do
   def take_action(state) do
     cond do
       has_unplaced_units?(state) -> place_unit(state)
+      has_required_move?(state) -> make_required_move(state)
       has_attackable_neighbor?(state) -> attack(state)
       can_move?(state) -> move(state)
       true -> end_turn()
@@ -29,6 +30,19 @@ defmodule Sengoku.AI.Smart do
       |> List.first
 
     %{type: "place_unit", tile_id: tile_id}
+  end
+
+  defp has_required_move?(state) do
+    not is_nil(state.required_move)
+  end
+
+  defp make_required_move(%{required_move: required_move}) do
+    %{
+      type: "move",
+      from_id: required_move.from_id,
+      to_id: required_move.to_id,
+      count: required_move.max
+    }
   end
 
   defp has_attackable_neighbor?(state) do

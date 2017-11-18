@@ -201,6 +201,7 @@ defmodule Sengoku.Game do
       state
     end
   end
+  
   def move(%{required_move: nil, current_player_id: current_player_id} = state, from_id, to_id, count) do
     if state.tiles[from_id].owner == current_player_id and
        state.tiles[to_id].owner == current_player_id and

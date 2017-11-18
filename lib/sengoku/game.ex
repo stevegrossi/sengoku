@@ -20,6 +20,7 @@ defmodule Sengoku.Game do
   def initialize_state(game_id, %{"board" => board}) do
     initialize_state(game_id, Board.new(board))
   end
+  
   def initialize_state(game_id, %Board{} = board) do
     @initial_state
     |> Map.put(:id, game_id)
@@ -131,58 +132,6 @@ defmodule Sengoku.Game do
       end
     else
       Logger.info("Tried to place unit when you have none")
-      state
-    end
-  end
-
-  def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do
-    from_tile = state.tiles[from_id]
-    to_tile = state.tiles[to_id]
-    defender_id = to_tile.owner
-    attacking_units = from_tile.units - 1
-    defending_units = to_tile.units
-
-    if attacking_units > 0 and
-       from_tile.owner == current_player_id and
-       defender_id != current_player_id and
-       to_id in from_tile.neighbors and
-       is_nil(state.required_move)
-    do
-      {attacker_losses, defender_losses} =
-        outcome || Battle.decide(attacking_units, defending_units)
-
-      state
-      |> Tile.adjust_units(from_id, -attacker_losses)
-      |> Tile.adjust_units(to_id, -defender_losses)
-      |> check_for_capture(from_id, to_id, min(attacking_units, 3))
-      |> deactivate_player_if_defeated(defender_id)
-      |> check_for_winner()
-    else
-      Logger.info("Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_id}`")
-      state
-    end
-  end
-
-  defp check_for_capture(state, from_id, to_id, attacking_units) do
-    if state.tiles[to_id].units == 0 do
-      movable_units = state.tiles[from_id].units - 1
-      if movable_units > attacking_units do
-        state
-        |> Tile.set_owner(to_id, state.current_player_id)
-        |> Tile.adjust_units(to_id, 0)
-        |> Map.put(:required_move, %{
-             from_id: from_id,
-             to_id: to_id,
-             min: 3,
-             max: movable_units
-           })
-      else
-        state
-        |> Tile.adjust_units(from_id, -attacking_units)
-        |> Tile.set_owner(to_id, state.current_player_id)
-        |> Tile.adjust_units(to_id, attacking_units)
-      end
-    else
       state
     end
   end

@@ -213,7 +213,6 @@ defmodule Sengoku.Game do
         to_id,
         count
       ) do
-
     if state.tiles[from_id].owner == current_player_id and
          state.tiles[to_id].owner == current_player_id and count < state.tiles[from_id].units and
          from_id in state.tiles[to_id].neighbors do

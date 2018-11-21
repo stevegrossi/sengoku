@@ -4,7 +4,6 @@ defmodule Sengoku.PlayerTest do
   alias Sengoku.Player
 
   describe "initialize_state/2" do
-
     test "adds the specified number of players" do
       state = Player.initialize_state(%{}, 3)
 
@@ -16,4 +15,3 @@ defmodule Sengoku.PlayerTest do
     end
   end
 end
-

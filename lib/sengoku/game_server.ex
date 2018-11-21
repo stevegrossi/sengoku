@@ -28,6 +28,7 @@ defmodule Sengoku.GameServer do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
+
     {:ok, Game.initialize_state(game_id, options)}
   end
 
@@ -51,6 +52,7 @@ defmodule Sengoku.GameServer do
     case Authentication.authenticate_player(state, token, name) do
       {:ok, {player_id, token}, new_state} ->
         {:reply, {:ok, player_id, token}, new_state}
+
       {:error, error} ->
         {:reply, {:error, error}, state}
     end
@@ -65,6 +67,7 @@ defmodule Sengoku.GameServer do
     state_updated(new_state)
     {:noreply, new_state}
   end
+
   def handle_cast({:action, player_id, %{} = action}, state) do
     if player_id == state.current_player_id do
       new_state = Game.handle_action(state, action)
@@ -76,6 +79,7 @@ defmodule Sengoku.GameServer do
       else
         Logger.info("It’s not your turn, player " <> Integer.to_string(player_id))
       end
+
       {:noreply, state}
     end
   end
@@ -86,6 +90,7 @@ defmodule Sengoku.GameServer do
       action = AI.Smart.take_action(state)
       action(state.id, state.current_player_id, action)
     end
+
     {:noreply, state}
   end
 
@@ -97,7 +102,7 @@ defmodule Sengoku.GameServer do
   end
 
   defp state_updated(state) do
-    send self(), :take_ai_move_if_necessary
+    send(self(), :take_ai_move_if_necessary)
     Endpoint.broadcast("games:" <> state.id, "update", state)
   end
 

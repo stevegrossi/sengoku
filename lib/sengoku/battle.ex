@@ -20,18 +20,22 @@ defmodule Sengoku.Battle do
   def compare_rolls(a_rolls, d_rolls) do
     compare_rolls(a_rolls, d_rolls, {0, 0})
   end
+
   def compare_rolls([], _d_rolls, losses) do
     losses
   end
+
   def compare_rolls(_a_rolls, [], losses) do
     losses
   end
+
   def compare_rolls([a_hd | a_tl], [d_hd | d_tl], {a_losses, d_losses})
-    when a_hd > d_hd do
+      when a_hd > d_hd do
     compare_rolls(a_tl, d_tl, {a_losses, d_losses + 1})
   end
+
   def compare_rolls([a_hd | a_tl], [d_hd | d_tl], {a_losses, d_losses})
-    when a_hd <= d_hd do
+      when a_hd <= d_hd do
     compare_rolls(a_tl, d_tl, {a_losses + 1, d_losses})
   end
 

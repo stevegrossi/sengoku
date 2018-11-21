@@ -4,7 +4,6 @@ defmodule Sengoku.GameTest do
   alias Sengoku.{Game, Player, Tile}
 
   describe ".initialize_state" do
-
     test "returns the state before the game begins" do
       state = Game.initialize_state("123", %{"board" => "japan"})
 
@@ -15,7 +14,6 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".start_game" do
-
     test "randomly and evenly distributes tiles to active players" do
       old_state = %{
         turn: 0,
@@ -42,15 +40,15 @@ defmodule Sengoku.GameTest do
 
       new_state = Game.start_game(old_state)
 
-      Enum.each(1..3, fn(player_id) ->
-        assert Enum.count(new_state.tiles, fn({_id, tile}) ->
-          tile.owner == player_id
-        end) == 3
+      Enum.each(1..3, fn player_id ->
+        assert Enum.count(new_state.tiles, fn {_id, tile} ->
+                 tile.owner == player_id
+               end) == 3
       end)
 
-      assert Enum.count(new_state.tiles, fn({_id, tile}) ->
-        tile.owner == 4
-      end) == 0
+      assert Enum.count(new_state.tiles, fn {_id, tile} ->
+               tile.owner == 4
+             end) == 0
     end
 
     test "grants Player one 3 unplaced units" do
@@ -92,7 +90,6 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".begin_turn" do
-
     test "grants the current player 1 unit for every 3 owned territories" do
       old_state = %{
         current_player_id: 1,
@@ -111,14 +108,14 @@ defmodule Sengoku.GameTest do
           12 => %Tile{owner: 1},
           13 => %Tile{owner: 1},
           14 => %Tile{owner: 1},
-          15 => %Tile{owner: 1},
+          15 => %Tile{owner: 1}
         },
         players: %{
           1 => %Player{unplaced_units: 0}
         }
       }
 
-      new_state = old_state |> Game.begin_turn
+      new_state = old_state |> Game.begin_turn()
 
       assert new_state.players[1].unplaced_units == 4
     end
@@ -141,14 +138,14 @@ defmodule Sengoku.GameTest do
           12 => %Tile{owner: 1},
           13 => %Tile{owner: 1},
           14 => %Tile{owner: 1},
-          15 => %Tile{owner: 1},
+          15 => %Tile{owner: 1}
         },
         players: %{
           2 => %Player{unplaced_units: 0}
         }
       }
 
-      new_state = old_state |> Game.begin_turn
+      new_state = old_state |> Game.begin_turn()
 
       assert new_state.players[2].unplaced_units == 3
     end
@@ -171,7 +168,7 @@ defmodule Sengoku.GameTest do
           12 => %Tile{owner: 1},
           13 => %Tile{owner: 1},
           14 => %Tile{owner: 1},
-          15 => %Tile{owner: 1},
+          15 => %Tile{owner: 1}
         },
         regions: %{
           1 => %{value: 2, tile_ids: [5, 6, 7, 8]},
@@ -189,7 +186,6 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".end_turn" do
-
     test "increments current_player_id to the next active Player and grants them units" do
       old_state = %{
         current_player_id: 2,
@@ -203,7 +199,7 @@ defmodule Sengoku.GameTest do
         tiles: %{}
       }
 
-      new_state = old_state |> Game.end_turn
+      new_state = old_state |> Game.end_turn()
 
       assert new_state.current_player_id == 4
       assert new_state.players[4].unplaced_units == 4
@@ -222,7 +218,7 @@ defmodule Sengoku.GameTest do
         tiles: %{}
       }
 
-      new_state = old_state |> Game.end_turn
+      new_state = old_state |> Game.end_turn()
 
       assert new_state.current_player_id == 2
       assert new_state.players[2].unplaced_units == 4
@@ -231,12 +227,11 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".place_unit" do
-
     test "moves an unit from the Player to the Tile" do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_units: 2},
+          1 => %Player{unplaced_units: 2}
         },
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
@@ -254,7 +249,7 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_units: 2},
+          1 => %Player{unplaced_units: 2}
         },
         tiles: %{
           1 => %Tile{owner: 99, units: 4}
@@ -271,7 +266,7 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_units: 0},
+          1 => %Player{unplaced_units: 0}
         },
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
@@ -288,14 +283,15 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         players: %{
-          1 => %Player{unplaced_units: 2},
+          1 => %Player{unplaced_units: 2}
         },
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
         },
-        required_move: %{
-          # Not nil
-        }
+        required_move:
+          %{
+            # Not nil
+          }
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -305,7 +301,6 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".attack" do
-
     test "attackers and defenders lose units" do
       old_state = %{
         current_player_id: 1,
@@ -363,12 +358,13 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[1].units == 21
       assert new_state.tiles[2].units == 0
       assert new_state.tiles[2].owner == 1
+
       assert new_state.required_move == %{
-        from_id: 1,
-        to_id: 2,
-        min: 3,
-        max: 20
-      }
+               from_id: 1,
+               to_id: 2,
+               min: 3,
+               max: 20
+             }
     end
 
     test "when the defender loses their last tile, makes them inactive" do
@@ -480,9 +476,10 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         },
-        required_move: %{
-          # Not nil
-        }
+        required_move:
+          %{
+            # Not nil
+          }
       }
 
       new_state = Game.attack(old_state, 1, 2, {1, 1})
@@ -491,17 +488,16 @@ defmodule Sengoku.GameTest do
   end
 
   describe ".move" do
-
     test "moves a number of units from one territory to another" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -517,11 +513,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -535,11 +531,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [3]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [3]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [3]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -553,11 +549,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 2, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -571,11 +567,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 2, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 2, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -589,11 +585,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -607,11 +603,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -625,11 +621,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 1, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 1, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: nil
       }
@@ -643,11 +639,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 0, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: %{
           from_id: 1,
@@ -670,11 +666,11 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
-          2 => %Tile{owner: 1, units: 0, neighbors: [1]},
+          2 => %Tile{owner: 1, units: 0, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: %{
           from_id: 1,
@@ -694,11 +690,11 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1, 3]},
-          3 => %Tile{owner: 1, units: 5, neighbors: [1, 2]},
+          3 => %Tile{owner: 1, units: 5, neighbors: [1, 2]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: %{
           from_id: 1,
@@ -718,11 +714,11 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1]},
-          3 => %Tile{owner: 1, units: 2, neighbors: [1]},
+          3 => %Tile{owner: 1, units: 2, neighbors: [1]}
         },
         players: %{
           1 => %Player{active: true, unplaced_units: 0},
-          2 => %Player{active: true, unplaced_units: 0},
+          2 => %Player{active: true, unplaced_units: 0}
         },
         required_move: %{
           from_id: 1,

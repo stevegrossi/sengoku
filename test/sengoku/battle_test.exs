@@ -4,7 +4,6 @@ defmodule Sengoku.BattleTest do
   alias Sengoku.{Battle}
 
   describe ".decide" do
-
     test "caps losses at 2 with only 2 attackers" do
       {a_losses, d_losses} = Battle.decide(99, 99)
       assert a_losses + d_losses == 2
@@ -27,7 +26,6 @@ defmodule Sengoku.BattleTest do
   end
 
   describe ".compare_rolls" do
-
     test "when the attacker wins 3" do
       assert {0, 2} == Battle.compare_rolls([6, 6, 6], [2, 1])
     end

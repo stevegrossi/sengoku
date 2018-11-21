@@ -16,10 +16,11 @@ defmodule Sengoku.AI.SmartTest do
       },
       regions: %{
         1 => %Region{value: 1, tile_ids: [1]},
-        2 => %Region{value: 1, tile_ids: [2]},
+        2 => %Region{value: 1, tile_ids: [2]}
       },
       required_move: nil
     }
+
     action = AI.Smart.take_action(state)
 
     assert action == %{type: "place_unit", tile_id: 1}
@@ -38,10 +39,11 @@ defmodule Sengoku.AI.SmartTest do
       },
       regions: %{
         1 => %Region{value: 1, tile_ids: [1]},
-        2 => %Region{value: 1, tile_ids: [2]},
+        2 => %Region{value: 1, tile_ids: [2]}
       },
       required_move: nil
     }
+
     action = AI.Smart.take_action(state)
 
     assert action == %{type: "attack", from_id: 1, to_id: 2}
@@ -63,12 +65,13 @@ defmodule Sengoku.AI.SmartTest do
     }
 
     action = AI.Smart.take_action(state)
+
     assert action == %{
-      type: "move",
-      from_id: 1,
-      to_id: 2,
-      count: 6
-    }
+             type: "move",
+             from_id: 1,
+             to_id: 2,
+             count: 6
+           }
   end
 
   test "makes a required move when necessary" do
@@ -92,12 +95,13 @@ defmodule Sengoku.AI.SmartTest do
     }
 
     action = AI.Smart.take_action(state)
+
     assert action == %{
-      type: "move",
-      from_id: 2,
-      to_id: 1,
-      count: 4
-    }
+             type: "move",
+             from_id: 2,
+             to_id: 1,
+             count: 4
+           }
   end
 
   test "ends turn when no other action" do
@@ -113,14 +117,14 @@ defmodule Sengoku.AI.SmartTest do
       },
       required_move: nil
     }
+
     action = AI.Smart.take_action(state)
 
     assert action == %{type: "end_turn"}
   end
 
   describe "get_preferred_regions/1" do
-
-     test "returns regions sorted by the percentage you control, favoring smaller regions" do
+    test "returns regions sorted by the percentage you control, favoring smaller regions" do
       state = %{
         current_player_id: 1,
         tiles: %{
@@ -142,10 +146,13 @@ defmodule Sengoku.AI.SmartTest do
       }
 
       assert AI.Smart.get_preferred_regions(state) == [
-        %Region{value: 1, tile_ids: [4, 5]}, # 2
-        %Region{value: 1, tile_ids: [6, 7, 8, 9]}, # 3
-        %Region{value: 1, tile_ids: [1, 2, 3]} # 1
-      ]
+               # 2
+               %Region{value: 1, tile_ids: [4, 5]},
+               # 3
+               %Region{value: 1, tile_ids: [6, 7, 8, 9]},
+               # 1
+               %Region{value: 1, tile_ids: [1, 2, 3]}
+             ]
     end
   end
 end

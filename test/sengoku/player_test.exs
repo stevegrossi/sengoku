@@ -8,10 +8,10 @@ defmodule Sengoku.PlayerTest do
       state = Player.initialize_state(%{}, 3)
 
       assert %{
-        1 => %Player{},
-        2 => %Player{},
-        3 => %Player{}
-      } = state.players
+               1 => %Player{},
+               2 => %Player{},
+               3 => %Player{}
+             } = state.players
     end
 
     test "encodes to JSON" do

@@ -3,7 +3,7 @@ defmodule Sengoku.GameTest do
 
   alias Sengoku.{Game, Player, Tile}
 
-  describe ".initialize_state" do
+  describe "initialize_state/2" do
     test "returns the state before the game begins" do
       state = Game.initialize_state("123", %{"board" => "japan"})
 
@@ -13,7 +13,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".start_game" do
+  describe "start_game/1" do
     test "randomly and evenly distributes tiles to active players" do
       old_state = %{
         turn: 0,
@@ -89,7 +89,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".begin_turn" do
+  describe "begin_turn/1" do
     test "grants the current player 1 unit for every 3 owned territories" do
       old_state = %{
         current_player_id: 1,
@@ -185,7 +185,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".end_turn" do
+  describe "end_turn/1" do
     test "increments current_player_id to the next active Player and grants them units" do
       old_state = %{
         current_player_id: 2,
@@ -226,7 +226,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".place_unit" do
+  describe "place_unit/2" do
     test "moves an unit from the Player to the Tile" do
       old_state = %{
         current_player_id: 1,
@@ -300,7 +300,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".attack" do
+  describe "attack/4" do
     test "attackers and defenders lose units" do
       old_state = %{
         current_player_id: 1,
@@ -487,7 +487,7 @@ defmodule Sengoku.GameTest do
     end
   end
 
-  describe ".move" do
+  describe "move/4" do
     test "moves a number of units from one territory to another" do
       old_state = %{
         current_player_id: 1,

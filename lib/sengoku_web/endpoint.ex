@@ -1,7 +1,7 @@
 defmodule SengokuWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :sengoku
 
-  socket "/socket", SengokuWeb.UserSocket
+  socket "/socket", SengokuWeb.UserSocket, websocket: true
 
   # Serve at "/" the static files from "priv/static" directory.
   #

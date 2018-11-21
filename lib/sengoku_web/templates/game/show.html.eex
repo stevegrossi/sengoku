@@ -1,4 +1,4 @@
 <script>
   window.game_id = '<%= @game_id %>'
-  window.logo_src = '<%= static_path(@conn, "/images/sengoku.svg") %>'
+  window.logo_src = '<%= Routes.static_path(@conn, "/images/sengoku.svg") %>'
 </script>

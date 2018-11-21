@@ -21,8 +21,9 @@ defmodule SengokuWeb do
     quote do
       use Phoenix.Controller, namespace: SengokuWeb
       import Plug.Conn
-      import SengokuWeb.Router.Helpers
       import SengokuWeb.Gettext
+
+      alias SengokuWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -38,9 +39,10 @@ defmodule SengokuWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import SengokuWeb.Router.Helpers
       import SengokuWeb.ErrorHelpers
       import SengokuWeb.Gettext
+
+      alias SengokuWeb.Router.Helpers, as: Routes
     end
   end
 

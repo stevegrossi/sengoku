@@ -4,15 +4,22 @@ defmodule Sengoku.Player do
   human- or computer-controller actor in the game.
   """
 
+  @derive Jason.Encoder
   defstruct unplaced_units: 0, active: true, ai: true, name: nil, color: nil
 
   @colors %{
-    1 => "#cc241d", # Red
-    2 => "#98971a", # Green
-    3 => "#d79921", # Yellow
-    4 => "#458588", # Blue
-    5 => "#b16286", # Purple
-    6 => "#d65d0e"  # Orange
+    # Red
+    1 => "#cc241d",
+    # Green
+    2 => "#98971a",
+    # Yellow
+    3 => "#d79921",
+    # Blue
+    4 => "#458588",
+    # Purple
+    5 => "#b16286",
+    # Orange
+    6 => "#d65d0e"
   }
 
   def new(atts \\ %{}) do
@@ -28,7 +35,7 @@ defmodule Sengoku.Player do
   end
 
   def update_attributes(state, player_id, %{} = new_atts) do
-    update_in(state, [:players, player_id], fn(player) ->
+    update_in(state, [:players, player_id], fn player ->
       Map.merge(player, new_atts)
     end)
   end
@@ -48,24 +55,24 @@ defmodule Sengoku.Player do
 
   def ai_ids(state) do
     state
-    |> filter_ids(&(&1.ai))
+    |> filter_ids(& &1.ai)
   end
 
   def active_ids(state) do
     state
-    |> filter_ids(&(&1.active))
+    |> filter_ids(& &1.active)
   end
 
   defp update(state, player_id, key, func) do
-    update_in(state, [:players, player_id], fn(player) ->
+    update_in(state, [:players, player_id], fn player ->
       Map.update!(player, key, func)
     end)
   end
 
   defp filter_ids(state, func) do
     state.players
-    |> Enum.filter(fn({_id, player}) -> func.(player) end)
+    |> Enum.filter(fn {_id, player} -> func.(player) end)
     |> Enum.into(%{})
-    |> Map.keys
+    |> Map.keys()
   end
 end

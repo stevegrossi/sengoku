@@ -2,6 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { Socket } from 'phoenix'
 import Game from "./components/Game"
+import css from '../css/app.scss'
 
 const game_id = window.game_id
 const game_container = document.getElementById('game_container')

@@ -4,6 +4,7 @@ defmodule Sengoku.Region do
   Tiles on the board, controlling all of which grants a bonus.
   """
 
+  @derive Jason.Encoder
   @enforce_keys [:value, :tile_ids]
   defstruct [:value, :tile_ids]
 
@@ -13,10 +14,11 @@ defmodule Sengoku.Region do
 
   def containing_tile_ids(%{regions: regions}, tile_ids) do
     regions
-    |> Map.values
-    |> Enum.filter(fn(region) ->
-         region.tile_ids -- tile_ids == []
-       end)
+    |> Map.values()
+    |> Enum.filter(fn region ->
+      region.tile_ids -- tile_ids == []
+    end)
   end
+
   def containing_tile_ids(_, _), do: []
 end

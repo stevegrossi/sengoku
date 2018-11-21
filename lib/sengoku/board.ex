@@ -50,17 +50,24 @@ defmodule Sengoku.Board do
       }
     }
   end
+
   def new("earth") do
     %__MODULE__{
       name: "earth",
       players_count: 6,
       regions: %{
-        1 => %Region{value: 5, tile_ids: Enum.to_list(1..9)},   # North America
-        2 => %Region{value: 2, tile_ids: Enum.to_list(10..13)}, # South America
-        3 => %Region{value: 3, tile_ids: Enum.to_list(14..19)}, # Africa
-        4 => %Region{value: 5, tile_ids: Enum.to_list(20..26)}, # Europe
-        5 => %Region{value: 7, tile_ids: Enum.to_list(27..38)}, # Asia
-        6 => %Region{value: 2, tile_ids: Enum.to_list(39..42)}  # Australia America
+        # North America
+        1 => %Region{value: 5, tile_ids: Enum.to_list(1..9)},
+        # South America
+        2 => %Region{value: 2, tile_ids: Enum.to_list(10..13)},
+        # Africa
+        3 => %Region{value: 3, tile_ids: Enum.to_list(14..19)},
+        # Europe
+        4 => %Region{value: 5, tile_ids: Enum.to_list(20..26)},
+        # Asia
+        5 => %Region{value: 7, tile_ids: Enum.to_list(27..38)},
+        # Australia America
+        6 => %Region{value: 2, tile_ids: Enum.to_list(39..42)}
       },
       tiles: %{
         1 => Tile.new([2, 4, 30]),

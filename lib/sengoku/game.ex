@@ -20,28 +20,33 @@ defmodule Sengoku.Game do
   def initialize_state(game_id, %{"board" => board}) do
     initialize_state(game_id, Board.new(board))
   end
+
   def initialize_state(game_id, %Board{} = board) do
     @initial_state
     |> Map.put(:id, game_id)
     |> Map.put(:board, board.name)
     |> Player.initialize_state(board.players_count)
     |> Tile.initialize_state(board.tiles)
-    |> Authentication.initialize_state
+    |> Authentication.initialize_state()
     |> Region.initialize_state(board.regions)
   end
 
   def handle_action(state, %{type: "end_turn"}) do
     end_turn(state)
   end
+
   def handle_action(state, %{type: "place_unit", tile_id: tile_id}) do
     place_unit(state, tile_id)
   end
+
   def handle_action(state, %{type: "attack", from_id: from_id, to_id: to_id}) do
     attack(state, from_id, to_id)
   end
+
   def handle_action(state, %{type: "move", from_id: from_id, to_id: to_id, count: count}) do
     move(state, from_id, to_id, count)
   end
+
   def handle_action(state, action) do
     Logger.info("Unrecognized action `#{inspect(action)}`")
     state
@@ -79,12 +84,14 @@ defmodule Sengoku.Game do
 
   defp grant_region_bonuses(%{current_player_id: current_player_id} = state) do
     owned_tile_ids = Tile.ids_owned_by(state, current_player_id)
+
     case Region.containing_tile_ids(state, owned_tile_ids) do
       [] ->
         state
+
       regions ->
         bonus =
-          Enum.reduce(regions, 0, fn(region, acc) ->
+          Enum.reduce(regions, 0, fn region, acc ->
             acc + region.value
           end)
 
@@ -101,6 +108,7 @@ defmodule Sengoku.Game do
 
   defp rotate_current_player(%{current_player_id: current_player_id} = state) do
     active_player_ids = Player.active_ids(state)
+
     next_player_id =
       active_player_ids
       |> Enum.at(Enum.find_index(active_player_ids, &(&1 == current_player_id)) + 1)
@@ -116,9 +124,7 @@ defmodule Sengoku.Game do
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
-    if current_player(state).unplaced_units > 0 and
-       is_nil(state.required_move)
-    do
+    if current_player(state).unplaced_units > 0 and is_nil(state.required_move) do
       tile = state.tiles[tile_id]
 
       if Tile.owned_by_player_id?(tile, current_player_id) do
@@ -142,12 +148,9 @@ defmodule Sengoku.Game do
     attacking_units = from_tile.units - 1
     defending_units = to_tile.units
 
-    if attacking_units > 0 and
-       from_tile.owner == current_player_id and
-       defender_id != current_player_id and
-       to_id in from_tile.neighbors and
-       is_nil(state.required_move)
-    do
+    if attacking_units > 0 and from_tile.owner == current_player_id and
+         defender_id != current_player_id and to_id in from_tile.neighbors and
+         is_nil(state.required_move) do
       {attacker_losses, defender_losses} =
         outcome || Battle.decide(attacking_units, defending_units)
 
@@ -158,7 +161,10 @@ defmodule Sengoku.Game do
       |> deactivate_player_if_defeated(defender_id)
       |> check_for_winner()
     else
-      Logger.info("Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_id}`")
+      Logger.info(
+        "Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_id}`"
+      )
+
       state
     end
   end
@@ -166,16 +172,17 @@ defmodule Sengoku.Game do
   defp check_for_capture(state, from_id, to_id, attacking_units) do
     if state.tiles[to_id].units == 0 do
       movable_units = state.tiles[from_id].units - 1
+
       if movable_units > attacking_units do
         state
         |> Tile.set_owner(to_id, state.current_player_id)
         |> Tile.adjust_units(to_id, 0)
         |> Map.put(:required_move, %{
-             from_id: from_id,
-             to_id: to_id,
-             min: 3,
-             max: movable_units
-           })
+          from_id: from_id,
+          to_id: to_id,
+          min: 3,
+          max: movable_units
+        })
       else
         state
         |> Tile.adjust_units(from_id, -attacking_units)
@@ -188,26 +195,28 @@ defmodule Sengoku.Game do
   end
 
   def move(%{required_move: %{}} = state, from_id, to_id, count) do
-    if from_id == state.required_move.from_id and
-       to_id == state.required_move.to_id and
-       count >= state.required_move.min
-    do
+    if from_id == state.required_move.from_id and to_id == state.required_move.to_id and
+         count >= state.required_move.min do
       state
-        |> Tile.adjust_units(from_id, -count)
-        |> Tile.adjust_units(to_id, count)
-        |> Map.put(:required_move, nil)
+      |> Tile.adjust_units(from_id, -count)
+      |> Tile.adjust_units(to_id, count)
+      |> Map.put(:required_move, nil)
     else
       Logger.info("Invalid required move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
   end
-  
-  def move(%{required_move: nil, current_player_id: current_player_id} = state, from_id, to_id, count) do
+
+  def move(
+        %{required_move: nil, current_player_id: current_player_id} = state,
+        from_id,
+        to_id,
+        count
+      ) do
+
     if state.tiles[from_id].owner == current_player_id and
-       state.tiles[to_id].owner == current_player_id and
-       count < state.tiles[from_id].units and
-       from_id in state.tiles[to_id].neighbors
-    do
+         state.tiles[to_id].owner == current_player_id and count < state.tiles[from_id].units and
+         from_id in state.tiles[to_id].neighbors do
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
@@ -242,17 +251,19 @@ defmodule Sengoku.Game do
   end
 
   def assign_random_tile_to_each(state, []), do: state
+
   def assign_random_tile_to_each(state, [player_id | rest]) do
     tile_id =
       state
-      |> Tile.unowned_ids
-      |> Enum.random
+      |> Tile.unowned_ids()
+      |> Enum.random()
 
     new_state = Tile.set_owner(state, tile_id, player_id)
     assign_random_tile_to_each(new_state, rest)
   end
 
   defp deactivate_player_if_defeated(state, nil), do: state
+
   defp deactivate_player_if_defeated(state, player_id) do
     if Tile.ids_owned_by(state, player_id) == [] do
       Player.deactivate(state, player_id)
@@ -263,6 +274,7 @@ defmodule Sengoku.Game do
 
   defp check_for_winner(state) do
     active_player_ids = Player.active_ids(state)
+
     if length(active_player_ids) == 1 do
       state
       |> Map.put(:winner_id, hd(active_player_ids))

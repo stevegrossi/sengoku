@@ -4,7 +4,6 @@ defmodule Sengoku.RegionTest do
   alias Sengoku.{Region}
 
   describe "containing_tile_ids/2" do
-
     test "returns Regions all of whose tile_ids are in the provided list" do
       state = %{
         regions: %{
@@ -17,10 +16,15 @@ defmodule Sengoku.RegionTest do
 
       tile_ids = [1, 4, 5, 6, 7, 8, 10]
       result = Region.containing_tile_ids(state, tile_ids)
+
       assert result == [
-        %{value: 1, tile_ids: [4, 5]},
-        %{value: 1, tile_ids: [6, 7, 8]}
-      ]
+               %{value: 1, tile_ids: [4, 5]},
+               %{value: 1, tile_ids: [6, 7, 8]}
+             ]
+    end
+
+    test "encodes to JSON" do
+      assert Jason.encode!(%Region{value: 1, tile_ids: []})
     end
   end
 end

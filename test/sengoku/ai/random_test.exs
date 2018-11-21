@@ -16,6 +16,7 @@ defmodule Sengoku.AI.RandomTest do
       },
       required_move: nil
     }
+
     action = AI.Random.take_action(state)
 
     assert action == %{type: "place_unit", tile_id: 1}
@@ -34,6 +35,7 @@ defmodule Sengoku.AI.RandomTest do
       },
       required_move: nil
     }
+
     action = AI.Random.take_action(state)
 
     assert action == %{type: "attack", from_id: 1, to_id: 2}
@@ -55,12 +57,13 @@ defmodule Sengoku.AI.RandomTest do
     }
 
     action = AI.Random.take_action(state)
+
     assert %{
-      type: "move",
-      from_id: _from_id,
-      to_id: _to_id,
-      count: _count
-    } = action
+             type: "move",
+             from_id: _from_id,
+             to_id: _to_id,
+             count: _count
+           } = action
   end
 
   test "makes a required move when necessary" do
@@ -84,12 +87,13 @@ defmodule Sengoku.AI.RandomTest do
     }
 
     action = AI.Random.take_action(state)
+
     assert %{
-      type: "move",
-      from_id: 2,
-      to_id: 1,
-      count: _count
-    } = action
+             type: "move",
+             from_id: 2,
+             to_id: 1,
+             count: _count
+           } = action
   end
 
   test "ends turn when no other action" do
@@ -105,6 +109,7 @@ defmodule Sengoku.AI.RandomTest do
       },
       required_move: nil
     }
+
     action = AI.Random.take_action(state)
 
     assert action == %{type: "end_turn"}

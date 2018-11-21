@@ -4,7 +4,6 @@ defmodule Sengoku.BoardTest do
   alias Sengoku.{Board}
 
   describe "new/1" do
-
     test "returns a Board struct with board-specific data" do
       %Board{
         name: "japan",

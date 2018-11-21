@@ -8,7 +8,7 @@ defmodule Sengoku.Token do
   """
   def new(n) do
     n
-    |> :crypto.strong_rand_bytes
+    |> :crypto.strong_rand_bytes()
     |> Base.encode16(case: :lower)
   end
 end

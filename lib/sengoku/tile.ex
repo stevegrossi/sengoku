@@ -4,6 +4,7 @@ defmodule Sengoku.Tile do
   controllable territory on the game board.
   """
 
+  @derive Jason.Encoder
   defstruct owner: nil, units: 1, neighbors: []
 
   def new(neighbors) do

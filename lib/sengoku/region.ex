@@ -4,6 +4,7 @@ defmodule Sengoku.Region do
   Tiles on the board, controlling all of which grants a bonus.
   """
 
+  @derive Jason.Encoder
   @enforce_keys [:value, :tile_ids]
   defstruct [:value, :tile_ids]
 

@@ -40,7 +40,7 @@ defmodule Sengoku.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:poison, "~> 3.0"}
+      {:jason, "~> 1.0"}
     ]
   end
 end

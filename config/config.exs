@@ -12,7 +12,7 @@ config :sengoku, SengokuWeb.Endpoint,
   render_errors: [view: SengokuWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Sengoku.PubSub, adapter: Phoenix.PubSub.PG2]
 
-config :phoenix, :json_library, Poison
+config :phoenix, :json_library, Jason
 
 # Configures Elixir's Logger
 config :logger, :console,

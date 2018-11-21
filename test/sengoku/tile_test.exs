@@ -21,5 +21,9 @@ defmodule Sengoku.TileTest do
       player_id = 1
       refute Tile.owned_by_player_id?(tile, player_id)
     end
+
+    test "encodes to JSON" do
+      assert Jason.encode!(Tile.new([]))
+    end
   end
 end

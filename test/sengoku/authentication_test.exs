@@ -3,7 +3,7 @@ defmodule Sengoku.AuthenticationTest do
 
   alias Sengoku.{Authentication, Player}
 
-  describe ".authenticate_player" do
+  describe "authenticate_player/3" do
     test "with no token, replaces the first AI player" do
       old_state = %{
         turn: 0,

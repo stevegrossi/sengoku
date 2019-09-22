@@ -42,7 +42,7 @@ defmodule Sengoku.Mixfile do
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:jason, "~> 1.0"},
-      {:wallaby, "~> 0.21", only: :test}
+      {:wallaby, "~> 0.23", only: :test}
     ]
   end
 end

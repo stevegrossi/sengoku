@@ -8,5 +8,3 @@ config :sengoku, SengokuWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
-
-config :wallaby, screenshot_on_failure: true

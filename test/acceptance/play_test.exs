@@ -1,4 +1,4 @@
-defmodule Sengoku.AccountManagementTest do
+defmodule Sengoku.PlayTest do
   use SengokuWeb.AcceptanceCase
 
   test "Playing a game", %{session: session} do
@@ -12,11 +12,5 @@ defmodule Sengoku.AccountManagementTest do
     session
     |> assert_has(css(".Player", count: 4))
     |> assert_has(css(".Player", count: 1, text: "Yojimbo"))
-
-    # |> fill_in(text_field("Email"), with: account.email)
-    # |> fill_in(text_field("Password"), with: "password")
-    # |> click(button("Log In"))
-    # |> click(link("Me"))
-    # |> assert_has(css("h2", text: account.email))
   end
 end

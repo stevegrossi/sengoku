@@ -5,7 +5,7 @@ defmodule Sengoku.Mixfile do
     [
       app: :sengoku,
       version: "0.0.1",
-      elixir: "~> 1.7",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,

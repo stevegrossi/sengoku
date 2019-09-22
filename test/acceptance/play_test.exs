@@ -10,7 +10,9 @@ defmodule Sengoku.AccountManagementTest do
        end)
 
     session
-    |> assert_has(css(".Player", text: "Yojimbo"))
+    |> assert_has(css(".Player", count: 4))
+    |> assert_has(css(".Player", count: 1, text: "Yojimbo"))
+
     # |> fill_in(text_field("Email"), with: account.email)
     # |> fill_in(text_field("Password"), with: "password")
     # |> click(button("Log In"))

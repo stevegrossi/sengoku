@@ -5,7 +5,7 @@ defmodule Sengoku.Mixfile do
     [
       app: :sengoku,
       version: "0.0.1",
-      elixir: "~> 1.9",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
@@ -41,7 +41,8 @@ defmodule Sengoku.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:wallaby, "~> 0.23", only: :test}
     ]
   end
 end

@@ -19,9 +19,9 @@ mix deps.compile
 mix ecto.create
 
 # Install phantomjs
-# export PHANTOMJS_VERSION="2.1.1"
-# export PHANTOMJS_HOST="https://s3.amazonaws.com/codeship-packages"
-# \curl -sSL https://raw.githubusercontent.com/codeship/scripts/master/packages/phantomjs.sh | bash -s
+export PHANTOMJS_VERSION="2.1.1"
+export PHANTOMJS_HOST="https://s3.amazonaws.com/codeship-packages"
+\curl -sSL https://raw.githubusercontent.com/codeship/scripts/master/packages/phantomjs.sh | bash -s
 
 nvm use 6
 

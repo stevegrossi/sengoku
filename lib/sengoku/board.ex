@@ -66,7 +66,7 @@ defmodule Sengoku.Board do
         4 => %Region{value: 5, tile_ids: Enum.to_list(20..26)},
         # Asia
         5 => %Region{value: 7, tile_ids: Enum.to_list(27..38)},
-        # Australia America
+        # Australia
         6 => %Region{value: 2, tile_ids: Enum.to_list(39..42)}
       },
       tiles: %{

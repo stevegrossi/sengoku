@@ -133,7 +133,7 @@ defmodule Sengoku.Board do
         7 => %Region{value: 6, tile_ids: [15, 16, 21, 22, 23, 28, 29]}
       },
       tiles: %{
-        1 => Tile.new([6, 7]),
+        1 => Tile.new([2, 6, 7]),
         2 => Tile.new([1, 3, 7]),
         3 => Tile.new([2, 4]),
         4 => Tile.new([3, 5, 8]),

@@ -24,6 +24,10 @@
       <label class="BorderRadio-label" for="board_earth">
         <b>Earth</b><br>6 players
       </label>
+      <input class="BorderRadio-input" id="board_wheel" type="radio" name="board" value="wheel" />
+      <label class="BorderRadio-label" for="board_wheel">
+        <b>Wheel</b><br>6 players
+      </label>
     </p>
     <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
   <% end %>

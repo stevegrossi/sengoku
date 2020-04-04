@@ -115,4 +115,68 @@ defmodule Sengoku.Board do
       }
     }
   end
+
+  @doc """
+  Returns a Board struct with the data specific to a given board.
+  """
+  def new("wheel") do
+    %__MODULE__{
+      name: "wheel",
+      players_count: 6,
+      regions: %{
+        1 => %Region{value: 3, tile_ids: [1, 6, 7, 10, 11, 14]},
+        2 => %Region{value: 3, tile_ids: [2, 3, 4, 5, 8, 12]},
+        3 => %Region{value: 3, tile_ids: [9, 13, 17, 24, 25, 26]},
+        4 => %Region{value: 3, tile_ids: [30, 33, 34, 37, 38, 43]},
+        5 => %Region{value: 3, tile_ids: [32, 36, 39, 40, 41, 42]},
+        6 => %Region{value: 3, tile_ids: [18, 19, 20, 27, 31, 35]},
+        7 => %Region{value: 6, tile_ids: [15, 16, 21, 22, 23, 28, 29]}
+      },
+      tiles: %{
+        1 => Tile.new([6, 7]),
+        2 => Tile.new([1, 3, 7]),
+        3 => Tile.new([2, 4]),
+        4 => Tile.new([3, 5, 8]),
+        5 => Tile.new([4, 8, 9]),
+        6 => Tile.new([1, 7, 10]),
+        7 => Tile.new([1, 2, 6, 11]),
+        8 => Tile.new([4, 5, 9, 12]),
+        9 => Tile.new([5, 8, 13]),
+        10 => Tile.new([6, 14]),
+        11 => Tile.new([7, 15]),
+        12 => Tile.new([8, 16]),
+        13 => Tile.new([9, 17]),
+        14 => Tile.new([10, 18, 19]),
+        15 => Tile.new([11, 16, 21, 22]),
+        16 => Tile.new([12, 15, 22, 23]),
+        17 => Tile.new([13, 25, 26]),
+        18 => Tile.new([14, 19, 27]),
+        19 => Tile.new([14, 18, 20, 27]),
+        20 => Tile.new([19, 21]),
+        21 => Tile.new([15, 20, 22, 28]),
+        22 => Tile.new([15, 16, 21, 23, 28, 29]),
+        23 => Tile.new([16, 22, 24, 29]),
+        24 => Tile.new([23, 25]),
+        25 => Tile.new([17, 24, 26, 30]),
+        26 => Tile.new([17, 25, 30]),
+        27 => Tile.new([18, 19, 31]),
+        28 => Tile.new([21, 22, 29, 32]),
+        29 => Tile.new([22, 23, 28, 33]),
+        30 => Tile.new([25, 26, 34]),
+        31 => Tile.new([27, 35]),
+        32 => Tile.new([28, 36]),
+        33 => Tile.new([29, 37]),
+        34 => Tile.new([30, 38]),
+        35 => Tile.new([31, 36, 39]),
+        36 => Tile.new([32, 35, 39, 40]),
+        37 => Tile.new([33, 38, 42, 43]),
+        38 => Tile.new([34, 37, 43]),
+        39 => Tile.new([35, 36, 40]),
+        40 => Tile.new([36, 39, 41]),
+        41 => Tile.new([40, 42]),
+        42 => Tile.new([37, 41, 43]),
+        43 => Tile.new([37, 38, 42])
+      }
+    }
+  end
 end

@@ -1,25 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-
-    <title>Sengoku</title>
-    <link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>">
-  </head>
-
-  <body class="App">
-    <h1>
-      <a href="/" class="Logo"><img src="<%= Routes.static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
-    </h1>
-
-    <main role="main">
-      <%= render @view_module, @view_template, assigns %>
-    </main>
-
-    <script src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
-  </body>
-</html>
+<main role="main" class="container">
+  <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+  <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+  <%= @inner_content %>
+</main>

@@ -1,29 +1,20 @@
 defmodule SengokuWeb.Router do
   use SengokuWeb, :router
 
-  pipeline :browser do
+pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {SengokuWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", SengokuWeb do
-    # Use the default browser stack
     pipe_through :browser
 
     get "/", GameController, :new
     post "/", GameController, :create
-    get "/:game_id", GameController, :show
+    live "/game/:game_id", GameLive
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", SengokuWeb do
-  #   pipe_through :api
-  # end
 end

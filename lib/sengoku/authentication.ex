@@ -25,14 +25,12 @@ defmodule Sengoku.Authentication do
         if is_nil(first_available_player_id) do
           {:error, :full}
         else
-          new_token = Token.new(16)
-
           state =
             state
-            |> put_in([:tokens, new_token], first_available_player_id)
+            |> put_in([:tokens, token], first_available_player_id)
             |> Player.update_attributes(first_available_player_id, %{ai: false, name: name})
 
-          {:ok, {first_available_player_id, new_token}, state}
+          {:ok, {first_available_player_id, token}, state}
         end
       else
         {:error, :in_progress}

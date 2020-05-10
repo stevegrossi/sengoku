@@ -16,6 +16,6 @@ defmodule SengokuWeb.Router do
 
     get "/", GameController, :new
     post "/", GameController, :create
-    live "/game/:game_id", GameLive
+    live "/game/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
   end
 end

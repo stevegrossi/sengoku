@@ -53,13 +53,13 @@ defmodule Sengoku.GameServer do
         state_updated(new_state)
         {:reply, {:ok, player_id, token}, new_state}
 
-      {:error, error} ->
-        {:reply, {:error, error}, state}
+      {:error, reason} ->
+        {:reply, {:error, reason}, state}
     end
   end
 
   def handle_call(:get_state, _from, state) do
-    {:reply, public_state(state), state}
+    {:reply, state, state}
   end
 
   def handle_cast({:action, _player_id, %{type: "start_game"}}, state) do
@@ -108,9 +108,5 @@ defmodule Sengoku.GameServer do
 
   defp via_tuple(game_id) do
     {:via, Registry, {:game_server_registry, game_id}}
-  end
-
-  defp public_state(state) do
-    Map.delete(state, :tokens)
   end
 end

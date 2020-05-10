@@ -27,6 +27,12 @@ defmodule SengokuWeb.GameLive do
   def render(assigns) do
     ~L"""
     <div class="Game">
+      <%= if @game_state.winner_id do %>
+        <div class="Modal GameOver">
+          <%= @game_state.players[@game_state.winner_id].name %> wins!
+        </div>
+      <% end %>
+
       <div class="Display">
         <h1 class="Logo">
           <a href="/">
@@ -99,10 +105,11 @@ defmodule SengokuWeb.GameLive do
     end
   end
 
-  # @impl true
-  # def handle_event("start", _params, socket) do
-  #   %{type: "start_game"}
+  @impl true
+  def handle_event("start", _params, socket) do
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "start_game"})
 
-  #   {:noreply, socket}
-  # end
+    {:noreply, socket}
+  end
 end

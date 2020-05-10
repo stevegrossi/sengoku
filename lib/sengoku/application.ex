@@ -14,9 +14,9 @@ defmodule Sengoku.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Sengoku.PubSub},
       # Start the Endpoint (http/https)
-      SengokuWeb.Endpoint
+      SengokuWeb.Endpoint,
       # Start a worker by calling: Sengoku.Worker.start_link(arg)
-      # {Sengoku.Worker, arg}
+      {Registry, keys: :unique, name: :game_server_registry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

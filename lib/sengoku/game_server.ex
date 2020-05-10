@@ -9,7 +9,6 @@ defmodule Sengoku.GameServer do
   require Logger
 
   alias Sengoku.{Authentication, Game, Token, AI}
-  alias SengokuWeb.Endpoint
 
   @default_ai_wait_time_ms 100
 
@@ -51,6 +50,7 @@ defmodule Sengoku.GameServer do
   def handle_call({:authenticate_player, token, name}, _from, state) do
     case Authentication.authenticate_player(state, token, name) do
       {:ok, {player_id, token}, new_state} ->
+        state_updated(new_state)
         {:reply, {:ok, player_id, token}, new_state}
 
       {:error, error} ->
@@ -85,7 +85,7 @@ defmodule Sengoku.GameServer do
   end
 
   def handle_info(:take_ai_move_if_necessary, state) do
-    if Game.current_player(state).ai && !state.winner_id do
+    if Game.current_player(state) && Game.current_player(state).ai && !state.winner_id do
       Process.sleep(ai_wait_time())
       action = AI.Smart.take_action(state)
       action(state.id, state.current_player_id, action)
@@ -103,7 +103,7 @@ defmodule Sengoku.GameServer do
 
   defp state_updated(state) do
     send(self(), :take_ai_move_if_necessary)
-    Endpoint.broadcast("games:" <> state.id, "update", state)
+    Phoenix.PubSub.broadcast(Sengoku.PubSub, "game:" <> state.id, {:game_updated, state})
   end
 
   defp via_tuple(game_id) do

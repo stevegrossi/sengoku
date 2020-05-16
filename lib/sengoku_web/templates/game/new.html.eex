@@ -28,6 +28,10 @@
       <label class="BorderRadio-label" for="board_wheel">
         <b>Wheel</b><br>6 players
       </label>
+      <input class="BorderRadio-input" id="board_all" type="radio" name="board" value="all" />
+      <label class="BorderRadio-label" for="board_all">
+        <b>All</b><br>8 players
+      </label>
     </p>
     <p><input class="Button Button--primary" type="submit" value="New Game" /></p>
   <% end %>

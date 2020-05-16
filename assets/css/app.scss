@@ -90,40 +90,96 @@ h2 {
   }
 }
 
-.Tile {
-  stroke: $black;
-  stroke-width: 1.5;
-
-  &-highlight {
-    opacity: 0;
-    fill: rgba(255,255,255,.1);
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  &-border {
-    fill: transparent;
-    stroke: transparent;
-    stroke-width: 0;
-    transition: all .1s ease-in;
-
-    &--major {
-      stroke-width: 7;
-      stroke: rgba(255, 255, 255, .4);
-    }
-
-    &--minor {
-      stroke-width: 7;
-      stroke: rgba(255, 255, 255, .2);
-    }
+@for $i from 1 through 11 {
+  #tile_#{$i} {
+    top: 0;
+    width: (100 / 12) * 1%;
+    left: ((100 / 12) * ($i - 1) + (100 / 24)) * 1%;
   }
 }
+
+.Board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin proportional-box($a: 1, $b: $a) {
+  position: absolute;
+  top: 0;
+  left: calc(40vw - #{$a/$b/2*100vh});
+  width: $a/$b*100vh;
+  height: 100vh;
+
+  @media (max-aspect-ratio: 650/406) {
+    top: calc(50vh - #{$b/$a/2*80vw});
+    left: 0;
+    width: 80vw;
+    height: $b/$a*80vw;
+  }
+}
+
+.Tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: green;
+  @include proportional-box(650, 508);
+}
+
+.Tile {
+  // position: absolute;
+
+  // svg {
+  //   width: 100%;
+  //   height: 100%;
+  // }
+  // outline: 1px solid magenta;
+  // position: relative;
+  // // position: absolute;
+  // // top: 0;
+  // // left: 0;
+  // width: 60px;
+  // height: 60px;
+  // text-align: center;
+
+  // &::before {
+  //   content: "⬣";
+  //   line-height: 60px;
+  // }
+//   stroke: $black;
+//   stroke-width: 1.5;
+
+//   &-highlight {
+//     opacity: 0;
+//     fill: rgba(255,255,255,.1);
+
+//     &:hover {
+//       opacity: 1;
+//     }
+//   }
+
+//   &-border {
+//     fill: transparent;
+//     stroke: transparent;
+//     stroke-width: 0;
+//     transition: all .1s ease-in;
+
+//     &--major {
+//       stroke-width: 7;
+//       stroke: rgba(255, 255, 255, .4);
+//     }
+
+//     &--minor {
+//       stroke-width: 7;
+//       stroke: rgba(255, 255, 255, .2);
+//     }
+//   }
+}
 .Tile-count {
-  fill: $black;
-  font-size: 21px;
-  cursor: default;
+//   fill: $black;
+//   font-size: 21px;
+//   cursor: default;
 }
 
 .Modal {
@@ -225,7 +281,7 @@ h2 {
   left: 20%;
   width: 80%;
   height: 100%;
-  padding: 1em;
+  // padding: 1em;
 }
 
 .BorderRadio {

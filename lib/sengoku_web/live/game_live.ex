@@ -40,9 +40,6 @@ defmodule SengokuWeb.GameLive do
           </a>
         </h1>
 
-        <p>User Token: <%= @user_token %></p>
-        <p>Player ID: <%= @player_id %></p>
-
         <ol class="Players">
           <%= for {player_id, player} <- @game_state.players do %>
             <li class="Player <%= if not player.active, do: "Player--inactive" %> <%= if @game_state.current_player_id == player_id, do: "Player--current" %>" style="background-color: <%= player.color %>">
@@ -77,9 +74,7 @@ defmodule SengokuWeb.GameLive do
 
       </div>
       <div class="Board">
-        <p>
-          <code><%= inspect(@game_state) %></code>
-        </p>
+        <div class="Tiles">Tiles, yo</div>
       </div>
     </div>
     """

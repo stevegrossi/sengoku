@@ -74,7 +74,13 @@ defmodule SengokuWeb.GameLive do
 
       </div>
       <div class="Board">
-        <div class="Tiles">Tiles, yo</div>
+        <ul class="Tiles">
+          <%= for {id, _tile} <- @game_state.tiles do %>
+            <li class="Tile" id="tile_<%= id %>">
+              <span class="TileCenter"><%= id %></span>
+            </li>
+          <% end %>
+        </ul>
       </div>
     </div>
     """

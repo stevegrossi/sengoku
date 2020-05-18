@@ -90,14 +90,6 @@ h2 {
   }
 }
 
-@for $i from 1 through 11 {
-  #tile_#{$i} {
-    top: 0;
-    width: (100 / 12) * 1%;
-    left: ((100 / 12) * ($i - 1) + (100 / 24)) * 1%;
-  }
-}
-
 .Board {
   display: flex;
   justify-content: center;
@@ -127,28 +119,103 @@ h2 {
   @include proportional-box(650, 508);
 }
 
+$tile-row-height: 8.75%;
+
+@for $i from 1 through 11 {
+  #tile_#{$i} {
+    top: 0 * $tile-row-height;
+    left: ((100 / 12) * ($i - 1) + (100 / 24)) * 1%;
+  }
+}
+
+@for $i from 12 through 23 {
+  #tile_#{$i} {
+    top: 1 * $tile-row-height;
+    left: ((100 / 12) * ($i - 12)) * 1%;
+  }
+}
+
+@for $i from 24 through 34 {
+  #tile_#{$i} {
+    top: 2 * $tile-row-height;
+    left: ((100 / 12) * ($i - 24) + (100 / 24)) * 1%;
+  }
+}
+
+@for $i from 35 through 46 {
+  #tile_#{$i} {
+    top: 3 * $tile-row-height;
+    left: ((100 / 12) * ($i - 35)) * 1%;
+  }
+}
+
+@for $i from 47 through 57 {
+  #tile_#{$i} {
+    top: 4 * $tile-row-height;
+    left: ((100 / 12) * ($i - 47) + (100 / 24)) * 1%;
+  }
+}
+
+@for $i from 58 through 69 {
+  #tile_#{$i} {
+    top: 5 * $tile-row-height;
+    left: ((100 / 12) * ($i - 58)) * 1%;
+  }
+}
+
+@for $i from 70 through 80 {
+  #tile_#{$i} {
+    top: 6 * $tile-row-height;
+    left: ((100 / 12) * ($i - 70) + (100 / 24)) * 1%;
+  }
+}
+
+@for $i from 81 through 92 {
+  #tile_#{$i} {
+    top: 7 * $tile-row-height;
+    left: ((100 / 12) * ($i - 81)) * 1%;
+  }
+}
+
+@for $i from 93 through 103 {
+  #tile_#{$i} {
+    top: 8 * $tile-row-height;
+    left: ((100 / 12) * ($i - 93) + (100 / 24)) * 1%;
+  }
+}
+
+@for $i from 104 through 115 {
+  #tile_#{$i} {
+    top: 9 * $tile-row-height;
+    left: ((100 / 12) * ($i - 104)) * 1%;
+  }
+}
+
+@for $i from 116 through 126 {
+  #tile_#{$i} {
+    top: 10 * $tile-row-height;
+    left: ((100 / 12) * ($i - 116) + (100 / 24)) * 1%;
+  }
+}
+
 .Tile {
-  // position: absolute;
+  position: absolute;
+  width: (100 / 12) * 1%;
+  height: (100 / 12) * 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  // svg {
-  //   width: 100%;
-  //   height: 100%;
-  // }
-  // outline: 1px solid magenta;
-  // position: relative;
-  // // position: absolute;
-  // // top: 0;
-  // // left: 0;
-  // width: 60px;
-  // height: 60px;
-  // text-align: center;
-
-  // &::before {
-  //   content: "⬣";
-  //   line-height: 60px;
-  // }
-//   stroke: $black;
-//   stroke-width: 1.5;
+  &::before {
+    content: "⬢";
+    line-height: 60px;
+    font-size: 110px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    line-height: 60px;
+  }
+}
 
 //   &-highlight {
 //     opacity: 0;
@@ -175,8 +242,20 @@ h2 {
 //       stroke: rgba(255, 255, 255, .2);
 //     }
 //   }
-}
-.Tile-count {
+// }
+.TileCenter {
+  background-color: #000;
+  border-radius: 50%;
+  display: block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  position: relative;
+  margin-top: 20px;
+  line-height: 32px;
+  font-weight: bold;
+  font-size: 18px;
+  // transform: translate(-25%, -50%);
 //   fill: $black;
 //   font-size: 21px;
 //   cursor: default;

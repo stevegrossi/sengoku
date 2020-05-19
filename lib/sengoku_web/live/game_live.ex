@@ -76,7 +76,7 @@ defmodule SengokuWeb.GameLive do
       <div class="Board">
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>
-            <li class="Tile" id="tile_<%= id %>">
+            <li class="Tile <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>" id="tile_<%= id %>">
               <svg viewBox="0 0 200 200" version="1.1">
                 <polygon points="183.138438763306,148 183.138438763306,52 100,4 16.8615612366939,52 16.8615612366939,148 100,196"/>
               </svg>

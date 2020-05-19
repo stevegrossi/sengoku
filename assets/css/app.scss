@@ -90,15 +90,6 @@ h2 {
   }
 }
 
-.player-bg-1 { background-color: #cc241d; }
-.player-bg-2 { background-color: #98971a; }
-.player-bg-3 { background-color: #d79921; }
-.player-bg-4 { background-color: #458588; }
-.player-bg-5 { background-color: #b16286; }
-.player-bg-6 { background-color: #d65d0e; }
-.player-bg-7 { background-color: #689d6a; }
-.player-bg-8 { background-color: #3c3836; }
-
 .Board {
   display: flex;
   justify-content: center;
@@ -247,6 +238,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 //   }
 // }
 .TileCenter {
+  background-color: #aaa;
   border-radius: 50%;
   display: block;
   width: 35px;
@@ -262,6 +254,26 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   font-size: 18px;
   text-shadow: 0 1px 1px rgba(0,0,0,.5);
 }
+
+.player-bg-1 { background-color: #fb4934; }
+.player-bg-2 { background-color: #b8bb26; }
+.player-bg-3 { background-color: #fabd2f; }
+.player-bg-4 { background-color: #458588; }
+.player-bg-5 { background-color: #d3869b; }
+.player-bg-6 { background-color: #fe8019; }
+.player-bg-7 { background-color: #8ec07c; }
+.player-bg-8 { background-color: #3c3836; }
+
+.region-1 svg { fill: #0d2d04; }
+.region-2 svg { fill: #f9dbbd; }
+.region-3 svg { fill: #405936; }
+.region-4 svg { fill: #594e36; }
+.region-5 svg { fill: #6b8471; }
+.region-6 svg { fill: #cb997e; }
+.region-7 svg { fill: #9dada6; }
+.region-8 svg { fill: #2f2504; }
+.region-9 svg { fill: #7e846b; }
+.region-10 svg { fill: #a5ae9e; }
 
 .Modal {
   background: rgba($black, .75);

@@ -42,7 +42,7 @@ defmodule SengokuWeb.GameLive do
 
         <ol class="Players">
           <%= for {player_id, player} <- @game_state.players do %>
-            <li class="Player <%= if not player.active, do: "Player--inactive" %> <%= if @game_state.current_player_id == player_id, do: "Player--current" %>" style="background-color: <%= player.color %>">
+            <li class="Player <%= "player-bg-#{player_id}" %> <%= if not player.active, do: "Player--inactive" %> <%= if @game_state.current_player_id == player_id, do: "Player--current" %>">
               <b>
                 <%= player.name %>
                 <%= if player.ai do %>
@@ -75,12 +75,12 @@ defmodule SengokuWeb.GameLive do
       </div>
       <div class="Board">
         <ul class="Tiles">
-          <%= for {id, _tile} <- @game_state.tiles do %>
+          <%= for {id, tile} <- @game_state.tiles do %>
             <li class="Tile" id="tile_<%= id %>">
-              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" version="1.1">
+              <svg viewBox="0 0 200 200" version="1.1">
                 <polygon points="183.138438763306,148 183.138438763306,52 100,4 16.8615612366939,52 16.8615612366939,148 100,196"/>
               </svg>
-              <span class="TileCenter"><%= id %></span>
+              <span class="TileCenter <%= "player-bg-#{tile.owner}" %>"><%= tile.units %></span>
             </li>
           <% end %>
         </ul>

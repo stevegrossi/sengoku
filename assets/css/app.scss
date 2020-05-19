@@ -115,7 +115,6 @@ h2 {
   list-style: none;
   margin: 0;
   padding: 0;
-  background: green;
   @include proportional-box(650, 508);
 }
 
@@ -198,23 +197,31 @@ $tile-row-height: 8.75%;
   }
 }
 
+$tile-width: (100 / 12) * 1%;
+$tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
+
 .Tile {
   position: absolute;
-  width: (100 / 12) * 1%;
-  height: (100 / 12) * 1%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: $tile-width;
+  height: $tile-height;
 
-  &::before {
-    content: "⬢";
-    line-height: 60px;
-    font-size: 110px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    line-height: 60px;
+  svg {
+    fill: #fbf1c7;
   }
+
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+
+  // &::before {
+  //   content: "⬢";
+  //   line-height: 60px;
+  //   font-size: 110px;
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   line-height: 60px;
+  // }
 }
 
 //   &-highlight {
@@ -250,8 +257,10 @@ $tile-row-height: 8.75%;
   width: 30px;
   height: 30px;
   text-align: center;
-  position: relative;
-  margin-top: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
   line-height: 32px;
   font-weight: bold;
   font-size: 18px;

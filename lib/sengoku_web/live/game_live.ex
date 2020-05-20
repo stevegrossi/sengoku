@@ -79,24 +79,66 @@ defmodule SengokuWeb.GameLive do
         <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
           <p>
             <% unplaced_units = @game_state.players[@game_state.current_player_id].unplaced_units %>
-            <%= if unplaced_units > 0 do %>
-              <%= "You have #{unplaced_units} units to place. Click on one of your territories to place a unit." %>
+            <%= cond do %>
+              <% unplaced_units > 0 -> %>
+                <%= "You have #{unplaced_units} units to place. Click on one of your territories to place a unit." %>
+              <% is_nil(@game_state.selected_tile_id) -> %>
+                Select one of your territories to attack or move from, or end your turn.
+              <% not is_nil(@game_state.selected_tile_id) && @game_state.tiles[@game_state.selected_tile_id].units == 1 %>
+                You must have more than 1 unit in a territory to move or attack.
+              <% true -> %>
+                Select an adjacent territory attack or move into.
             <% end %>
           </p>
         <% end %>
       </div>
 
-      <div class="Board">
+      <div
+        class="Board"
+        <%= if @game_state.selected_tile_id, do: "phx-click=unselect_tile" %>
+      >
+        <%= if @game_state.required_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
+          <div class="Modal">
+            <form class="MoveForm" phx-submit="move">
+              <h2>Move how many?</h2>
+              <div class="MoveForm-slider">
+                <span><%= @game_state.required_move.min %></span>
+                <input class="MoveForm-input"
+                       type="range"
+                       min=<%= @game_state.required_move.min %>
+                       max=<%= @game_state.required_move.max %>
+                       name="count"
+                       autoFocus
+                />
+                <span><%= @game_state.required_move.max %></span>
+              </div>
+              <div class="MoveForm-actions">
+                <input class="Button Button--primary" type="submit" value="Move" />
+              </div>
+            </form>
+          </div>
+        <% end %>
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>
             <li
-              class="Tile <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>"
+              class="
+                Tile
+                <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>
+                <%= if id == @game_state.selected_tile_id, do: "Tile--selected" %>
+                <%= if @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors, do: "Tile--neighborOfselected" %>
+              "
               id="tile_<%= id %>"
               <%= cond do %>
                 <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
                   phx-click="place_unit"
                 <% is_nil(@game_state.selected_tile_id) -> %>
                   phx-click="select_tile"
+                <% id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
+                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
+                    phx-click="start_move"
+                  <% else %>
+                    phx-click="attack"
+                  <% end %>
                 <% true -> %>
               <% end %>
               phx-value-tile_id="<%= id %>"
@@ -163,6 +205,46 @@ defmodule SengokuWeb.GameLive do
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "select_tile", tile_id: tile_id})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("unselect_tile", _params, socket) do
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "unselect_tile"})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("attack", %{"tile_id" => tile_id_string}, socket) do
+    {tile_id, _} = Integer.parse(tile_id_string)
+    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "attack", from_id: selected_tile_id, to_id: tile_id})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("start_move", %{"tile_id" => tile_id_string}, socket) do
+    {to_tile_id, _} = Integer.parse(tile_id_string)
+    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "start_move", from_id: selected_tile_id, to_id: to_tile_id})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("move", %{"count" => count_string}, socket) do
+    {count, _} = Integer.parse(count_string)
+    %{game_id: game_id, player_id: player_id, game_state: %{required_move: required_move}} = socket.assigns
+    GameServer.action(game_id, player_id, %{
+      type: "move",
+      from_id: required_move.from_id,
+      to_id: required_move.to_id,
+      count: count
+    })
 
     {:noreply, socket}
   end

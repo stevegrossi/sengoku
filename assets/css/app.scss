@@ -209,45 +209,32 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   svg {
     fill: #fbf1c7;
     filter: drop-shadow( 0px 1px 2px rgba(0, 0, 0, .25));
+    overflow: visible;
   }
 
   &:hover {
     transform: scale(1.1);
+  }
 
-    // svg {
-    //   stroke: rgba(255,255,255,.5);
-    //   stroke-width: 10px;
-    //   paint-order: stroke;
-    // }
+  &--selected,
+  &--neighborOfselected {
+    stroke-width: 15px;
+    paint-order: stroke;
+  }
+
+  &--selected {
+    svg {
+      stroke: rgba(255,255,255,.5);
+    }
+  }
+
+  &--neighborOfselected {
+    svg {
+      stroke: rgba(255,255,255,.25);
+    }
   }
 }
 
-//   &-highlight {
-//     opacity: 0;
-//     fill: rgba(255,255,255,.1);
-
-//     &:hover {
-//       opacity: 1;
-//     }
-//   }
-
-//   &-border {
-//     fill: transparent;
-//     stroke: transparent;
-//     stroke-width: 0;
-//     transition: all .1s ease-in;
-
-//     &--major {
-//       stroke-width: 7;
-//       stroke: rgba(255, 255, 255, .4);
-//     }
-
-//     &--minor {
-//       stroke-width: 7;
-//       stroke: rgba(255, 255, 255, .2);
-//     }
-//   }
-// }
 .TileCenter {
   background-color: #aaa;
   border-radius: 50%;

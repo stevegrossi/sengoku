@@ -44,8 +44,16 @@ defmodule Sengoku.Game do
     select_tile(state, tile_id)
   end
 
+  def handle_action(state, %{type: "unselect_tile"}) do
+    unselect_tile(state)
+  end
+
   def handle_action(state, %{type: "attack", from_id: from_id, to_id: to_id}) do
     attack(state, from_id, to_id)
+  end
+
+  def handle_action(state, %{type: "start_move", from_id: from_id, to_id: to_id}) do
+    start_move(state, from_id, to_id)
   end
 
   def handle_action(state, %{type: "move", from_id: from_id, to_id: to_id, count: count}) do
@@ -150,6 +158,10 @@ defmodule Sengoku.Game do
     %{state | selected_tile_id: tile_id}
   end
 
+  def unselect_tile(%{selected_tile_id: tile_id} = state) when is_integer(tile_id) do
+    %{state | selected_tile_id: nil}
+  end
+
   def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
@@ -201,6 +213,17 @@ defmodule Sengoku.Game do
     else
       state
     end
+  end
+
+  def start_move(state, from_id, to_id) do
+    state
+    |> Map.put(:selected_tile_id, nil)
+    |> Map.put(:required_move, %{
+      from_id: from_id,
+      to_id: to_id,
+      min: 0,
+      max: state.tiles[from_id].units - 1
+    })
   end
 
   def move(%{required_move: %{}} = state, from_id, to_id, count) do

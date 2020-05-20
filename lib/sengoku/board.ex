@@ -140,7 +140,7 @@ defmodule Sengoku.Board do
   Returns a Board struct with the data specific to a given board.
   """
   def new("japan") do
-    map_tile_ids = [32, 39, 40, 41, 43, 44, 50, 51, 52, 53, 54, 55, 60, 61, 62, 63, 64, 65, 66, 67, 71, 72, 74]
+    map_tile_ids = [32, 33, 39, 40, 41, 43, 44, 50, 51, 52, 53, 54, 55, 60, 61, 62, 63, 64, 65, 66, 67, 71, 72, 74]
 
     %__MODULE__{
       name: "japan",
@@ -151,7 +151,7 @@ defmodule Sengoku.Board do
         3 => %Region{value: 5, tile_ids: [39, 40, 41, 50, 51, 52]},
         4 => %Region{value: 4, tile_ids: [53, 54, 64, 65]},
         5 => %Region{value: 3, tile_ids: [55, 66, 67]},
-        6 => %Region{value: 2, tile_ids: [32, 43, 44]}
+        6 => %Region{value: 2, tile_ids: [32, 33, 43, 44]}
       },
       tiles: Enum.map(map_tile_ids, fn(tile_id) ->
           neighbors = Enum.filter(@all_neighbor_ids[tile_id], fn(neighbor_id) ->

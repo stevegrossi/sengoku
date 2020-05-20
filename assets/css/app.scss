@@ -204,10 +204,21 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   position: absolute;
   width: $tile-width;
   height: $tile-height;
+  transition: transform ease-in-out 0.1s;
 
   svg {
     fill: #fbf1c7;
     filter: drop-shadow( 0px 1px 2px rgba(0, 0, 0, .25));
+  }
+
+  &:hover {
+    transform: scale(1.1);
+
+    // svg {
+    //   stroke: rgba(255,255,255,.5);
+    //   stroke-width: 10px;
+    //   paint-order: stroke;
+    // }
   }
 }
 
@@ -265,11 +276,11 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 .player-bg-8 { background-color: #3c3836; }
 
 .region-1 svg { fill: #0d2d04; }
-.region-2 svg { fill: #f9dbbd; }
+.region-2 svg { fill: #eae2b7; }
 .region-3 svg { fill: #405936; }
 .region-4 svg { fill: #594e36; }
 .region-5 svg { fill: #6b8471; }
-.region-6 svg { fill: #cb997e; }
+.region-6 svg { fill: #e9c46a; }
 .region-7 svg { fill: #9dada6; }
 .region-8 svg { fill: #2f2504; }
 .region-9 svg { fill: #7e846b; }

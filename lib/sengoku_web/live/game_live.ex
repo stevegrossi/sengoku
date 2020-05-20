@@ -75,6 +75,15 @@ defmodule SengokuWeb.GameLive do
         <%= if @game_state.turn > 0 && !@game_state.winner_id do %>
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
+
+        <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
+          <p>
+            <% unplaced_units = @game_state.players[@game_state.current_player_id].unplaced_units %>
+            <%= if unplaced_units > 0 do %>
+              <%= "You have #{unplaced_units} units to place. Click on one of your territories to place a unit." %>
+            <% end %>
+          </p>
+        <% end %>
       </div>
 
       <div class="Board">
@@ -83,7 +92,13 @@ defmodule SengokuWeb.GameLive do
             <li
               class="Tile <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>"
               id="tile_<%= id %>"
-              phx-click="place_unit"
+              <%= cond do %>
+                <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
+                  phx-click="place_unit"
+                <% is_nil(@game_state.selected_tile_id) -> %>
+                  phx-click="select_tile"
+                <% true -> %>
+              <% end %>
               phx-value-tile_id="<%= id %>"
             >
               <svg viewBox="0 0 200 200" version="1.1">
@@ -128,7 +143,6 @@ defmodule SengokuWeb.GameLive do
 
   @impl true
   def handle_event("place_unit", %{"tile_id" => tile_id_string}, socket) do
-    # authorize
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "place_unit", tile_id: tile_id})
@@ -138,9 +152,17 @@ defmodule SengokuWeb.GameLive do
 
   @impl true
   def handle_event("end_turn", _params, socket) do
-    # authorize
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "end_turn"})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("select_tile", %{"tile_id" => tile_id_string}, socket) do
+    {tile_id, _} = Integer.parse(tile_id_string)
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "select_tile", tile_id: tile_id})
 
     {:noreply, socket}
   end

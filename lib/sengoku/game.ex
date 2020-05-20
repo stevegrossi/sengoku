@@ -14,7 +14,8 @@ defmodule Sengoku.Game do
     turn: 0,
     current_player_id: nil,
     winner_id: nil,
-    required_move: nil
+    required_move: nil,
+    selected_tile_id: nil
   }
 
   def initialize_state(game_id, %{"board" => board}) do
@@ -37,6 +38,10 @@ defmodule Sengoku.Game do
 
   def handle_action(state, %{type: "place_unit", tile_id: tile_id}) do
     place_unit(state, tile_id)
+  end
+
+  def handle_action(state, %{type: "select_tile", tile_id: tile_id}) do
+    select_tile(state, tile_id)
   end
 
   def handle_action(state, %{type: "attack", from_id: from_id, to_id: to_id}) do
@@ -139,6 +144,10 @@ defmodule Sengoku.Game do
       Logger.info("Tried to place unit when you have none")
       state
     end
+  end
+
+  def select_tile(%{selected_tile_id: nil} = state, tile_id) do
+    %{state | selected_tile_id: tile_id}
   end
 
   def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do

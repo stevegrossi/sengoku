@@ -3,7 +3,7 @@ defmodule SengokuWeb.GameLive do
 
   require Logger
 
-  alias Sengoku.{GameServer, Game}
+  alias Sengoku.GameServer
 
   @impl true
   def mount(params, session, socket) do
@@ -84,7 +84,7 @@ defmodule SengokuWeb.GameLive do
                 <%= "You have #{unplaced_units} units to place. Click on one of your territories to place a unit." %>
               <% is_nil(@game_state.selected_tile_id) -> %>
                 Select one of your territories to attack or move from, or end your turn.
-              <% not is_nil(@game_state.selected_tile_id) && @game_state.tiles[@game_state.selected_tile_id].units == 1 %>
+              <% @game_state.tiles[@game_state.selected_tile_id].units == 1 -> %>
                 You must have more than 1 unit in a territory to move or attack.
               <% true -> %>
                 Select an adjacent territory attack or move into.
@@ -167,7 +167,7 @@ defmodule SengokuWeb.GameLive do
       socket.assigns.user_token,
       player_name
     ) do
-      {:ok, player_id, token} ->
+      {:ok, player_id, _token} ->
         {:noreply, assign(socket, player_id: player_id)}
       {:error, reason} ->
         Logger.info("Failed to join game: #{reason}")

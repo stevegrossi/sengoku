@@ -72,11 +72,20 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="start">Start Game</button>
         <% end %>
 
+        <%= if @game_state.turn > 0 && !@game_state.winner_id do %>
+          <button class="Button" phx-click="end_turn">End Turn</button>
+        <% end %>
       </div>
+
       <div class="Board">
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>
-            <li class="Tile <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>" id="tile_<%= id %>">
+            <li
+              class="Tile <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>"
+              id="tile_<%= id %>"
+              phx-click="place_unit"
+              phx-value-tile_id="<%= id %>"
+            >
               <svg viewBox="0 0 200 200" version="1.1">
                 <polygon points="183.138438763306,148 183.138438763306,52 100,4 16.8615612366939,52 16.8615612366939,148 100,196"/>
               </svg>
@@ -113,6 +122,25 @@ defmodule SengokuWeb.GameLive do
   def handle_event("start", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "start_game"})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("place_unit", %{"tile_id" => tile_id_string}, socket) do
+    # authorize
+    {tile_id, _} = Integer.parse(tile_id_string)
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "place_unit", tile_id: tile_id})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("end_turn", _params, socket) do
+    # authorize
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "end_turn"})
 
     {:noreply, socket}
   end

@@ -487,6 +487,32 @@ defmodule Sengoku.GameTest do
     end
   end
 
+  describe "start_move/3" do
+    test "unselects the current tile and starts a move" do
+      old_state = %{
+        selected_tile_id: 1,
+        required_move: nil,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
+        tiles: %{
+          1 => %Tile{units: 3, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
+        },
+      }
+
+      new_state = Game.start_move(old_state, 1, 2)
+      assert new_state.selected_tile_id == nil
+      assert new_state.required_move == %{
+        from_id: 1,
+        to_id: 2,
+        min: 0,
+        max: 2
+      }
+    end
+  end
+
   describe "move/4" do
     test "moves a number of units from one territory to another" do
       old_state = %{

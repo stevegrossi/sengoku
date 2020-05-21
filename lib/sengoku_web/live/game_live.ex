@@ -4,6 +4,7 @@ defmodule SengokuWeb.GameLive do
   require Logger
 
   alias Sengoku.GameServer
+  alias SengokuWeb.MoveUnitsForm
 
   @impl true
   def mount(params, session, socket) do
@@ -98,25 +99,7 @@ defmodule SengokuWeb.GameLive do
         <%= if @game_state.selected_tile_id, do: "phx-click=unselect_tile" %>
       >
         <%= if @game_state.required_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
-          <div class="Modal">
-            <form class="MoveForm" phx-submit="move">
-              <h2>Move how many?</h2>
-              <div class="MoveForm-slider">
-                <span><%= @game_state.required_move.min %></span>
-                <input class="MoveForm-input"
-                       type="range"
-                       min=<%= @game_state.required_move.min %>
-                       max=<%= @game_state.required_move.max %>
-                       name="count"
-                       autoFocus
-                />
-                <span><%= @game_state.required_move.max %></span>
-              </div>
-              <div class="MoveForm-actions">
-                <input class="Button Button--primary" type="submit" value="Move" />
-              </div>
-            </form>
-          </div>
+          <%= live_component(@socket, MoveUnitsForm, id: "move_form", required_move: @game_state.required_move) %>
         <% end %>
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>

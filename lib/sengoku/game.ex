@@ -15,7 +15,8 @@ defmodule Sengoku.Game do
     current_player_id: nil,
     winner_id: nil,
     required_move: nil,
-    selected_tile_id: nil
+    selected_tile_id: nil,
+    end_turn_after_move: false
   }
 
   def initialize_state(game_id, %{"board" => board}) do
@@ -115,6 +116,7 @@ defmodule Sengoku.Game do
 
   def end_turn(state) do
     state
+    |> Map.put(:selected_tile_id, nil)
     |> rotate_current_player()
     |> begin_turn()
   end
@@ -218,6 +220,7 @@ defmodule Sengoku.Game do
   def start_move(state, from_id, to_id) do
     state
     |> Map.put(:selected_tile_id, nil)
+    |> Map.put(:end_turn_after_move, true)
     |> Map.put(:required_move, %{
       from_id: from_id,
       to_id: to_id,
@@ -233,12 +236,13 @@ defmodule Sengoku.Game do
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
       |> Map.put(:required_move, nil)
+      |> Map.put(:selected_tile_id, nil)
+      |> maybe_end_turn
     else
       Logger.info("Invalid required move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
   end
-
   def move(
         %{required_move: nil, current_player_id: current_player_id} = state,
         from_id,
@@ -251,11 +255,21 @@ defmodule Sengoku.Game do
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
+      |> Map.put(:selected_tile_id, nil)
       |> end_turn
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
+  end
+
+  defp maybe_end_turn(%{end_turn_after_move: true} = state) do
+    state
+    |> Map.put(:end_turn_after_move, false)
+    |> end_turn
+  end
+  defp maybe_end_turn(state) do
+    state
   end
 
   defp increment_turn(state) do

@@ -129,11 +129,11 @@ defmodule SengokuWeb.GameLive do
               "
               id="tile_<%= id %>"
               <%= cond do %>
-                <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
+                <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
                   phx-click="place_unit"
-                <% is_nil(@game_state.selected_tile_id) -> %>
+                <% is_nil(@game_state.selected_tile_id) && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
                   phx-click="select_tile"
-                <% id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
+                <% @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
                   <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
                     phx-click="start_move"
                   <% else %>

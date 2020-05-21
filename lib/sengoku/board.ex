@@ -215,20 +215,4 @@ defmodule Sengoku.Board do
         |> Enum.into(%{})
     }
   end
-
-  @doc """
-  Returns a Board struct with the data specific to a given board.
-  """
-  def new("all") do
-    %__MODULE__{
-      name: "all",
-      players_count: 6,
-      regions: %{},
-      tiles:
-        Enum.map(@all_neighbor_ids, fn({id, neighbors}) ->
-          {id, Tile.new(neighbors)}
-        end)
-        |> Enum.into(%{})
-    }
-  end
 end

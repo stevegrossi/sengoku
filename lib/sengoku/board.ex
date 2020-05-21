@@ -140,8 +140,6 @@ defmodule Sengoku.Board do
   Returns a Board struct with the data specific to a given board.
   """
   def new("japan") do
-    map_tile_ids = [32, 33, 39, 40, 41, 43, 44, 50, 51, 52, 53, 54, 55, 60, 61, 62, 63, 64, 65, 66, 67, 71, 72, 74]
-
     %__MODULE__{
       name: "japan",
       players_count: 4,
@@ -153,20 +151,12 @@ defmodule Sengoku.Board do
         5 => %Region{value: 3, tile_ids: [55, 66, 67]},
         6 => %Region{value: 2, tile_ids: [32, 33, 43, 44]}
       },
-      tiles: Enum.map(map_tile_ids, fn(tile_id) ->
-          neighbors = Enum.filter(@all_neighbor_ids[tile_id], fn(neighbor_id) ->
-            neighbor_id in map_tile_ids
-          end)
-          {tile_id, Tile.new(neighbors)}
-        end)
-        |> Enum.into(%{})
+      tiles: build_tiles([32, 33, 39, 40, 41, 43, 44, 50, 51, 52, 53, 54, 55, 60, 61, 62, 63, 64, 65, 66, 67, 71, 72, 74])
     }
 
   end
 
   def new("earth") do
-    map_tile_ids = [24, 25, 26, 36, 37, 38, 39, 40, 41, 42, 43, 44, 48, 49, 51, 52, 53, 54, 55, 56, 60, 63, 64, 65, 66, 67, 72, 74, 75, 76, 78, 83, 84, 86, 87, 90, 91, 95, 98, 99, 101, 102]
-
     %__MODULE__{
       name: "earth",
       players_count: 6,
@@ -178,13 +168,7 @@ defmodule Sengoku.Board do
         5 => %Region{value: 7, tile_ids: [42, 43, 44, 53, 54, 55, 56, 65, 66, 67, 76, 78]}, # Asia
         6 => %Region{value: 2, tile_ids: [90, 91, 101, 102]} # Australia
       },
-      tiles: Enum.map(map_tile_ids, fn(tile_id) ->
-          neighbors = Enum.filter(@all_neighbor_ids[tile_id], fn(neighbor_id) ->
-            neighbor_id in map_tile_ids
-          end)
-          {tile_id, Tile.new(neighbors)}
-        end)
-        |> Enum.into(%{})
+      tiles: build_tiles([24, 25, 26, 36, 37, 38, 39, 40, 41, 42, 43, 44, 48, 49, 51, 52, 53, 54, 55, 56, 60, 63, 64, 65, 66, 67, 72, 74, 75, 76, 78, 83, 84, 86, 87, 90, 91, 95, 98, 99, 101, 102])
     }
   end
 
@@ -192,8 +176,6 @@ defmodule Sengoku.Board do
   Returns a Board struct with the data specific to a given board.
   """
   def new("wheel") do
-    map_tile_ids = [15, 16, 17, 18, 19, 26, 27, 30, 31, 37, 39, 41, 43, 48, 51, 52, 55, 59, 60, 61, 62, 63, 64, 65, 66, 67, 71, 74, 75, 78, 83, 85, 87, 89, 95, 96, 99, 100, 107, 108, 109, 110, 111]
-
     %__MODULE__{
       name: "wheel",
       players_count: 6,
@@ -206,13 +188,18 @@ defmodule Sengoku.Board do
         6 => %Region{value: 3, tile_ids: [59, 60, 61, 71, 83, 95]},
         7 => %Region{value: 6, tile_ids: [51, 52, 62, 63, 64, 74, 75]}
       },
-      tiles: Enum.map(map_tile_ids, fn(tile_id) ->
-          neighbors = Enum.filter(@all_neighbor_ids[tile_id], fn(neighbor_id) ->
-            neighbor_id in map_tile_ids
-          end)
-          {tile_id, Tile.new(neighbors)}
-        end)
-        |> Enum.into(%{})
+      tiles: build_tiles([15, 16, 17, 18, 19, 26, 27, 30, 31, 37, 39, 41, 43, 48, 51, 52, 55, 59, 60, 61, 62, 63, 64, 65, 66, 67, 71, 74, 75, 78, 83, 85, 87, 89, 95, 96, 99, 100, 107, 108, 109, 110, 111])
     }
+  end
+
+  defp build_tiles(tile_ids_for_map) do
+    tile_ids_for_map
+    |> Enum.map(fn(tile_id) ->
+         neighbors = Enum.filter(@all_neighbor_ids[tile_id], fn(neighbor_id) ->
+           neighbor_id in tile_ids_for_map
+         end)
+         {tile_id, Tile.new(neighbors)}
+       end)
+    |> Enum.into(%{})
   end
 end

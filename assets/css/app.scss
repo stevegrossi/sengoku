@@ -216,21 +216,21 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     transform: scale(1.1);
   }
 
-  &--selected,
-  &--neighborOfselected {
+  &--selected {
+    stroke: rgba(255,255,255,.5);
     stroke-width: 15px;
     paint-order: stroke;
   }
 
-  &--selected {
+  &--potentialMoveTarget {
     svg {
-      stroke: rgba(255,255,255,.5);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(0, 128, 0, 1));
     }
   }
 
-  &--neighborOfselected {
+  &--potentialAttackTarget {
     svg {
-      stroke: rgba(255,255,255,.25);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(255, 0, 0, 1));
     }
   }
 }

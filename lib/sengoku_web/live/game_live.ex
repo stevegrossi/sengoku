@@ -125,7 +125,13 @@ defmodule SengokuWeb.GameLive do
                 Tile
                 <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>
                 <%= if id == @game_state.selected_tile_id, do: "Tile--selected" %>
-                <%= if @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors, do: "Tile--neighborOfselected" %>
+                <%= if @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors do %>
+                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
+                    Tile--potentialMoveTarget
+                  <% else %>
+                    Tile--potentialAttackTarget
+                  <% end %>
+                <% end %>
               "
               id="tile_<%= id %>"
               <%= cond do %>

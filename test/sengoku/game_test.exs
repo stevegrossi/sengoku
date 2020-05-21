@@ -325,6 +325,7 @@ defmodule Sengoku.GameTest do
     test "when the attacker defeats the last defender, captures the territory and moves the attacking number of units in" do
       old_state = %{
         current_player_id: 1,
+        selected_tile_id: 1,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -340,6 +341,7 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[1].units == 1
       assert new_state.tiles[2].units == 2
       assert new_state.tiles[2].owner == 1
+      assert is_nil(new_state.selected_tile_id)
     end
 
     test "with more units in the origin tile, allows moving them in" do
@@ -490,7 +492,7 @@ defmodule Sengoku.GameTest do
   end
 
   describe "start_move/3" do
-    test "unselects the current tile and starts a move" do
+    test "starts a move" do
       old_state = %{
         selected_tile_id: 1,
         required_move: nil,
@@ -506,7 +508,6 @@ defmodule Sengoku.GameTest do
       }
 
       new_state = Game.start_move(old_state, 1, 2)
-      assert new_state.selected_tile_id == nil
 
       assert new_state.required_move == %{
                from_id: 1,

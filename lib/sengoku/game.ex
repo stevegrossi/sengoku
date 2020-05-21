@@ -211,6 +211,7 @@ defmodule Sengoku.Game do
         |> Tile.adjust_units(from_id, -attacking_units)
         |> Tile.set_owner(to_id, state.current_player_id)
         |> Tile.adjust_units(to_id, attacking_units)
+        |> Map.put(:selected_tile_id, nil)
       end
     else
       state
@@ -219,7 +220,6 @@ defmodule Sengoku.Game do
 
   def start_move(state, from_id, to_id) do
     state
-    |> Map.put(:selected_tile_id, nil)
     |> Map.put(:end_turn_after_move, true)
     |> Map.put(:required_move, %{
       from_id: from_id,

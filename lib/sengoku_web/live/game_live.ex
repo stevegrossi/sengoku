@@ -16,12 +16,13 @@ defmodule SengokuWeb.GameLive do
       Phoenix.PubSub.subscribe(Sengoku.PubSub, "game:" <> game_id)
     end
 
-    {:ok, assign(socket,
-      game_id: game_id,
-      user_token: user_token,
-      player_id: game_state.tokens[user_token],
-      game_state: game_state
-    )}
+    {:ok,
+     assign(socket,
+       game_id: game_id,
+       user_token: user_token,
+       player_id: game_state.tokens[user_token],
+       game_state: game_state
+     )}
   end
 
   @impl true
@@ -152,12 +153,13 @@ defmodule SengokuWeb.GameLive do
   @impl true
   def handle_event("join", %{"player_name" => player_name}, socket) do
     case GameServer.authenticate_player(
-      socket.assigns.game_id,
-      socket.assigns.user_token,
-      player_name
-    ) do
+           socket.assigns.game_id,
+           socket.assigns.user_token,
+           player_name
+         ) do
       {:ok, player_id, _token} ->
         {:noreply, assign(socket, player_id: player_id)}
+
       {:error, reason} ->
         Logger.info("Failed to join game: #{reason}")
         {:noreply, socket}
@@ -209,8 +211,15 @@ defmodule SengokuWeb.GameLive do
   @impl true
   def handle_event("attack", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
-    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} = socket.assigns
-    GameServer.action(game_id, player_id, %{type: "attack", from_id: selected_tile_id, to_id: tile_id})
+
+    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} =
+      socket.assigns
+
+    GameServer.action(game_id, player_id, %{
+      type: "attack",
+      from_id: selected_tile_id,
+      to_id: tile_id
+    })
 
     {:noreply, socket}
   end
@@ -218,8 +227,15 @@ defmodule SengokuWeb.GameLive do
   @impl true
   def handle_event("start_move", %{"tile_id" => tile_id_string}, socket) do
     {to_tile_id, _} = Integer.parse(tile_id_string)
-    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} = socket.assigns
-    GameServer.action(game_id, player_id, %{type: "start_move", from_id: selected_tile_id, to_id: to_tile_id})
+
+    %{game_id: game_id, player_id: player_id, game_state: %{selected_tile_id: selected_tile_id}} =
+      socket.assigns
+
+    GameServer.action(game_id, player_id, %{
+      type: "start_move",
+      from_id: selected_tile_id,
+      to_id: to_tile_id
+    })
 
     {:noreply, socket}
   end
@@ -227,7 +243,10 @@ defmodule SengokuWeb.GameLive do
   @impl true
   def handle_event("move", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
-    %{game_id: game_id, player_id: player_id, game_state: %{required_move: required_move}} = socket.assigns
+
+    %{game_id: game_id, player_id: player_id, game_state: %{required_move: required_move}} =
+      socket.assigns
+
     GameServer.action(game_id, player_id, %{
       type: "move",
       from_id: required_move.from_id,

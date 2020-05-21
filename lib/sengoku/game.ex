@@ -243,6 +243,7 @@ defmodule Sengoku.Game do
       state
     end
   end
+
   def move(
         %{required_move: nil, current_player_id: current_player_id} = state,
         from_id,
@@ -268,6 +269,7 @@ defmodule Sengoku.Game do
     |> Map.put(:end_turn_after_move, false)
     |> end_turn
   end
+
   defp maybe_end_turn(state) do
     state
   end

@@ -1,5 +1,4 @@
 defmodule SengokuWeb.Plug.IdentifyAnonymousUser do
-
   alias Sengoku.Token
 
   def init(options), do: options
@@ -9,7 +8,7 @@ defmodule SengokuWeb.Plug.IdentifyAnonymousUser do
       conn
     else
       conn
-      |> Plug.Conn.put_session(:anonymous_user_id, Token.new)
+      |> Plug.Conn.put_session(:anonymous_user_id, Token.new())
     end
   end
 end

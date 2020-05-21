@@ -502,17 +502,19 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
-        },
+        }
       }
 
       new_state = Game.start_move(old_state, 1, 2)
       assert new_state.selected_tile_id == nil
+
       assert new_state.required_move == %{
-        from_id: 1,
-        to_id: 2,
-        min: 0,
-        max: 2
-      }
+               from_id: 1,
+               to_id: 2,
+               min: 0,
+               max: 2
+             }
+
       assert new_state.end_turn_after_move
     end
   end

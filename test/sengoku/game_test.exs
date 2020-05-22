@@ -226,6 +226,27 @@ defmodule Sengoku.GameTest do
       assert new_state.players[2].unplaced_units == 4
       assert new_state.turn == 2
     end
+
+    test "does nothing when a move is pending" do
+      old_state = %{
+        current_player_id: 1,
+        turn: 1,
+        players: %{
+          1 => %Player{unplaced_units: 0, active: false},
+          2 => %Player{unplaced_units: 1, active: true},
+          3 => %Player{unplaced_units: 1, active: true},
+          4 => %Player{unplaced_units: 1, active: true}
+        },
+        tiles: %{},
+        required_move: %{
+          # Not nil
+        }
+      }
+
+      new_state = Game.end_turn(old_state)
+
+      assert new_state == old_state
+    end
   end
 
   describe "place_unit/2" do

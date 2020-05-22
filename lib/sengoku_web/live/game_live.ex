@@ -65,8 +65,11 @@ defmodule SengokuWeb.GameLive do
 
         <%= if @game_state.turn == 0 && not Map.has_key?(@game_state.tokens, @user_token) do %>
           <form phx-submit="join">
-            <input class="TextField" type="text" name="player_name" placeholder="Player Name" required autofocus />
-            <input type="submit" class="Button" value="Join Game" />
+            <label for="player_name" class="visually-hidden">Your Name:</label>
+            <div class="ComboInput">
+              <input id="player_name" class="ComboInput-input" type="text" name="player_name" placeholder="Your Name" required autofocus />
+              <input type="submit" class="Button ComboInput-button" value="Join" />
+            </div>
           </form>
         <% end %>
 

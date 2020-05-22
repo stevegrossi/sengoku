@@ -35,6 +35,10 @@ h2 {
   font-size: 1em;
 }
 
+form {
+  font-size: inherit;
+}
+
 .App {
   max-width: 60em;
   margin: 0 auto;
@@ -374,16 +378,6 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   height: 100%;
 }
 
-.TextField {
-  width: 100%;
-  font-size: inherit;
-  margin: .5em 0;
-  padding: .5em;
-  border-radius: .25em;
-  border: 0;
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.25);
-}
-
 .BorderRadio {
   &-input {
     display: none;
@@ -450,4 +444,28 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     flex-basis: 0;
     padding: 0 2em;
   }
+}
+
+.ComboInput {
+  display: flex;
+
+  &-input {
+    font-size: inherit;
+    padding: .5em;
+    border-radius: .25em 0 0 .25em;
+    border: 0;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.25);
+    width: 75%;
+  }
+
+  &-button {
+    padding: .5em;
+    border-radius: 0 .25em .25em 0;
+    width: 25%;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  left: -9999px;
 }

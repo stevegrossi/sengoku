@@ -189,13 +189,13 @@ defmodule Sengoku.Board do
         # North America
         1 => %Region{value: 5, tile_ids: [24, 25, 26, 36, 37, 38, 48, 49, 60]},
         # South America
-        2 => %Region{value: 2, tile_ids: [72, 83, 84, 95]},
+        2 => %Region{value: 2, tile_ids: [72, 73, 83, 84]},
         # Africa
         3 => %Region{value: 3, tile_ids: [74, 75, 86, 87, 98, 99]},
         # Europe
         4 => %Region{value: 5, tile_ids: [39, 40, 41, 51, 52, 63, 64]},
         # Asia
-        5 => %Region{value: 7, tile_ids: [42, 43, 44, 53, 54, 55, 56, 65, 66, 67, 76, 78]},
+        5 => %Region{value: 7, tile_ids: [42, 43, 44, 45, 53, 54, 55, 56, 65, 66, 67, 76, 78]},
         # Australia
         6 => %Region{value: 2, tile_ids: [90, 91, 101, 102]}
       },
@@ -213,6 +213,7 @@ defmodule Sengoku.Board do
           42,
           43,
           44,
+          45,
           48,
           49,
           51,
@@ -228,6 +229,7 @@ defmodule Sengoku.Board do
           66,
           67,
           72,
+          73,
           74,
           75,
           76,
@@ -238,7 +240,6 @@ defmodule Sengoku.Board do
           87,
           90,
           91,
-          95,
           98,
           99,
           101,

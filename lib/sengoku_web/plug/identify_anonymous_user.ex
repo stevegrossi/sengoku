@@ -3,7 +3,7 @@ defmodule SengokuWeb.Plug.IdentifyAnonymousUser do
 
   def init(options), do: options
 
-  def call(conn, opts) do
+  def call(conn, _opts) do
     if Plug.Conn.get_session(conn, :anonymous_user_id) do
       conn
     else

@@ -5,9 +5,9 @@ defmodule Sengoku.PlayTest do
     session
     |> visit("/")
     |> assert_has(css("h2", text: "PLAY"))
-    |> accept_prompt([with: "Yojimbo"], fn(session) ->
-        click(session, button("New Game"))
-       end)
+    |> accept_prompt([with: "Yojimbo"], fn session ->
+      click(session, button("New Game"))
+    end)
 
     session
     |> assert_has(css(".Player", count: 4))

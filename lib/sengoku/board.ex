@@ -182,6 +182,9 @@ defmodule Sengoku.Board do
   end
 
   def new("earth") do
+    # Alaska <=> Kamchatka
+    additional_neighbors = [{24, 45}]
+
     %__MODULE__{
       name: "earth",
       players_count: 6,
@@ -200,51 +203,54 @@ defmodule Sengoku.Board do
         6 => %Region{value: 2, tile_ids: [90, 91, 101, 102]}
       },
       tiles:
-        build_tiles([
-          24,
-          25,
-          26,
-          36,
-          37,
-          38,
-          39,
-          40,
-          41,
-          42,
-          43,
-          44,
-          45,
-          48,
-          49,
-          51,
-          52,
-          53,
-          54,
-          55,
-          56,
-          60,
-          63,
-          64,
-          65,
-          66,
-          67,
-          72,
-          73,
-          74,
-          75,
-          76,
-          78,
-          83,
-          84,
-          86,
-          87,
-          90,
-          91,
-          98,
-          99,
-          101,
-          102
-        ])
+        build_tiles(
+          [
+            24,
+            25,
+            26,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            48,
+            49,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            60,
+            63,
+            64,
+            65,
+            66,
+            67,
+            72,
+            73,
+            74,
+            75,
+            76,
+            78,
+            83,
+            84,
+            86,
+            87,
+            90,
+            91,
+            98,
+            99,
+            101,
+            102
+          ],
+          additional_neighbors
+        )
     }
   end
 
@@ -313,7 +319,7 @@ defmodule Sengoku.Board do
     }
   end
 
-  defp build_tiles(tile_ids_for_map) do
+  defp build_tiles(tile_ids_for_map, additional_neighbors \\ []) do
     tile_ids_for_map
     |> Enum.map(fn tile_id ->
       neighbors =
@@ -321,8 +327,28 @@ defmodule Sengoku.Board do
           neighbor_id in tile_ids_for_map
         end)
 
+      neighbors = maybe_add_additional_neighbors(tile_id, neighbors, additional_neighbors)
+
       {tile_id, Tile.new(neighbors)}
     end)
     |> Enum.into(%{})
+  end
+
+  defp maybe_add_additional_neighbors(tile_id, neighbors, additional_neighbor_pairs) do
+    additional_neighbors =
+      Enum.reduce(additional_neighbor_pairs, [], fn pair, acc ->
+        case pair do
+          {^tile_id, neighbor} ->
+            acc ++ [neighbor]
+
+          {neighbor, ^tile_id} ->
+            acc ++ [neighbor]
+
+          _ ->
+            acc
+        end
+      end)
+
+    neighbors ++ additional_neighbors
   end
 end

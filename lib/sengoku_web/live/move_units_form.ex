@@ -1,11 +1,13 @@
 defmodule SengokuWeb.MoveUnitsForm do
   use Phoenix.LiveComponent
 
+  @impl
   def update(assigns, socket) do
     default_count = max(assigns.required_move.min, floor(assigns.required_move.max / 2))
     {:ok, assign(socket, Map.merge(assigns, %{count: default_count}))}
   end
 
+  @impl
   def render(assigns) do
     ~L"""
     <div class="Modal">

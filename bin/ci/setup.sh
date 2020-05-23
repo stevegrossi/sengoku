@@ -23,9 +23,7 @@ export PHANTOMJS_VERSION="2.1.1"
 export PHANTOMJS_HOST="https://s3.amazonaws.com/codeship-packages"
 \curl -sSL https://raw.githubusercontent.com/codeship/scripts/master/packages/phantomjs.sh | bash -s
 
-nvm use 6
-
-# Assets: As of Phoenix 1.3, these live in assets/
+nvm use 14
 
 # js dependencies
 (cd assets/ && npm install)

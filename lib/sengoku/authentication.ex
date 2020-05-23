@@ -4,7 +4,7 @@ defmodule Sengoku.Authentication do
   correspond to which integer player IDs in the GameServer’s state.
   """
 
-  alias Sengoku.{Player, Token}
+  alias Sengoku.Player
 
   def initialize_state(state) do
     Map.put(state, :tokens, %{})

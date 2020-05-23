@@ -5,6 +5,7 @@
     "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch-stdin"
   },
+  "engines" : { "node" : ">=14.0" },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "phoenix": "file:../deps/phoenix",

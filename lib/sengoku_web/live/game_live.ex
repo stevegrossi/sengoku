@@ -52,7 +52,7 @@ defmodule SengokuWeb.GameLive do
                 <% end %>
               </b>
               <%= if player.unplaced_units > 0 do %>
-                <span>
+                <span class="Player-unplacedUnits">
                   <%= player.unplaced_units %>
                   <svg class="Icon" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" version="1.1" >
                     <use href="#icon-unit" />
@@ -92,7 +92,7 @@ defmodule SengokuWeb.GameLive do
               <% @game_state.tiles[@game_state.selected_tile_id].units == 1 -> %>
                 You must have more than 1 unit in a territory to move or attack.
               <% true -> %>
-                Select an adjacent territory attack or move into.
+                Select an adjacent territory to attack or move into.
             <% end %>
           </p>
         <% end %>

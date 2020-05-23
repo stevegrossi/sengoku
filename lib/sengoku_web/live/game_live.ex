@@ -77,16 +77,15 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="start">Start Game</button>
         <% end %>
 
-        <%= if @game_state.turn > 0 && !@game_state.winner_id do %>
+        <%= if @game_state.turn > 0 && !@game_state.winner_id && @game_state.current_player_id == @player_id do %>
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
 
         <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
           <p>
-            <% unplaced_units = @game_state.players[@game_state.current_player_id].unplaced_units %>
             <%= cond do %>
-              <% unplaced_units > 0 -> %>
-                <%= "You have #{unplaced_units} units to place. Click on one of your territories to place a unit." %>
+              <% @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
+                <%= "You have #{@game_state.players[@game_state.current_player_id].unplaced_units} units to place. Click on one of your territories to place a unit." %>
               <% is_nil(@game_state.selected_tile_id) -> %>
                 Select one of your territories to attack or move from, or end your turn.
               <% @game_state.tiles[@game_state.selected_tile_id].units == 1 -> %>

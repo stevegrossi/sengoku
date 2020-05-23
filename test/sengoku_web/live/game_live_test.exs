@@ -9,9 +9,6 @@ defmodule SengokuWeb.GameLiveTest do
     assert html =~ ~s(<div class="Game">)
   end
 
-  # Phoenix.PubSub.subscribe(Sengoku.PubSub, "game:" <> game_id)
-  # assert_receive {:game_updated, _new_state}
-
   test "joining a game", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
     {:ok, view, _html} = live(conn, "/game/#{game_id}")

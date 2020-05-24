@@ -1,2 +1,2 @@
 alias SengokuWeb.Router.Helpers, as: Routes
-alias Sengoku.{Game, Tile, Player, GameServer, Battle}
+alias Sengoku.{Game, Region, Tile, Player, GameServer, Battle}

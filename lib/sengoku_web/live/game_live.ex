@@ -7,9 +7,7 @@ defmodule SengokuWeb.GameLive do
   alias SengokuWeb.MoveUnitsForm
 
   @impl true
-  def mount(params, session, socket) do
-    user_token = session["anonymous_user_id"]
-    game_id = params["game_id"]
+  def mount(%{"game_id" => game_id}, %{"anonymous_user_id" => user_token}, socket) do
     game_state = GameServer.get_state(game_id)
 
     if connected?(socket) do

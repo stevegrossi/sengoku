@@ -364,6 +364,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   width: 20%;
   background-color: rgba(0, 0, 0, .5);
   padding: 0 1em;
+  overflow: auto;
 
   & > * {
     margin: 1em auto;

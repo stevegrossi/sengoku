@@ -33,6 +33,10 @@ defmodule Sengoku.GameServer do
 
   # API
 
+  def alive?(game_id) do
+    Registry.lookup(:game_server_registry, game_id) != []
+  end
+
   def authenticate_player(game_id, token, name \\ nil) do
     GenServer.call(via_tuple(game_id), {:authenticate_player, token, name})
   end

@@ -469,3 +469,11 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   position: absolute;
   left: -9999px;
 }
+
+.alert {
+  color: #fff;
+  background-color: rgba(0,0,0,.1);
+  padding: .5em;
+  border-radius: .25em;
+  border: 1px solid rgba(0,0,0,.25);
+}

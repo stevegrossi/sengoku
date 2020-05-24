@@ -13,7 +13,7 @@ defmodule SengokuWeb.GameLiveTest do
     assert html =~ ~s(<div class="Game">)
   end
 
-  test "joining a game", %{conn: conn} do
+  test "joining and playing a game", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
     {:ok, view, _html} = live(conn, "/game/#{game_id}")
 
@@ -59,6 +59,22 @@ defmodule SengokuWeb.GameLiveTest do
 
     assert has_element?(view, ".Tile--selected")
     assert render(view) =~ "Select an adjacent territory"
+  end
+
+  test "the Region Bonuses module", %{conn: conn} do
+    {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
+    {:ok, view, html} = live(conn, "/game/#{game_id}")
+
+    assert html =~ "Region Bonuses"
+
+    game_state = Sengoku.GameServer.get_state(game_id)
+    game_state = put_in(game_state.tiles[60].owner, 1)
+    game_state = put_in(game_state.tiles[61].owner, 1)
+    game_state = put_in(game_state.tiles[71].owner, 1)
+    game_state = put_in(game_state.tiles[72].owner, 1)
+    send(view.pid, {:game_updated, game_state})
+
+    assert has_element?(view, ".region-1.region-ownedby-1")
   end
 
   # element() requires a single match, but because tiles are assigned randomly,

@@ -93,7 +93,11 @@ defmodule SengokuWeb.GameLive do
               <li class="
                 Region
                 region-<%= region_id %>
-                <%= if all_tiles_owned_by?(region.tile_ids, @player_id, @game_state.tiles), do: "Region--owned" %>
+                <%= case owner_of_region(region, @game_state.tiles) do %>
+                  <%= {:ok, owner_id} -> %>
+                    <%= "region-ownedby-#{owner_id}" %>
+                  <% _ -> %>
+                <% end %>
               ">
                 <svg viewBox="0 0 200 200" version="1.1">
                   <use href="#hexagon" />
@@ -282,15 +286,15 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  defp all_tiles_owned_by?(tile_ids, player_id, tiles) do
-    tile_ids_owned_by_player =
-      tiles
-      |> Enum.filter(fn {tile_id, tile} ->
-           tile.owner == player_id
-         end)
-      |> Enum.into(%{})
-      |> Map.keys
-
-    tile_ids -- tile_ids_owned_by_player == []
+  defp owner_of_region(region, tiles) do
+    region.tile_ids
+    |> Enum.map(fn(tile_id) ->
+         tiles[tile_id].owner
+       end)
+    |> Enum.uniq
+    |> case do
+         [owner_id] -> {:ok, owner_id}
+         _ -> nil
+       end
   end
 end

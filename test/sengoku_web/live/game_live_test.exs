@@ -68,9 +68,9 @@ defmodule SengokuWeb.GameLiveTest do
     matching_tile_id =
       1..126
       |> Enum.to_list()
-      |> Enum.find(fn(tile_id) ->
-          has_element?(view, "#tile_#{tile_id}#{selector}")
-         end)
+      |> Enum.find(fn tile_id ->
+        has_element?(view, "#tile_#{tile_id}#{selector}")
+      end)
 
     element(view, "#tile_#{matching_tile_id}")
   end

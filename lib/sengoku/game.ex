@@ -118,6 +118,7 @@ defmodule Sengoku.Game do
     # Don’t end turn if a move is pending
     state
   end
+
   def end_turn(state) do
     state
     |> Map.put(:selected_tile_id, nil)

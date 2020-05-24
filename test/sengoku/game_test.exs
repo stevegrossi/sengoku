@@ -238,9 +238,10 @@ defmodule Sengoku.GameTest do
           4 => %Player{unplaced_units: 1, active: true}
         },
         tiles: %{},
-        required_move: %{
-          # Not nil
-        }
+        required_move:
+          %{
+            # Not nil
+          }
       }
 
       new_state = Game.end_turn(old_state)

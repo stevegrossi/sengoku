@@ -13,6 +13,12 @@ defmodule SengokuWeb.GameLiveTest do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
     {:ok, view, _html} = live(conn, "/game/#{game_id}")
 
+    # Ensure nothing on the board is interactive before the game starts
+    refute has_element?(view, ~s([phx-click="place_unit"]))
+    refute has_element?(view, ~s([phx-click="select_tile"]))
+    refute has_element?(view, ~s([phx-click="start_move"]))
+    refute has_element?(view, ~s([phx-click="attack"]))
+
     render_submit(view, :join, %{"player_name" => "Yojimbo"})
 
     assert has_element?(view, ".Player.player-bg-1", "Yojimbo")

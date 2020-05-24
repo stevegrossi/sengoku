@@ -86,6 +86,28 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
 
+        <%= if @game_state.regions != [] do %>
+          <h2 class="text-center">Region Bonuses</h2>
+          <ol class="Regions">
+            <%= for {region_id, region} <- @game_state.regions do %>
+              <li class="
+                Region
+                region-<%= region_id %>
+                <%= case owner_of_region(region, @game_state.tiles) do %>
+                  <%= {:ok, owner_id} -> %>
+                    <%= "region-ownedby-#{owner_id}" %>
+                  <% _ -> %>
+                <% end %>
+              ">
+                <svg viewBox="0 0 200 200" version="1.1">
+                  <use href="#hexagon" />
+                </svg>
+                <span class="Region-value"><%= region.value %></span>
+              </li>
+            <% end %>
+          </ol>
+        <% end %>
+
         <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
           <p>
             <%= cond do %>
@@ -141,7 +163,7 @@ defmodule SengokuWeb.GameLive do
               phx-value-tile_id="<%= id %>"
             >
               <svg viewBox="0 0 200 200" version="1.1">
-                <polygon points="183.138438763306,148 183.138438763306,52 100,4 16.8615612366939,52 16.8615612366939,148 100,196"/>
+                <use href="#hexagon" />
               </svg>
               <span class="TileCenter <%= "player-bg-#{tile.owner}" %>"><%= tile.units %></span>
             </li>
@@ -262,5 +284,17 @@ defmodule SengokuWeb.GameLive do
     })
 
     {:noreply, socket}
+  end
+
+  defp owner_of_region(region, tiles) do
+    region.tile_ids
+    |> Enum.map(fn(tile_id) ->
+         tiles[tile_id].owner
+       end)
+    |> Enum.uniq
+    |> case do
+         [owner_id] -> {:ok, owner_id}
+         _ -> nil
+       end
   end
 end

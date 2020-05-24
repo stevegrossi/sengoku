@@ -208,7 +208,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 
   svg {
     fill: #fbf1c7;
-    filter: drop-shadow( 0px 1px 2px rgba(0, 0, 0, .25));
+    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, .25));
     overflow: visible;
   }
 
@@ -276,6 +276,41 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 .region-8 svg { fill: #a9a18c; }
 .region-9 svg { fill: #855723; }
 .region-10 svg { fill: #eae2b7; }
+
+.region-ownedby-1 svg { stroke: #fb4934; }
+.region-ownedby-2 svg { stroke: #b8bb26; }
+.region-ownedby-3 svg { stroke: #fabd2f; }
+.region-ownedby-4 svg { stroke: #458588; }
+.region-ownedby-5 svg { stroke: #d3869b; }
+.region-ownedby-6 svg { stroke: #fe8019; }
+.region-ownedby-7 svg { stroke: #8ec07c; }
+.region-ownedby-8 svg { stroke: #3c3836; }
+
+.Regions {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+.Region {
+  position: relative;
+
+  &-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(0,0,0,.5);
+  }
+
+  svg {
+    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, .25));
+    overflow: visible;
+    stroke-width: 25px;
+    paint-order: stroke;
+  }
+}
 
 .Modal {
   background: rgba($black, .75);
@@ -364,6 +399,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   width: 20%;
   background-color: rgba(0, 0, 0, .5);
   padding: 0 1em;
+  overflow: auto;
 
   & > * {
     margin: 1em auto;
@@ -476,4 +512,8 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   padding: .5em;
   border-radius: .25em;
   border: 1px solid rgba(0,0,0,.25);
+}
+
+.text-center {
+  text-align: center;
 }

@@ -251,7 +251,7 @@ defmodule Sengoku.GameTest do
   end
 
   describe "place_unit/2" do
-    test "moves an unit from the Player to the Tile" do
+    test "moves a unit from the Player to the Tile" do
       old_state = %{
         current_player_id: 1,
         players: %{

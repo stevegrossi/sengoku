@@ -141,7 +141,7 @@ defmodule SengokuWeb.GameLive do
               phx-value-tile_id="<%= id %>"
             >
               <svg viewBox="0 0 200 200" version="1.1">
-                <polygon points="183.138438763306,148 183.138438763306,52 100,4 16.8615612366939,52 16.8615612366939,148 100,196"/>
+                <use href="#hexagon" />
               </svg>
               <span class="TileCenter <%= "player-bg-#{tile.owner}" %>"><%= tile.units %></span>
             </li>

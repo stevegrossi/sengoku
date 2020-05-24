@@ -12,5 +12,18 @@ defmodule Sengoku.BoardTest do
         regions: _regions
       } = Board.new("japan")
     end
+
+    test "restricts neighbors to only tiles on the board" do
+      board = Board.new("wheel")
+
+      assert board.tiles[59].neighbors == [48, 60, 71]
+    end
+
+    test "allow specifying additional neighbor mappings" do
+      board = Board.new("earth")
+
+      assert 45 in board.tiles[24].neighbors
+      assert 24 in board.tiles[45].neighbors
+    end
   end
 end

@@ -14,7 +14,9 @@ defmodule Sengoku.Game do
     turn: 0,
     current_player_id: nil,
     winner_id: nil,
-    required_move: nil
+    required_move: nil,
+    selected_tile_id: nil,
+    end_turn_after_move: false
   }
 
   def initialize_state(game_id, %{"board" => board}) do
@@ -39,8 +41,20 @@ defmodule Sengoku.Game do
     place_unit(state, tile_id)
   end
 
+  def handle_action(state, %{type: "select_tile", tile_id: tile_id}) do
+    select_tile(state, tile_id)
+  end
+
+  def handle_action(state, %{type: "unselect_tile"}) do
+    unselect_tile(state)
+  end
+
   def handle_action(state, %{type: "attack", from_id: from_id, to_id: to_id}) do
     attack(state, from_id, to_id)
+  end
+
+  def handle_action(state, %{type: "start_move", from_id: from_id, to_id: to_id}) do
+    start_move(state, from_id, to_id)
   end
 
   def handle_action(state, %{type: "move", from_id: from_id, to_id: to_id, count: count}) do
@@ -100,8 +114,14 @@ defmodule Sengoku.Game do
     end
   end
 
+  def end_turn(%{required_move: %{}} = state) do
+    # Don’t end turn if a move is pending
+    state
+  end
+
   def end_turn(state) do
     state
+    |> Map.put(:selected_tile_id, nil)
     |> rotate_current_player()
     |> begin_turn()
   end
@@ -139,6 +159,14 @@ defmodule Sengoku.Game do
       Logger.info("Tried to place unit when you have none")
       state
     end
+  end
+
+  def select_tile(%{selected_tile_id: nil} = state, tile_id) do
+    %{state | selected_tile_id: tile_id}
+  end
+
+  def unselect_tile(%{selected_tile_id: tile_id} = state) when is_integer(tile_id) do
+    %{state | selected_tile_id: nil}
   end
 
   def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do
@@ -188,10 +216,22 @@ defmodule Sengoku.Game do
         |> Tile.adjust_units(from_id, -attacking_units)
         |> Tile.set_owner(to_id, state.current_player_id)
         |> Tile.adjust_units(to_id, attacking_units)
+        |> Map.put(:selected_tile_id, nil)
       end
     else
       state
     end
+  end
+
+  def start_move(state, from_id, to_id) do
+    state
+    |> Map.put(:end_turn_after_move, true)
+    |> Map.put(:required_move, %{
+      from_id: from_id,
+      to_id: to_id,
+      min: 0,
+      max: state.tiles[from_id].units - 1
+    })
   end
 
   def move(%{required_move: %{}} = state, from_id, to_id, count) do
@@ -201,6 +241,8 @@ defmodule Sengoku.Game do
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
       |> Map.put(:required_move, nil)
+      |> Map.put(:selected_tile_id, nil)
+      |> maybe_end_turn
     else
       Logger.info("Invalid required move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
@@ -219,11 +261,22 @@ defmodule Sengoku.Game do
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
+      |> Map.put(:selected_tile_id, nil)
       |> end_turn
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
+  end
+
+  defp maybe_end_turn(%{end_turn_after_move: true} = state) do
+    state
+    |> Map.put(:end_turn_after_move, false)
+    |> end_turn
+  end
+
+  defp maybe_end_turn(state) do
+    state
   end
 
   defp increment_turn(state) do

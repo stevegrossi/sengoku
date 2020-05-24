@@ -189,6 +189,7 @@ defmodule Sengoku.GameTest do
     test "increments current_player_id to the next active Player and grants them units" do
       old_state = %{
         current_player_id: 2,
+        selected_tile_id: 1,
         turn: 1,
         players: %{
           1 => %Player{active: true, unplaced_units: 1},
@@ -203,6 +204,7 @@ defmodule Sengoku.GameTest do
 
       assert new_state.current_player_id == 4
       assert new_state.players[4].unplaced_units == 4
+      assert new_state.selected_tile_id == nil
     end
 
     test "when the last active Player’s turn ends, starts at 1 and increments turn" do
@@ -223,6 +225,28 @@ defmodule Sengoku.GameTest do
       assert new_state.current_player_id == 2
       assert new_state.players[2].unplaced_units == 4
       assert new_state.turn == 2
+    end
+
+    test "does nothing when a move is pending" do
+      old_state = %{
+        current_player_id: 1,
+        turn: 1,
+        players: %{
+          1 => %Player{unplaced_units: 0, active: false},
+          2 => %Player{unplaced_units: 1, active: true},
+          3 => %Player{unplaced_units: 1, active: true},
+          4 => %Player{unplaced_units: 1, active: true}
+        },
+        tiles: %{},
+        required_move:
+          %{
+            # Not nil
+          }
+      }
+
+      new_state = Game.end_turn(old_state)
+
+      assert new_state == old_state
     end
   end
 
@@ -323,6 +347,7 @@ defmodule Sengoku.GameTest do
     test "when the attacker defeats the last defender, captures the territory and moves the attacking number of units in" do
       old_state = %{
         current_player_id: 1,
+        selected_tile_id: 1,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -338,6 +363,7 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[1].units == 1
       assert new_state.tiles[2].units == 2
       assert new_state.tiles[2].owner == 1
+      assert is_nil(new_state.selected_tile_id)
     end
 
     test "with more units in the origin tile, allows moving them in" do
@@ -487,10 +513,40 @@ defmodule Sengoku.GameTest do
     end
   end
 
+  describe "start_move/3" do
+    test "starts a move" do
+      old_state = %{
+        selected_tile_id: 1,
+        required_move: nil,
+        end_turn_after_move: false,
+        players: %{
+          1 => %Player{active: true},
+          2 => %Player{active: true}
+        },
+        tiles: %{
+          1 => %Tile{units: 3, owner: 1, neighbors: [2]},
+          2 => %Tile{units: 2, owner: 2, neighbors: [1]}
+        }
+      }
+
+      new_state = Game.start_move(old_state, 1, 2)
+
+      assert new_state.required_move == %{
+               from_id: 1,
+               to_id: 2,
+               min: 0,
+               max: 2
+             }
+
+      assert new_state.end_turn_after_move
+    end
+  end
+
   describe "move/4" do
-    test "moves a number of units from one territory to another" do
+    test "moves a number of units from one territory to another and clears selection" do
       old_state = %{
         current_player_id: 1,
+        selected_tile_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -499,16 +555,22 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        required_move: %{
+          from_id: 1,
+          to_id: 2,
+          min: 3,
+          max: 4
+        }
       }
 
       new_state = Game.move(old_state, 1, 2, 4)
 
       assert new_state.tiles[1].units == 1
       assert new_state.tiles[2].units == 5
+      assert new_state.selected_tile_id == nil
     end
 
-    test "ends the Player’s turn" do
+    test "ends the Player’s turn when end_turn_after_move is true" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
@@ -519,7 +581,13 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        required_move: %{
+          from_id: 1,
+          to_id: 2,
+          min: 3,
+          max: 4
+        },
+        end_turn_after_move: true
       }
 
       new_state = Game.move(old_state, 1, 2, 3)

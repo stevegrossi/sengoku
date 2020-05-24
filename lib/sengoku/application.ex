@@ -1,21 +1,22 @@
 defmodule Sengoku.Application do
-  @moduledoc """
-  The top-level OTP application.
-  """
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
+  @moduledoc false
 
   use Application
 
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   def start(_type, _args) do
-    import Supervisor.Spec
-
-    # Define workers and child supervisors to be supervised
     children = [
-      # Start the endpoint when the application starts
-      supervisor(SengokuWeb.Endpoint, []),
-      # Start your own worker by calling: Sengoku.Worker.start_link(arg1, arg2, arg3)
-      worker(Registry, [:unique, :game_server_registry])
+      # Start the Ecto repository
+      # Sengoku.Repo,
+      # Start the Telemetry supervisor
+      SengokuWeb.Telemetry,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Sengoku.PubSub},
+      # Start the Endpoint (http/https)
+      SengokuWeb.Endpoint,
+      # Start a worker by calling: Sengoku.Worker.start_link(arg)
+      {Registry, keys: :unique, name: :game_server_registry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

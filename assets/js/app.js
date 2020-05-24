@@ -1,27 +1,28 @@
-import React from "react"
-import ReactDOM from "react-dom"
-import { Socket } from 'phoenix'
-import Game from "./components/Game"
-import css from '../css/app.scss'
+// We need to import the CSS so that webpack will load it.
+// The MiniCssExtractPlugin is used to separate it out into
+// its own CSS file.
+import "../css/app.scss"
 
-const game_id = window.game_id
-const game_container = document.getElementById('game_container')
-if (game_id && game_container) {
-  const socket = new Socket('/socket', {params: {}})
-  socket.connect()
+// webpack automatically bundles all modules in your
+// entry points. Those entry points can be configured
+// in "webpack.config.js".
+//
+// Import deps with the dep name or local files with a relative path, for example:
+//
+//     import {Socket} from "phoenix"
+//     import socket from "./socket"
+//
+import "phoenix_html"
+import {Socket} from "phoenix"
+import {LiveSocket} from "phoenix_live_view"
 
-  const token = localStorage.getItem('games:' + game_id + ':token')
-  const channel = socket.channel('games:' + game_id, { token: token })
-  channel.join()
-    .receive('ok', resp => {
-      console.log('Joined game ' + game_id, resp)
-      ReactDOM.render(<Game id={game_id} channel={channel} />, game_container)
-    })
-    .receive('error', resp => {
-      if (resp.reason == 'in_progress') {
-        game_container.innerHTML = 'You cannot join a game already in progress.'
-      } else {
-        game_container.innerHTML = 'An unexpected error occurred. Please try refreshing.'
-      }
-    })
-}
+let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+
+// connect if there are any LiveViews on the page
+liveSocket.connect()
+
+// expose liveSocket on window for web console debug logs and latency simulation:
+// >> liveSocket.enableDebug()
+// >> liveSocket.enableLatencySim(1000)
+window.liveSocket = liveSocket

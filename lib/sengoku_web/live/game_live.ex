@@ -86,6 +86,18 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
 
+        <h2 class="text-center">Region Bonuses</h2>
+        <ol class="Regions">
+          <%= for {region_id, region} <- @game_state.regions do %>
+            <li class="Region region-<%= region_id %>">
+              <svg viewBox="0 0 200 200" version="1.1">
+                <use href="#hexagon" />
+              </svg>
+              <span class="Region-value"><%= region.value %></span>
+            </li>
+          <% end %>
+        </ol>
+
         <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
           <p>
             <%= cond do %>

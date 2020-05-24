@@ -297,6 +297,15 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 
   svg {
     filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, .25));
+    overflow: visible;
+  }
+
+  &--owned {
+    svg {
+      stroke: rgba(255,255,255,.5);
+      stroke-width: 25px;
+      paint-order: stroke;
+    }
   }
 }
 

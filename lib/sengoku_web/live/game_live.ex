@@ -8,19 +8,26 @@ defmodule SengokuWeb.GameLive do
 
   @impl true
   def mount(%{"game_id" => game_id}, %{"anonymous_user_id" => user_token}, socket) do
-    game_state = GameServer.get_state(game_id)
+    if GameServer.alive?(game_id) do
+      game_state = GameServer.get_state(game_id)
 
-    if connected?(socket) do
-      Phoenix.PubSub.subscribe(Sengoku.PubSub, "game:" <> game_id)
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Sengoku.PubSub, "game:" <> game_id)
+      end
+
+      {:ok,
+       assign(socket,
+         game_id: game_id,
+         user_token: user_token,
+         player_id: game_state.tokens[user_token],
+         game_state: game_state
+       )}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "Game not found. Start a new one?")
+       |> redirect(to: Routes.game_path(SengokuWeb.Endpoint, :new))}
     end
-
-    {:ok,
-     assign(socket,
-       game_id: game_id,
-       user_token: user_token,
-       player_id: game_state.tokens[user_token],
-       game_state: game_state
-     )}
   end
 
   @impl true

@@ -3,6 +3,10 @@ defmodule SengokuWeb.GameLiveTest do
   import Phoenix.LiveViewTest
   @endpoint SengokuWeb.Endpoint
 
+  test "redirects when the GameServer is unavailable", %{conn: conn} do
+    assert {:error, {:redirect, %{to: "/"}}} = live(conn, "/game/no-game-here")
+  end
+
   test "connected mount", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
     {:ok, _view, html} = live(conn, "/game/#{game_id}")

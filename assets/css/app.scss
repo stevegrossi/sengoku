@@ -251,6 +251,10 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   font-weight: bold;
   font-size: 18px;
   text-shadow: 0 1px 1px rgba(0,0,0,.5);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .player-bg-1 { background-color: #fb4934; }

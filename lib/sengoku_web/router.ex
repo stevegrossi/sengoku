@@ -1,6 +1,9 @@
 defmodule SengokuWeb.Router do
   use SengokuWeb, :router
 
+  import Plug.BasicAuth
+  import Phoenix.LiveDashboard.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -11,11 +14,25 @@ defmodule SengokuWeb.Router do
     plug SengokuWeb.Plug.IdentifyAnonymousUser
   end
 
+  pipeline :admins_only do
+    if Mix.env() == :prod do
+      creds = System.get_env("ADMIN_CREDS") || raise("You must set ADMIN_CREDS in the environment")
+      [username, password] = String.split(creds, ":")
+      plug :basic_auth, username: username, password: password
+    end
+  end
+
   scope "/", SengokuWeb do
     pipe_through :browser
 
     get "/", GameController, :new
     post "/", GameController, :create
     live "/game/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
+  end
+
+  scope "/" do
+    pipe_through [:browser, :admins_only]
+
+    live_dashboard "/dashboard", metrics: SengokuWeb.Telemetry
   end
 end

@@ -68,10 +68,10 @@ defmodule SengokuWeb.GameLiveTest do
     assert html =~ "Region Bonuses"
 
     game_state = Sengoku.GameServer.get_state(game_id)
-    game_state = put_in(game_state.tiles[60].owner, 1)
-    game_state = put_in(game_state.tiles[61].owner, 1)
-    game_state = put_in(game_state.tiles[71].owner, 1)
-    game_state = put_in(game_state.tiles[72].owner, 1)
+    game_state = put_in(game_state.tiles[49].owner, 1)
+    game_state = put_in(game_state.tiles[50].owner, 1)
+    game_state = put_in(game_state.tiles[58].owner, 1)
+    game_state = put_in(game_state.tiles[59].owner, 1)
     send(view.pid, {:game_updated, game_state})
 
     assert has_element?(view, ".region-1.region-ownedby-1")

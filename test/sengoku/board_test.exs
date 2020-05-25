@@ -16,14 +16,14 @@ defmodule Sengoku.BoardTest do
     test "restricts neighbors to only tiles on the board" do
       board = Board.new("wheel")
 
-      assert board.tiles[59].neighbors == [48, 60, 71]
+      assert board.tiles[3].neighbors == [4, 12, 13]
     end
 
     test "allow specifying additional neighbor mappings" do
       board = Board.new("earth")
 
-      assert 45 in board.tiles[24].neighbors
-      assert 24 in board.tiles[45].neighbors
+      assert 10 in board.tiles[19].neighbors
+      assert 19 in board.tiles[10].neighbors
     end
   end
 end

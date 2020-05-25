@@ -16,7 +16,9 @@ defmodule SengokuWeb.Router do
 
   pipeline :admins_only do
     if Mix.env() == :prod do
-      creds = System.get_env("ADMIN_CREDS") || raise("You must set ADMIN_CREDS in the environment")
+      creds =
+        System.get_env("ADMIN_CREDS") || raise("You must set ADMIN_CREDS in the environment")
+
       [username, password] = String.split(creds, ":")
       plug :basic_auth, username: username, password: password
     end

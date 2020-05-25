@@ -4,7 +4,6 @@ defmodule Sengoku.Player do
   human- or computer-controller actor in the game.
   """
 
-  @derive Jason.Encoder
   defstruct unplaced_units: 0, active: true, ai: true, name: nil, color: nil
 
   @colors %{

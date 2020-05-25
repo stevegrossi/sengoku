@@ -13,9 +13,5 @@ defmodule Sengoku.PlayerTest do
                3 => %Player{}
              } = state.players
     end
-
-    test "encodes to JSON" do
-      assert Jason.encode!(Player.new())
-    end
   end
 end

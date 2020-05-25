@@ -22,9 +22,5 @@ defmodule Sengoku.RegionTest do
                %{value: 1, tile_ids: [6, 7, 8]}
              ]
     end
-
-    test "encodes to JSON" do
-      assert Jason.encode!(%Region{value: 1, tile_ids: []})
-    end
   end
 end

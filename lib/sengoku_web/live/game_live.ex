@@ -86,7 +86,7 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
 
-        <%= if @game_state.regions != [] do %>
+        <%= if @game_state.regions != %{} do %>
           <h2 class="text-center">Region Bonuses</h2>
           <ol class="Regions">
             <%= for {region_id, region} <- @game_state.regions do %>

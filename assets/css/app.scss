@@ -276,13 +276,16 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   list-style: none;
   padding: 0;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .Region {
   position: relative;
+  flex-basis: 16.67%;
 
   &-value {
     position: absolute;
+    font-size: 18px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

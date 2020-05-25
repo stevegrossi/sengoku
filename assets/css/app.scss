@@ -118,86 +118,72 @@ form {
   @include proportional-box(650, 508);
 }
 
-$tile-row-height: 8.75%;
+$tile-row-height: 10.75%;
 
-@for $i from 1 through 11 {
+@for $i from 1 through 9 {
   #tile_#{$i} {
     top: 0 * $tile-row-height;
-    left: ((100 / 12) * ($i - 1) + (100 / 24)) * 1%;
+    left: ((100 / 10) * ($i - 1) + (100 / 20)) * 1%;
   }
 }
 
-@for $i from 12 through 23 {
+@for $i from 10 through 19 {
   #tile_#{$i} {
     top: 1 * $tile-row-height;
-    left: ((100 / 12) * ($i - 12)) * 1%;
+    left: ((100 / 10) * ($i - 10)) * 1%;
   }
 }
 
-@for $i from 24 through 34 {
+@for $i from 20 through 28 {
   #tile_#{$i} {
     top: 2 * $tile-row-height;
-    left: ((100 / 12) * ($i - 24) + (100 / 24)) * 1%;
+    left: ((100 / 10) * ($i - 20) + (100 / 20)) * 1%;
   }
 }
 
-@for $i from 35 through 46 {
+@for $i from 29 through 38 {
   #tile_#{$i} {
     top: 3 * $tile-row-height;
-    left: ((100 / 12) * ($i - 35)) * 1%;
+    left: ((100 / 10) * ($i - 29)) * 1%;
   }
 }
 
-@for $i from 47 through 57 {
+@for $i from 39 through 47 {
   #tile_#{$i} {
     top: 4 * $tile-row-height;
-    left: ((100 / 12) * ($i - 47) + (100 / 24)) * 1%;
+    left: ((100 / 10) * ($i - 39) + (100 / 20)) * 1%;
   }
 }
 
-@for $i from 58 through 69 {
+@for $i from 48 through 57 {
   #tile_#{$i} {
     top: 5 * $tile-row-height;
-    left: ((100 / 12) * ($i - 58)) * 1%;
+    left: ((100 / 10) * ($i - 48)) * 1%;
   }
 }
 
-@for $i from 70 through 80 {
+@for $i from 58 through 66 {
   #tile_#{$i} {
     top: 6 * $tile-row-height;
-    left: ((100 / 12) * ($i - 70) + (100 / 24)) * 1%;
+    left: ((100 / 10) * ($i - 58) + (100 / 20)) * 1%;
   }
 }
 
-@for $i from 81 through 92 {
+@for $i from 67 through 76 {
   #tile_#{$i} {
     top: 7 * $tile-row-height;
-    left: ((100 / 12) * ($i - 81)) * 1%;
+    left: ((100 / 10) * ($i - 67)) * 1%;
   }
 }
 
-@for $i from 93 through 103 {
+@for $i from 77 through 85 {
   #tile_#{$i} {
     top: 8 * $tile-row-height;
-    left: ((100 / 12) * ($i - 93) + (100 / 24)) * 1%;
+    left: ((100 / 10) * ($i - 77) + (100 / 20)) * 1%;
   }
 }
 
-@for $i from 104 through 115 {
-  #tile_#{$i} {
-    top: 9 * $tile-row-height;
-    left: ((100 / 12) * ($i - 104)) * 1%;
-  }
-}
-
-@for $i from 116 through 126 {
-  #tile_#{$i} {
-    top: 10 * $tile-row-height;
-    left: ((100 / 12) * ($i - 116) + (100 / 24)) * 1%;
-  }
-}
-
-$tile-width: (100 / 12) * 1%;
+$tile-width: (100 / 10) * 1%;
 $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 
 .Tile {

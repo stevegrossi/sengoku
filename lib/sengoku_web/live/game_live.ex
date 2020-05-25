@@ -288,13 +288,13 @@ defmodule SengokuWeb.GameLive do
 
   defp owner_of_region(region, tiles) do
     region.tile_ids
-    |> Enum.map(fn(tile_id) ->
-         tiles[tile_id].owner
-       end)
-    |> Enum.uniq
+    |> Enum.map(fn tile_id ->
+      tiles[tile_id].owner
+    end)
+    |> Enum.uniq()
     |> case do
-         [owner_id] -> {:ok, owner_id}
-         _ -> nil
-       end
+      [owner_id] -> {:ok, owner_id}
+      _ -> nil
+    end
   end
 end

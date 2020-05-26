@@ -60,3 +60,29 @@ jobs:
 
       - run: mix format --check-formatted
       - run: mix test
+
+  deploy:
+    # only run this job if the verify job succeeds
+    needs: verify
+
+    # only run this job if the workflow is running on the master branch
+    if: github.ref == 'refs/heads/master'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+        # actions/checkout@v2 only checks out the latest commit,
+        # so we need to tell it to check out the entire master branch
+        with:
+          ref: master
+          fetch-depth: 0
+
+      # configure the gigalixir-actions with our credentials and app name
+      - uses: mhanberg/gigalixir-action@v0.1.0
+        with:
+          GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
+          GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}
+          GIGALIXIR_APP: sengoku-prod
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

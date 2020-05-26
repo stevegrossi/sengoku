@@ -29,7 +29,9 @@ defmodule SengokuWeb.GameLiveTest do
     render_submit(view, :join, %{"player_name" => "Yojimbo"})
 
     assert has_element?(view, ".Player.player-bg-1", "Yojimbo")
-    assert render(view) =~ "You’re in! Share the URL with a friend to invite them, or start the game when ready."
+
+    assert render(view) =~
+             "You’re in! Share the URL with a friend to invite them, or start the game when ready."
 
     render_click(element(view, ~s([phx-click="start"])))
 

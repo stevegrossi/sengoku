@@ -23,11 +23,15 @@ defmodule SengokuWeb.GameLiveTest do
     refute has_element?(view, ~s([phx-click="start_move"]))
     refute has_element?(view, ~s([phx-click="attack"]))
 
+    assert render(view) =~ "You are currently spectating. Join the game or wait and watch."
+    refute has_element?(view, ~s([phx-click="start"]))
+
     render_submit(view, :join, %{"player_name" => "Yojimbo"})
 
     assert has_element?(view, ".Player.player-bg-1", "Yojimbo")
+    assert render(view) =~ "You’re in! Share the URL with a friend to invite them, or start the game when ready."
 
-    render_click(view, :start)
+    render_click(element(view, ~s([phx-click="start"])))
 
     assert has_element?(view, ".player-bg-1 .Player-unplacedUnits", "3")
     assert render(view) =~ "You have 3 units to place"

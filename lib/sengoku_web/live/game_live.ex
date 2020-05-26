@@ -78,7 +78,7 @@ defmodule SengokuWeb.GameLive do
           </form>
         <% end %>
 
-        <%= if @game_state.turn == 0 do %>
+        <%= if @game_state.turn == 0 && @player_id do %>
           <button class="Button" phx-click="start">Start Game</button>
         <% end %>
 
@@ -108,20 +108,28 @@ defmodule SengokuWeb.GameLive do
           </ol>
         <% end %>
 
-        <%= if @game_state.turn > 0 && @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
-          <p>
-            <%= cond do %>
-              <% @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
-                <%= "You have #{@game_state.players[@game_state.current_player_id].unplaced_units} units to place. Click on one of your territories to place a unit." %>
-              <% is_nil(@game_state.selected_tile_id) -> %>
-                Select one of your territories to attack or move from, or end your turn.
-              <% @game_state.tiles[@game_state.selected_tile_id].units == 1 -> %>
-                You must have more than 1 unit in a territory to move or attack.
-              <% true -> %>
-                Select an adjacent territory to attack or move into.
+        <p>
+          <%= if @game_state.turn == 0 do %>
+            <%= if @player_id do %>
+              You’re in! Share the URL with a friend to invite them, or start the game when ready.
+            <% else %>
+              You are currently spectating. Join the game or wait and watch.
             <% end %>
-          </p>
-        <% end %>
+          <% else %>
+            <%= if @game_state.current_player_id == @player_id && !@game_state.winner_id do %>
+              <%= cond do %>
+                <% @game_state.players[@game_state.current_player_id].unplaced_units > 0 -> %>
+                  <%= "You have #{@game_state.players[@game_state.current_player_id].unplaced_units} units to place. Click on one of your territories to place a unit." %>
+                <% is_nil(@game_state.selected_tile_id) -> %>
+                  Select one of your territories to attack or move from, or end your turn.
+                <% @game_state.tiles[@game_state.selected_tile_id].units == 1 -> %>
+                  You must have more than 1 unit in a territory to move or attack.
+                <% true -> %>
+                  Select an adjacent territory to attack or move into.
+              <% end %>
+            <% end %>
+          <% end %>
+        </p>
       </div>
 
       <div

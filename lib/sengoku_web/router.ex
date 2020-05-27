@@ -28,8 +28,8 @@ defmodule SengokuWeb.Router do
     pipe_through :browser
 
     get "/", GameController, :new
-    post "/", GameController, :create
-    live "/game/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
+    post "/games", GameController, :create
+    live "/games/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
   end
 
   scope "/" do

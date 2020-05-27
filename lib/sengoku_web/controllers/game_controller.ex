@@ -9,6 +9,6 @@ defmodule SengokuWeb.GameController do
 
   def create(conn, %{"board" => _board} = options) do
     {:ok, game_id} = GameServer.new(options)
-    redirect(conn, to: "/game/#{game_id}")
+    redirect(conn, to: Routes.live_path(conn, SengokuWeb.GameLive, game_id))
   end
 end

@@ -24,6 +24,10 @@ body {
   font-family: 'Crimson Text', serif;
 }
 
+h1 {
+  font-size: 3em;
+}
+
 h2 {
   margin: 0;
   text-transform: uppercase;
@@ -317,9 +321,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 .GameOver {
   color: $white;
   font-weight: bold;
-  font-size: 3em;
   text-shadow: 0 1px 2px $black;
-  pointer-events: none;
 }
 
 .Button {
@@ -333,7 +335,9 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   cursor: pointer;
   display: block;
   width: 100%;
+  text-align: center;
   background-color: $gray;
+  text-decoration: none;
 
   &:hover,
   &:focus {

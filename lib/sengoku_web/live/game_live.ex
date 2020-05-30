@@ -36,7 +36,10 @@ defmodule SengokuWeb.GameLive do
     <div class="Game">
       <%= if @game_state.winner_id do %>
         <div class="Modal GameOver">
-          <%= @game_state.players[@game_state.winner_id].name %> wins!
+          <div>
+            <h1><%= @game_state.players[@game_state.winner_id].name %> wins!</h1>
+            <p><a href="<%= Routes.game_path(@socket, :new) %>" class="Button Button--primary">Start a New Game</a></p>
+          </div>
         </div>
       <% end %>
 

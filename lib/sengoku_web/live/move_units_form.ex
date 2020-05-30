@@ -25,7 +25,7 @@ defmodule SengokuWeb.MoveUnitsForm do
                  max=<%= @required_move.max %>
                  name="count"
                  value="<%= @count %>"
-                 autoFocus
+                 autofocus
           />
           <span><%= @required_move.max %></span>
         </form>

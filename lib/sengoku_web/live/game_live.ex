@@ -149,27 +149,22 @@ defmodule SengokuWeb.GameLive do
                 Tile
                 <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>
                 <%= if id == @game_state.selected_tile_id, do: "Tile--selected" %>
-                <%= if @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors do %>
-                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
-                    Tile--potentialMoveTarget
-                  <% else %>
-                    Tile--potentialAttackTarget
-                  <% end %>
-                <% end %>
               "
               id="tile_<%= id %>"
-              <%= cond do %>
-                <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
-                  phx-click="place_unit"
-                <% is_nil(@game_state.selected_tile_id) && @game_state.current_player_id && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
-                  phx-click="select_tile"
-                <% @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
-                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
-                    phx-click="start_move"
-                  <% else %>
-                    phx-click="attack"
-                  <% end %>
-                <% true -> %>
+              <%= if @player_id && @player_id == @game_state.current_player_id do %>
+                <%= cond do %>
+                  <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
+                    phx-click="place_unit"
+                  <% is_nil(@game_state.selected_tile_id) && @game_state.current_player_id && @game_state.tiles[id].units > 1 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
+                    phx-click="select_tile"
+                  <% @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
+                    <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
+                      phx-click="start_move"
+                    <% else %>
+                      phx-click="attack"
+                    <% end %>
+                  <% true -> %>
+                <% end %>
               <% end %>
               phx-value-tile_id="<%= id %>"
             >

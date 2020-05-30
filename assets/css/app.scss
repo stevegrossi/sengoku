@@ -202,23 +202,34 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     overflow: visible;
   }
 
-  &:hover {
-    transform: scale(1.1);
-  }
-
   &--selected {
     stroke: rgba(255,255,255,.5);
     stroke-width: 15px;
     paint-order: stroke;
   }
 
-  &--potentialMoveTarget {
+  &[phx-click="place_unit"],
+  &[phx-click="select_tile"] {
+    cursor: pointer;
+
+    svg {
+      stroke: rgba(255,255,255,.25);
+      stroke-width: 15px;
+      paint-order: stroke;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &[phx-click="start_move"] {
     svg {
       filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(0, 128, 0, 1));
     }
   }
 
-  &--potentialAttackTarget {
+  &[phx-click="attack"] {
     svg {
       filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(255, 0, 0, 1));
     }

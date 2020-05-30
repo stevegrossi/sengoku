@@ -2,8 +2,8 @@ defmodule SengokuWeb.MoveUnitsForm do
   use Phoenix.LiveComponent
 
   @impl true
-  def update(assigns, socket) do
-    default_count = max(assigns.required_move.min, floor(assigns.required_move.max / 2))
+  def update(%{required_move: %{min: min, max: max}} = assigns, socket) do
+    default_count = midpoint(min, max)
     {:ok, assign(socket, Map.merge(assigns, %{count: default_count}))}
   end
 
@@ -55,5 +55,9 @@ defmodule SengokuWeb.MoveUnitsForm do
   def handle_event("update_count", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
     {:noreply, assign(socket, count: count)}
+  end
+
+  defp midpoint(low, high) do
+    low + floor((high - low) / 2)
   end
 end

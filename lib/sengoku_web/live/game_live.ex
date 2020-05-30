@@ -139,8 +139,8 @@ defmodule SengokuWeb.GameLive do
         class="Board"
         <%= if @game_state.selected_tile_id, do: "phx-click=unselect_tile" %>
       >
-        <%= if @game_state.required_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
-          <%= live_component(@socket, MoveUnitsForm, id: "move_form", required_move: @game_state.required_move) %>
+        <%= if @game_state.pending_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
+          <%= live_component(@socket, MoveUnitsForm, id: "move_form", pending_move: @game_state.pending_move) %>
         <% end %>
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>
@@ -279,13 +279,13 @@ defmodule SengokuWeb.GameLive do
   def handle_event("move", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
 
-    %{game_id: game_id, player_id: player_id, game_state: %{required_move: required_move}} =
+    %{game_id: game_id, player_id: player_id, game_state: %{pending_move: pending_move}} =
       socket.assigns
 
     GameServer.action(game_id, player_id, %{
       type: "move",
-      from_id: required_move.from_id,
-      to_id: required_move.to_id,
+      from_id: pending_move.from_id,
+      to_id: pending_move.to_id,
       count: count
     })
 

@@ -238,7 +238,7 @@ defmodule Sengoku.GameTest do
           4 => %Player{unplaced_units: 1, active: true}
         },
         tiles: %{},
-        required_move:
+        pending_move:
           %{
             # Not nil
           }
@@ -260,7 +260,7 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -278,7 +278,7 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 99, units: 4}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -295,7 +295,7 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = old_state |> Game.place_unit(1)
@@ -303,7 +303,7 @@ defmodule Sengoku.GameTest do
       assert new_state == old_state
     end
 
-    test "changes nothing if a required_move is pending" do
+    test "changes nothing if a move is pending" do
       old_state = %{
         current_player_id: 1,
         players: %{
@@ -312,7 +312,7 @@ defmodule Sengoku.GameTest do
         tiles: %{
           1 => %Tile{owner: 1, units: 4}
         },
-        required_move:
+        pending_move:
           %{
             # Not nil
           }
@@ -336,7 +336,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {1, 1})
@@ -356,7 +356,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 2})
@@ -377,7 +377,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 21, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -385,7 +385,7 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[2].units == 0
       assert new_state.tiles[2].owner == 1
 
-      assert new_state.required_move == %{
+      assert new_state.pending_move == %{
                from_id: 1,
                to_id: 2,
                min: 3,
@@ -404,7 +404,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 2, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -426,7 +426,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 2, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2, {0, 1})
@@ -442,7 +442,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -456,7 +456,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 1, owner: 2, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -470,7 +470,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 1, neighbors: [1]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
@@ -484,14 +484,14 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 1, owner: 1, neighbors: [3]},
           2 => %Tile{units: 1, owner: 2, neighbors: [3]}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.attack(old_state, 1, 2)
       assert new_state == old_state
     end
 
-    test "changes nothing if a required_move is pending" do
+    test "changes nothing if a move is pending" do
       old_state = %{
         current_player_id: 1,
         players: %{
@@ -502,7 +502,7 @@ defmodule Sengoku.GameTest do
           1 => %Tile{units: 3, owner: 1, neighbors: [2]},
           2 => %Tile{units: 2, owner: 2, neighbors: [1]}
         },
-        required_move:
+        pending_move:
           %{
             # Not nil
           }
@@ -517,7 +517,7 @@ defmodule Sengoku.GameTest do
     test "starts a move" do
       old_state = %{
         selected_tile_id: 1,
-        required_move: nil,
+        pending_move: nil,
         end_turn_after_move: false,
         players: %{
           1 => %Player{active: true},
@@ -531,7 +531,7 @@ defmodule Sengoku.GameTest do
 
       new_state = Game.start_move(old_state, 1, 2)
 
-      assert new_state.required_move == %{
+      assert new_state.pending_move == %{
                from_id: 1,
                to_id: 2,
                min: 1,
@@ -555,7 +555,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,
@@ -581,7 +581,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,
@@ -605,7 +605,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -623,7 +623,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -641,7 +641,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -659,7 +659,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 6)
@@ -677,7 +677,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 5)
@@ -695,7 +695,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: nil
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 1, 3)
@@ -713,7 +713,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,
@@ -725,7 +725,7 @@ defmodule Sengoku.GameTest do
 
       assert new_state.tiles[1].units == 2
       assert new_state.tiles[2].units == 3
-      assert is_nil(new_state.required_move)
+      assert is_nil(new_state.pending_move)
       assert new_state.current_player_id == 1
     end
 
@@ -740,7 +740,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,
@@ -764,7 +764,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,
@@ -788,7 +788,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        required_move: %{
+        pending_move: %{
           from_id: 1,
           to_id: 2,
           min: 3,

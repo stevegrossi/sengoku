@@ -18,7 +18,7 @@ defmodule Sengoku.AI.SmartTest do
         1 => %Region{value: 1, tile_ids: [1]},
         2 => %Region{value: 1, tile_ids: [2]}
       },
-      required_move: nil
+      pending_move: nil
     }
 
     action = AI.Smart.take_action(state)
@@ -41,7 +41,7 @@ defmodule Sengoku.AI.SmartTest do
         1 => %Region{value: 1, tile_ids: [1]},
         2 => %Region{value: 1, tile_ids: [2]}
       },
-      required_move: nil
+      pending_move: nil
     }
 
     action = AI.Smart.take_action(state)
@@ -61,7 +61,7 @@ defmodule Sengoku.AI.SmartTest do
         2 => %Tile{owner: 1, units: 1, neighbors: [1, 3]},
         3 => %Tile{owner: 2, units: 1, neighbors: [2]}
       },
-      required_move: nil
+      pending_move: nil
     }
 
     action = AI.Smart.take_action(state)
@@ -86,7 +86,7 @@ defmodule Sengoku.AI.SmartTest do
         2 => %Tile{owner: 1, units: 5, neighbors: [1, 3]},
         3 => %Tile{owner: 2, units: 1, neighbors: [2]}
       },
-      required_move: %{
+      pending_move: %{
         from_id: 2,
         to_id: 1,
         min: 3,
@@ -115,7 +115,7 @@ defmodule Sengoku.AI.SmartTest do
         1 => %Tile{owner: 1, units: 1, neighbors: [2]},
         2 => %Tile{owner: nil, units: 1, neighbors: [1]}
       },
-      required_move: nil
+      pending_move: nil
     }
 
     action = AI.Smart.take_action(state)

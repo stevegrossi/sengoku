@@ -534,7 +534,7 @@ defmodule Sengoku.GameTest do
       assert new_state.required_move == %{
                from_id: 1,
                to_id: 2,
-               min: 0,
+               min: 1,
                max: 2
              }
 

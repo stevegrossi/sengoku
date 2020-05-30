@@ -229,7 +229,7 @@ defmodule Sengoku.Game do
     |> Map.put(:required_move, %{
       from_id: from_id,
       to_id: to_id,
-      min: 0,
+      min: 1,
       max: state.tiles[from_id].units - 1
     })
   end

@@ -6,7 +6,7 @@ defmodule SengokuWeb.GameLive do
   alias Sengoku.GameServer
   alias SengokuWeb.MoveUnitsForm
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(%{"game_id" => game_id}, %{"anonymous_user_id" => user_token}, socket) do
     if GameServer.alive?(game_id) do
       game_state = GameServer.get_state(game_id)
@@ -30,7 +30,7 @@ defmodule SengokuWeb.GameLive do
     end
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~L"""
     <div class="Game">
@@ -185,12 +185,12 @@ defmodule SengokuWeb.GameLive do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({:game_updated, new_state}, socket) do
     {:noreply, assign(socket, game_state: new_state)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("join", %{"player_name" => player_name}, socket) do
     case GameServer.authenticate_player(
            socket.assigns.game_id,
@@ -206,7 +206,7 @@ defmodule SengokuWeb.GameLive do
     end
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "start_game"})
@@ -214,7 +214,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("place_unit", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
@@ -223,7 +223,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("end_turn", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "end_turn"})
@@ -231,7 +231,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("select_tile", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
@@ -240,7 +240,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("unselect_tile", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "unselect_tile"})
@@ -248,7 +248,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("attack", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
 
@@ -264,7 +264,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start_move", %{"tile_id" => tile_id_string}, socket) do
     {to_tile_id, _} = Integer.parse(tile_id_string)
 
@@ -280,7 +280,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("move", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
 

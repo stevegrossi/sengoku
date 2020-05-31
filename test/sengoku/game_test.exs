@@ -519,7 +519,6 @@ defmodule Sengoku.GameTest do
       old_state = %{
         selected_tile_id: 1,
         pending_move: nil,
-        end_turn_after_move: false,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -537,10 +536,9 @@ defmodule Sengoku.GameTest do
                to_id: 2,
                min: 1,
                max: 2,
-               required: false
+               required: false,
+               end_turn: true
              }
-
-      assert new_state.end_turn_after_move
     end
   end
 
@@ -557,12 +555,7 @@ defmodule Sengoku.GameTest do
           1 => %Player{active: true, unplaced_units: 0},
           2 => %Player{active: true, unplaced_units: 0}
         },
-        pending_move: %{
-          from_id: 1,
-          to_id: 2,
-          min: 3,
-          max: 4
-        }
+        pending_move: nil
       }
 
       new_state = Game.move(old_state, 1, 2, 4)
@@ -572,7 +565,7 @@ defmodule Sengoku.GameTest do
       assert new_state.selected_tile_id == nil
     end
 
-    test "ends the Player’s turn when end_turn_after_move is true" do
+    test "ends the Player’s turn when pending_move.end_turn is true" do
       old_state = %{
         current_player_id: 1,
         tiles: %{
@@ -587,9 +580,10 @@ defmodule Sengoku.GameTest do
           from_id: 1,
           to_id: 2,
           min: 3,
-          max: 4
-        },
-        end_turn_after_move: true
+          max: 4,
+          required: false,
+          end_turn: true
+        }
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
@@ -719,7 +713,9 @@ defmodule Sengoku.GameTest do
           from_id: 1,
           to_id: 2,
           min: 3,
-          max: 4
+          max: 4,
+          required: true,
+          end_turn: false
         }
       }
 
@@ -746,7 +742,9 @@ defmodule Sengoku.GameTest do
           from_id: 1,
           to_id: 2,
           min: 3,
-          max: 4
+          max: 4,
+          required: true,
+          end_turn: false
         }
       }
 
@@ -770,7 +768,9 @@ defmodule Sengoku.GameTest do
           from_id: 1,
           to_id: 2,
           min: 3,
-          max: 4
+          max: 4,
+          required: true,
+          end_turn: false
         }
       }
 
@@ -794,7 +794,9 @@ defmodule Sengoku.GameTest do
           from_id: 1,
           to_id: 2,
           min: 3,
-          max: 4
+          max: 4,
+          required: true,
+          end_turn: false
         }
       }
 
@@ -808,16 +810,15 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         selected_tile_id: 1,
-        end_turn_after_move: true,
         pending_move: %{
-          required: false
+          required: false,
+          end_turn: true
         }
       }
 
       new_state = Game.cancel_move(old_state)
 
       assert is_nil(new_state.pending_move)
-      refute new_state.end_turn_after_move
       assert old_state.current_player_id == new_state.current_player_id
       assert is_nil(new_state.selected_tile_id)
     end
@@ -826,7 +827,6 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         selected_tile_id: 1,
-        end_turn_after_move: true,
         pending_move: nil
       }
 
@@ -839,9 +839,9 @@ defmodule Sengoku.GameTest do
       old_state = %{
         current_player_id: 1,
         selected_tile_id: 1,
-        end_turn_after_move: true,
         pending_move: %{
-          required: true
+          required: true,
+          end_turn: false
         }
       }
 

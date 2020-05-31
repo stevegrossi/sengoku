@@ -366,7 +366,7 @@ defmodule Sengoku.GameTest do
       assert is_nil(new_state.selected_tile_id)
     end
 
-    test "with more units in the origin tile, allows moving them in" do
+    test "with more units in the origin tile, requires moving some in" do
       old_state = %{
         current_player_id: 1,
         players: %{
@@ -389,7 +389,8 @@ defmodule Sengoku.GameTest do
                from_id: 1,
                to_id: 2,
                min: 3,
-               max: 20
+               max: 20,
+               required: true
              }
     end
 
@@ -514,7 +515,7 @@ defmodule Sengoku.GameTest do
   end
 
   describe "start_move/3" do
-    test "starts a move" do
+    test "starts a non-required move" do
       old_state = %{
         selected_tile_id: 1,
         pending_move: nil,
@@ -535,7 +536,8 @@ defmodule Sengoku.GameTest do
                from_id: 1,
                to_id: 2,
                min: 1,
-               max: 2
+               max: 2,
+               required: false
              }
 
       assert new_state.end_turn_after_move
@@ -798,6 +800,54 @@ defmodule Sengoku.GameTest do
 
       new_state = Game.move(old_state, 1, 3, 3)
       assert new_state == old_state
+    end
+  end
+
+  describe "cancel_move/1" do
+    test "removes the pending move, clearing the selection and resuming the player’s turn" do
+      old_state = %{
+        current_player_id: 1,
+        selected_tile_id: 1,
+        end_turn_after_move: true,
+        pending_move: %{
+          required: false
+        }
+      }
+
+      new_state = Game.cancel_move(old_state)
+
+      assert is_nil(new_state.pending_move)
+      refute new_state.end_turn_after_move
+      assert old_state.current_player_id == new_state.current_player_id
+      assert is_nil(new_state.selected_tile_id)
+    end
+
+    test "does nothing if no move is pending" do
+      old_state = %{
+        current_player_id: 1,
+        selected_tile_id: 1,
+        end_turn_after_move: true,
+        pending_move: nil
+      }
+
+      new_state = Game.cancel_move(old_state)
+
+      assert old_state == new_state
+    end
+
+    test "does nothing if the pending move is required" do
+      old_state = %{
+        current_player_id: 1,
+        selected_tile_id: 1,
+        end_turn_after_move: true,
+        pending_move: %{
+          required: true
+        }
+      }
+
+      new_state = Game.cancel_move(old_state)
+
+      assert old_state == new_state
     end
   end
 end

@@ -61,6 +61,10 @@ defmodule Sengoku.Game do
     move(state, from_id, to_id, count)
   end
 
+  def handle_action(state, %{type: "cancel_move"}) do
+    cancel_move(state)
+  end
+
   def handle_action(state, action) do
     Logger.info("Unrecognized action `#{inspect(action)}`")
     state
@@ -209,7 +213,8 @@ defmodule Sengoku.Game do
           from_id: from_id,
           to_id: to_id,
           min: 3,
-          max: movable_units
+          max: movable_units,
+          required: true
         })
       else
         state
@@ -230,7 +235,8 @@ defmodule Sengoku.Game do
       from_id: from_id,
       to_id: to_id,
       min: 1,
-      max: state.tiles[from_id].units - 1
+      max: state.tiles[from_id].units - 1,
+      required: false
     })
   end
 
@@ -267,6 +273,19 @@ defmodule Sengoku.Game do
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
+  end
+
+  def cancel_move(%{pending_move: nil} = state) do
+    state
+  end
+  def cancel_move(%{pending_move: %{required: true}} = state) do
+    state
+  end
+  def cancel_move(state) do
+    state
+    |> Map.put(:selected_tile_id, nil)
+    |> Map.put(:end_turn_after_move, false)
+    |> Map.put(:pending_move, nil)
   end
 
   defp maybe_end_turn(%{end_turn_after_move: true} = state) do

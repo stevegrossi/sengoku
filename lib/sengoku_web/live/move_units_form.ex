@@ -45,6 +45,12 @@ defmodule SengokuWeb.MoveUnitsForm do
             phx-click="move"
             phx-value-count="<%= @pending_move.min %>"
           >Move Min (<%= @pending_move.min %>)</button>
+          <%= unless @pending_move.required do %>
+            <button
+              class="Button"
+              phx-click="cancel_move"
+            >Cancel</button>
+          <% end %>
         </div>
       </div>
     </div>

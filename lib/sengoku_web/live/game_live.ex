@@ -292,6 +292,14 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
+  @impl Phoenix.LiveView
+  def handle_event("cancel_move", _params, socket) do
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "cancel_move"})
+
+    {:noreply, socket}
+  end
+
   defp owner_of_region(region, tiles) do
     region.tile_ids
     |> Enum.map(fn tile_id ->

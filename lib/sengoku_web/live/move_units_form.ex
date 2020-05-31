@@ -13,7 +13,7 @@ defmodule SengokuWeb.MoveUnitsForm do
     <div class="Modal">
       <div class="MoveForm">
         <h2>Move how many?</h2>
-        <form
+        <div
           class="MoveForm-slider"
           phx-change="update_count"
           phx-target="<%= @myself %>"
@@ -28,7 +28,7 @@ defmodule SengokuWeb.MoveUnitsForm do
                  autofocus
           />
           <span><%= @pending_move.max %></span>
-        </form>
+        </div>
         <div class="MoveForm-actions">
           <button
             class="Button Button--primary"

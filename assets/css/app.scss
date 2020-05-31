@@ -476,6 +476,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     flex-direction: row-reverse;
 
     & > * {
+      white-space: nowrap;
       margin-right: 1em;
 
       &:first-child {

@@ -536,8 +536,7 @@ defmodule Sengoku.GameTest do
                to_id: 2,
                min: 1,
                max: 2,
-               required: false,
-               end_turn: true
+               required: false
              }
     end
   end
@@ -581,8 +580,7 @@ defmodule Sengoku.GameTest do
           to_id: 2,
           min: 3,
           max: 4,
-          required: false,
-          end_turn: true
+          required: false
         }
       }
 
@@ -714,8 +712,7 @@ defmodule Sengoku.GameTest do
           to_id: 2,
           min: 3,
           max: 4,
-          required: true,
-          end_turn: false
+          required: true
         }
       }
 
@@ -743,8 +740,7 @@ defmodule Sengoku.GameTest do
           to_id: 2,
           min: 3,
           max: 4,
-          required: true,
-          end_turn: false
+          required: true
         }
       }
 
@@ -769,8 +765,7 @@ defmodule Sengoku.GameTest do
           to_id: 2,
           min: 3,
           max: 4,
-          required: true,
-          end_turn: false
+          required: true
         }
       }
 
@@ -795,8 +790,7 @@ defmodule Sengoku.GameTest do
           to_id: 2,
           min: 3,
           max: 4,
-          required: true,
-          end_turn: false
+          required: true
         }
       }
 
@@ -811,8 +805,7 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         selected_tile_id: 1,
         pending_move: %{
-          required: false,
-          end_turn: true
+          required: false
         }
       }
 
@@ -840,8 +833,7 @@ defmodule Sengoku.GameTest do
         current_player_id: 1,
         selected_tile_id: 1,
         pending_move: %{
-          required: true,
-          end_turn: false
+          required: true
         }
       }
 

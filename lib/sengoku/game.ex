@@ -234,12 +234,11 @@ defmodule Sengoku.Game do
       to_id: to_id,
       min: 1,
       max: state.tiles[from_id].units - 1,
-      required: false,
-      end_turn: true
+      required: false
     })
   end
 
-  def move(%{pending_move: %{end_turn: move_ends_turn}} = state, from_id, to_id, count) do
+  def move(%{pending_move: %{required: required}} = state, from_id, to_id, count) do
     if from_id == state.pending_move.from_id and to_id == state.pending_move.to_id and
          count >= state.pending_move.min do
 
@@ -248,7 +247,7 @@ defmodule Sengoku.Game do
       |> Tile.adjust_units(to_id, count)
       |> Map.put(:pending_move, nil)
       |> Map.put(:selected_tile_id, nil)
-      |> maybe_end_turn(move_ends_turn)
+      |> end_turn_unless_required_move(required)
     else
       Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
@@ -275,6 +274,9 @@ defmodule Sengoku.Game do
     end
   end
 
+  defp end_turn_unless_required_move(state, false), do: end_turn(state)
+  defp end_turn_unless_required_move(state, true), do: state
+
   def cancel_move(%{pending_move: nil} = state) do
     state
   end
@@ -286,9 +288,6 @@ defmodule Sengoku.Game do
     |> Map.put(:selected_tile_id, nil)
     |> Map.put(:pending_move, nil)
   end
-
-  defp maybe_end_turn(state, true), do: end_turn(state)
-  defp maybe_end_turn(state, _), do: state
 
   defp increment_turn(state) do
     state

@@ -241,7 +241,6 @@ defmodule Sengoku.Game do
   def move(%{pending_move: %{required: required}} = state, from_id, to_id, count) do
     if from_id == state.pending_move.from_id and to_id == state.pending_move.to_id and
          count >= state.pending_move.min do
-
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
@@ -280,9 +279,11 @@ defmodule Sengoku.Game do
   def cancel_move(%{pending_move: nil} = state) do
     state
   end
+
   def cancel_move(%{pending_move: %{required: true}} = state) do
     state
   end
+
   def cancel_move(state) do
     state
     |> Map.put(:selected_tile_id, nil)

@@ -6,7 +6,7 @@ defmodule SengokuWeb.GameLive do
   alias Sengoku.GameServer
   alias SengokuWeb.MoveUnitsForm
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(%{"game_id" => game_id}, %{"anonymous_user_id" => user_token}, socket) do
     if GameServer.alive?(game_id) do
       game_state = GameServer.get_state(game_id)
@@ -30,7 +30,7 @@ defmodule SengokuWeb.GameLive do
     end
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~L"""
     <div class="Game">
@@ -139,8 +139,8 @@ defmodule SengokuWeb.GameLive do
         class="Board"
         <%= if @game_state.selected_tile_id, do: "phx-click=unselect_tile" %>
       >
-        <%= if @game_state.required_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
-          <%= live_component(@socket, MoveUnitsForm, id: "move_form", required_move: @game_state.required_move) %>
+        <%= if @game_state.pending_move && is_nil(@game_state.winner_id) && @game_state.current_player_id == @player_id do %>
+          <%= live_component(@socket, MoveUnitsForm, id: "move_form", pending_move: @game_state.pending_move) %>
         <% end %>
         <ul class="Tiles">
           <%= for {id, tile} <- @game_state.tiles do %>
@@ -149,27 +149,22 @@ defmodule SengokuWeb.GameLive do
                 Tile
                 <%= "region-#{elem(Enum.find(@game_state.regions, fn({_id, region}) -> id in region.tile_ids end), 0)}" %>
                 <%= if id == @game_state.selected_tile_id, do: "Tile--selected" %>
-                <%= if @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors do %>
-                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
-                    Tile--potentialMoveTarget
-                  <% else %>
-                    Tile--potentialAttackTarget
-                  <% end %>
-                <% end %>
               "
               id="tile_<%= id %>"
-              <%= cond do %>
-                <% @game_state.current_player_id && @game_state.players[@game_state.current_player_id].unplaced_units > 0 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
-                  phx-click="place_unit"
-                <% is_nil(@game_state.selected_tile_id) && @game_state.current_player_id && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
-                  phx-click="select_tile"
-                <% @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
-                  <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
-                    phx-click="start_move"
-                  <% else %>
-                    phx-click="attack"
-                  <% end %>
-                <% true -> %>
+              <%= if @player_id && @game_state.current_player_id && @player_id == @game_state.current_player_id do %>
+                <%= cond do %>
+                  <% @game_state.players[@game_state.current_player_id].unplaced_units > 0 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
+                    phx-click="place_unit"
+                  <% is_nil(@game_state.selected_tile_id) && @game_state.tiles[id].units > 1 && @game_state.tiles[id].owner == @game_state.current_player_id -> %>
+                    phx-click="select_tile"
+                  <% @game_state.selected_tile_id && id in @game_state.tiles[@game_state.selected_tile_id].neighbors -> %>
+                    <%= if @game_state.tiles[id].owner == @game_state.current_player_id do %>
+                      phx-click="start_move"
+                    <% else %>
+                      phx-click="attack"
+                    <% end %>
+                  <% true -> %>
+                <% end %>
               <% end %>
               phx-value-tile_id="<%= id %>"
             >
@@ -185,12 +180,12 @@ defmodule SengokuWeb.GameLive do
     """
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_info({:game_updated, new_state}, socket) do
     {:noreply, assign(socket, game_state: new_state)}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("join", %{"player_name" => player_name}, socket) do
     case GameServer.authenticate_player(
            socket.assigns.game_id,
@@ -206,7 +201,7 @@ defmodule SengokuWeb.GameLive do
     end
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "start_game"})
@@ -214,7 +209,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("place_unit", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
@@ -223,7 +218,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("end_turn", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "end_turn"})
@@ -231,7 +226,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("select_tile", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
     %{game_id: game_id, player_id: player_id} = socket.assigns
@@ -240,7 +235,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("unselect_tile", _params, socket) do
     %{game_id: game_id, player_id: player_id} = socket.assigns
     GameServer.action(game_id, player_id, %{type: "unselect_tile"})
@@ -248,7 +243,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("attack", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
 
@@ -264,7 +259,7 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("start_move", %{"tile_id" => tile_id_string}, socket) do
     {to_tile_id, _} = Integer.parse(tile_id_string)
 
@@ -280,19 +275,27 @@ defmodule SengokuWeb.GameLive do
     {:noreply, socket}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def handle_event("move", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
 
-    %{game_id: game_id, player_id: player_id, game_state: %{required_move: required_move}} =
+    %{game_id: game_id, player_id: player_id, game_state: %{pending_move: pending_move}} =
       socket.assigns
 
     GameServer.action(game_id, player_id, %{
       type: "move",
-      from_id: required_move.from_id,
-      to_id: required_move.to_id,
+      from_id: pending_move.from_id,
+      to_id: pending_move.to_id,
       count: count
     })
+
+    {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("cancel_move", _params, socket) do
+    %{game_id: game_id, player_id: player_id} = socket.assigns
+    GameServer.action(game_id, player_id, %{type: "cancel_move"})
 
     {:noreply, socket}
   end

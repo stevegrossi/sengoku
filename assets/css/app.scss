@@ -8,6 +8,15 @@ $red: #cc241d;
 $z-index-overlay: 10;
 $z-index-logo: 100;
 
+$player-1-color: #fb4934;
+$player-2-color: #b8bb26;
+$player-3-color: #fabd2f;
+$player-4-color: #458588;
+$player-5-color: #d3869b;
+$player-6-color: #fe8019;
+$player-7-color: #8ec07c;
+$player-8-color: #3c3836;
+
 * {
   box-sizing: border-box;
 }
@@ -202,23 +211,34 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     overflow: visible;
   }
 
-  &:hover {
-    transform: scale(1.1);
-  }
-
   &--selected {
     stroke: rgba(255,255,255,.5);
     stroke-width: 15px;
     paint-order: stroke;
   }
 
-  &--potentialMoveTarget {
+  &[phx-click="place_unit"],
+  &[phx-click="select_tile"] {
+    cursor: pointer;
+
+    svg {
+      stroke: rgba(255,255,255,.25);
+      stroke-width: 15px;
+      paint-order: stroke;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &[phx-click="start_move"] {
     svg {
       filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(0, 128, 0, 1));
     }
   }
 
-  &--potentialAttackTarget {
+  &[phx-click="attack"] {
     svg {
       filter: drop-shadow(0 0 3px rgba(255, 255, 255, .75)) drop-shadow(0 0 5px rgba(255, 0, 0, 1));
     }
@@ -247,14 +267,14 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
   user-select: none;
 }
 
-.player-bg-1 { background-color: #fb4934; }
-.player-bg-2 { background-color: #b8bb26; }
-.player-bg-3 { background-color: #fabd2f; }
-.player-bg-4 { background-color: #458588; }
-.player-bg-5 { background-color: #d3869b; }
-.player-bg-6 { background-color: #fe8019; }
-.player-bg-7 { background-color: #8ec07c; }
-.player-bg-8 { background-color: #3c3836; }
+.player-bg-1 { background-color: $player-1-color; }
+.player-bg-2 { background-color: $player-2-color; }
+.player-bg-3 { background-color: $player-3-color; }
+.player-bg-4 { background-color: $player-4-color; }
+.player-bg-5 { background-color: $player-5-color; }
+.player-bg-6 { background-color: $player-6-color; }
+.player-bg-7 { background-color: $player-7-color; }
+.player-bg-8 { background-color: $player-8-color; }
 
 .region-1 svg { fill: #493829; }
 .region-2 svg { fill: #816c5b; }
@@ -267,14 +287,14 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 .region-9 svg { fill: #855723; }
 .region-10 svg { fill: #eae2b7; }
 
-.region-ownedby-1 svg { stroke: #fb4934; }
-.region-ownedby-2 svg { stroke: #b8bb26; }
-.region-ownedby-3 svg { stroke: #fabd2f; }
-.region-ownedby-4 svg { stroke: #458588; }
-.region-ownedby-5 svg { stroke: #d3869b; }
-.region-ownedby-6 svg { stroke: #fe8019; }
-.region-ownedby-7 svg { stroke: #8ec07c; }
-.region-ownedby-8 svg { stroke: #3c3836; }
+.region-ownedby-1 svg { stroke: $player-1-color; }
+.region-ownedby-2 svg { stroke: $player-2-color; }
+.region-ownedby-3 svg { stroke: $player-3-color; }
+.region-ownedby-4 svg { stroke: $player-4-color; }
+.region-ownedby-5 svg { stroke: $player-5-color; }
+.region-ownedby-6 svg { stroke: $player-6-color; }
+.region-ownedby-7 svg { stroke: $player-7-color; }
+.region-ownedby-8 svg { stroke: $player-8-color; }
 
 .Regions {
   list-style: none;
@@ -456,6 +476,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
     flex-direction: row-reverse;
 
     & > * {
+      white-space: nowrap;
       margin-right: 1em;
 
       &:first-child {

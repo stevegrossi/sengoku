@@ -2,8 +2,8 @@ defmodule SengokuWeb.MoveUnitsForm do
   use Phoenix.LiveComponent
 
   @impl true
-  def update(assigns, socket) do
-    default_count = max(assigns.required_move.min, floor(assigns.required_move.max / 2))
+  def update(%{pending_move: %{min: min, max: max}} = assigns, socket) do
+    default_count = midpoint(min, max)
     {:ok, assign(socket, Map.merge(assigns, %{count: default_count}))}
   end
 
@@ -13,28 +13,28 @@ defmodule SengokuWeb.MoveUnitsForm do
     <div class="Modal">
       <div class="MoveForm">
         <h2>Move how many?</h2>
-        <form
+        <div
           class="MoveForm-slider"
           phx-change="update_count"
           phx-target="<%= @myself %>"
         >
-          <span><%= @required_move.min %></span>
+          <span><%= @pending_move.min %></span>
           <input class="MoveForm-input"
                  type="range"
-                 min=<%= @required_move.min %>
-                 max=<%= @required_move.max %>
+                 min=<%= @pending_move.min %>
+                 max=<%= @pending_move.max %>
                  name="count"
                  value="<%= @count %>"
-                 autoFocus
+                 autofocus
           />
-          <span><%= @required_move.max %></span>
-        </form>
+          <span><%= @pending_move.max %></span>
+        </div>
         <div class="MoveForm-actions">
           <button
             class="Button Button--primary"
             phx-click="move"
-            phx-value-count="<%= @required_move.max %>"
-          >Move Max (<%= @required_move.max %>)</button>
+            phx-value-count="<%= @pending_move.max %>"
+          >Move Max (<%= @pending_move.max %>)</button>
           <button
             class="Button Button--primary"
             phx-click="move"
@@ -43,8 +43,14 @@ defmodule SengokuWeb.MoveUnitsForm do
           <button
             class="Button Button--primary"
             phx-click="move"
-            phx-value-count="<%= @required_move.min %>"
-          >Move Min (<%= @required_move.min %>)</button>
+            phx-value-count="<%= @pending_move.min %>"
+          >Move Min (<%= @pending_move.min %>)</button>
+          <%= unless @pending_move.required do %>
+            <button
+              class="Button"
+              phx-click="cancel_move"
+            >Cancel</button>
+          <% end %>
         </div>
       </div>
     </div>
@@ -55,5 +61,9 @@ defmodule SengokuWeb.MoveUnitsForm do
   def handle_event("update_count", %{"count" => count_string}, socket) do
     {count, _} = Integer.parse(count_string)
     {:noreply, assign(socket, count: count)}
+  end
+
+  defp midpoint(low, high) do
+    low + floor((high - low) / 2)
   end
 end

@@ -14,9 +14,8 @@ defmodule Sengoku.Game do
     turn: 0,
     current_player_id: nil,
     winner_id: nil,
-    required_move: nil,
-    selected_tile_id: nil,
-    end_turn_after_move: false
+    pending_move: nil,
+    selected_tile_id: nil
   }
 
   def initialize_state(game_id, %{"board" => board}) do
@@ -59,6 +58,10 @@ defmodule Sengoku.Game do
 
   def handle_action(state, %{type: "move", from_id: from_id, to_id: to_id, count: count}) do
     move(state, from_id, to_id, count)
+  end
+
+  def handle_action(state, %{type: "cancel_move"}) do
+    cancel_move(state)
   end
 
   def handle_action(state, action) do
@@ -114,7 +117,7 @@ defmodule Sengoku.Game do
     end
   end
 
-  def end_turn(%{required_move: %{}} = state) do
+  def end_turn(%{pending_move: %{}} = state) do
     # Don’t end turn if a move is pending
     state
   end
@@ -144,7 +147,7 @@ defmodule Sengoku.Game do
   end
 
   def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
-    if current_player(state).unplaced_units > 0 and is_nil(state.required_move) do
+    if current_player(state).unplaced_units > 0 and is_nil(state.pending_move) do
       tile = state.tiles[tile_id]
 
       if Tile.owned_by_player_id?(tile, current_player_id) do
@@ -178,7 +181,7 @@ defmodule Sengoku.Game do
 
     if attacking_units > 0 and from_tile.owner == current_player_id and
          defender_id != current_player_id and to_id in from_tile.neighbors and
-         is_nil(state.required_move) do
+         is_nil(state.pending_move) do
       {attacker_losses, defender_losses} =
         outcome || Battle.decide(attacking_units, defending_units)
 
@@ -205,11 +208,12 @@ defmodule Sengoku.Game do
         state
         |> Tile.set_owner(to_id, state.current_player_id)
         |> Tile.adjust_units(to_id, 0)
-        |> Map.put(:required_move, %{
+        |> Map.put(:pending_move, %{
           from_id: from_id,
           to_id: to_id,
           min: 3,
-          max: movable_units
+          max: movable_units,
+          required: true
         })
       else
         state
@@ -225,32 +229,32 @@ defmodule Sengoku.Game do
 
   def start_move(state, from_id, to_id) do
     state
-    |> Map.put(:end_turn_after_move, true)
-    |> Map.put(:required_move, %{
+    |> Map.put(:pending_move, %{
       from_id: from_id,
       to_id: to_id,
-      min: 0,
-      max: state.tiles[from_id].units - 1
+      min: 1,
+      max: state.tiles[from_id].units - 1,
+      required: false
     })
   end
 
-  def move(%{required_move: %{}} = state, from_id, to_id, count) do
-    if from_id == state.required_move.from_id and to_id == state.required_move.to_id and
-         count >= state.required_move.min do
+  def move(%{pending_move: %{required: required}} = state, from_id, to_id, count) do
+    if from_id == state.pending_move.from_id and to_id == state.pending_move.to_id and
+         count >= state.pending_move.min do
       state
       |> Tile.adjust_units(from_id, -count)
       |> Tile.adjust_units(to_id, count)
-      |> Map.put(:required_move, nil)
+      |> Map.put(:pending_move, nil)
       |> Map.put(:selected_tile_id, nil)
-      |> maybe_end_turn
+      |> end_turn_unless_required_move(required)
     else
-      Logger.info("Invalid required move of `#{count}` units from `#{from_id}` to `#{to_id}`")
+      Logger.info("Invalid move of `#{count}` units from `#{from_id}` to `#{to_id}`")
       state
     end
   end
 
   def move(
-        %{required_move: nil, current_player_id: current_player_id} = state,
+        %{pending_move: nil, current_player_id: current_player_id} = state,
         from_id,
         to_id,
         count
@@ -269,14 +273,21 @@ defmodule Sengoku.Game do
     end
   end
 
-  defp maybe_end_turn(%{end_turn_after_move: true} = state) do
+  defp end_turn_unless_required_move(state, false), do: end_turn(state)
+  defp end_turn_unless_required_move(state, true), do: state
+
+  def cancel_move(%{pending_move: nil} = state) do
     state
-    |> Map.put(:end_turn_after_move, false)
-    |> end_turn
   end
 
-  defp maybe_end_turn(state) do
+  def cancel_move(%{pending_move: %{required: true}} = state) do
     state
+  end
+
+  def cancel_move(state) do
+    state
+    |> Map.put(:selected_tile_id, nil)
+    |> Map.put(:pending_move, nil)
   end
 
   defp increment_turn(state) do

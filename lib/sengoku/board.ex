@@ -191,7 +191,7 @@ defmodule Sengoku.Board do
 
   defp build_tiles(board, additional_neighbors \\ []) do
     tile_ids_for_map =
-      Enum.reduce(board.regions, [], fn({_id, region}, tile_ids) ->
+      Enum.reduce(board.regions, [], fn {_id, region}, tile_ids ->
         tile_ids ++ region.tile_ids
       end)
 

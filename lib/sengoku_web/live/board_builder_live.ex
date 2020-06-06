@@ -3,11 +3,12 @@ defmodule SengokuWeb.BoardBuilderLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket,
-      tiles: build_tiles(),
-      regions: 1..8,
-      current_region: 1
-    )}
+    {:ok,
+     assign(socket,
+       tiles: build_tiles(),
+       regions: 1..8,
+       current_region: 1
+     )}
   end
 
   @impl Phoenix.LiveView
@@ -71,16 +72,18 @@ defmodule SengokuWeb.BoardBuilderLive do
   def handle_event("toggle_tile", %{"tile_id" => tile_id_string}, socket) do
     tile_id = String.to_integer(tile_id_string)
     current_region = socket.assigns.current_region
+
     new_tiles =
       socket.assigns.tiles
-      |> Map.update!(tile_id, fn(tile_region) ->
-           case tile_region do
-             ^current_region ->
-               nil
-             _ ->
-               socket.assigns.current_region
-           end
-         end)
+      |> Map.update!(tile_id, fn tile_region ->
+        case tile_region do
+          ^current_region ->
+            nil
+
+          _ ->
+            socket.assigns.current_region
+        end
+      end)
 
     {:noreply, assign(socket, tiles: new_tiles)}
   end
@@ -95,9 +98,9 @@ defmodule SengokuWeb.BoardBuilderLive do
   defp build_tiles do
     1..85
     |> Enum.to_list()
-    |> Enum.map(fn(id) ->
-         {id, nil}
-       end)
+    |> Enum.map(fn id ->
+      {id, nil}
+    end)
     |> Enum.into(%{})
   end
 end

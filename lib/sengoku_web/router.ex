@@ -30,6 +30,7 @@ defmodule SengokuWeb.Router do
     get "/", GameController, :new
     post "/games", GameController, :create
     live "/games/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
+    live "/builder", BoardBuilderLive, layout: {SengokuWeb.LayoutView, :game}
   end
 
   scope "/" do

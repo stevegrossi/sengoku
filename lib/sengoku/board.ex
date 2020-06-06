@@ -109,36 +109,9 @@ defmodule Sengoku.Board do
         4 => %Region{value: 4, tile_ids: [34, 35, 44, 45, 53, 54]},
         5 => %Region{value: 3, tile_ids: [46, 55, 56]},
         6 => %Region{value: 2, tile_ids: [18, 27, 36, 37]}
-      },
-      tiles:
-        build_tiles([
-          49,
-          50,
-          58,
-          59,
-          51,
-          52,
-          61,
-          32,
-          33,
-          41,
-          42,
-          43,
-          34,
-          35,
-          44,
-          45,
-          53,
-          54,
-          46,
-          55,
-          56,
-          18,
-          27,
-          36,
-          37
-        ])
+      }
     }
+    |> build_tiles()
   end
 
   def new("earth") do
@@ -155,56 +128,9 @@ defmodule Sengoku.Board do
         4 => %Region{value: 5, tile_ids: [14, 15, 23, 24, 25, 33, 34]},
         5 => %Region{value: 7, tile_ids: [16, 17, 18, 19, 26, 27, 28, 35, 36, 37, 44, 46]},
         6 => %Region{value: 2, tile_ids: [56, 57, 65, 66]}
-      },
-      tiles:
-        build_tiles(
-          [
-            10,
-            11,
-            12,
-            20,
-            21,
-            22,
-            30,
-            31,
-            40,
-            50,
-            51,
-            59,
-            60,
-            42,
-            43,
-            52,
-            53,
-            62,
-            63,
-            14,
-            15,
-            23,
-            24,
-            25,
-            33,
-            34,
-            16,
-            17,
-            18,
-            19,
-            26,
-            27,
-            28,
-            35,
-            36,
-            37,
-            44,
-            46,
-            56,
-            57,
-            65,
-            66
-          ],
-          additional_neighbors
-        )
+      }
     }
+    |> build_tiles(additional_neighbors)
   end
 
   @doc """
@@ -222,54 +148,9 @@ defmodule Sengoku.Board do
         5 => %Region{value: 3, tile_ids: [61, 70, 79, 80, 81, 82]},
         6 => %Region{value: 3, tile_ids: [39, 40, 41, 49, 59, 69]},
         7 => %Region{value: 6, tile_ids: [33, 34, 42, 43, 44, 52, 53]}
-      },
-      tiles:
-        build_tiles([
-          3,
-          12,
-          13,
-          21,
-          23,
-          30,
-          4,
-          5,
-          6,
-          7,
-          16,
-          25,
-          17,
-          27,
-          37,
-          45,
-          46,
-          47,
-          56,
-          63,
-          65,
-          73,
-          74,
-          83,
-          61,
-          70,
-          79,
-          80,
-          81,
-          82,
-          39,
-          40,
-          41,
-          49,
-          59,
-          69,
-          33,
-          34,
-          42,
-          43,
-          44,
-          52,
-          53
-        ])
+      }
     }
+    |> build_tiles()
   end
 
   def new("europe") do
@@ -285,79 +166,50 @@ defmodule Sengoku.Board do
         6 => %Region{value: 6, tile_ids: [26, 27, 35, 36, 37, 45, 46]},
         7 => %Region{value: 4, tile_ids: [54, 55, 56, 64, 65, 66, 74, 75, 84]},
         8 => %Region{value: 5, tile_ids: [18, 19, 28, 38, 47, 57]}
-      },
-      tiles:
-        build_tiles([
-          10,
-          18,
-          19,
-          20,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          35,
-          36,
-          37,
-          38,
-          40,
-          41,
-          42,
-          43,
-          44,
-          45,
-          46,
-          47,
-          50,
-          51,
-          52,
-          53,
-          54,
-          55,
-          56,
-          57,
-          58,
-          59,
-          60,
-          61,
-          62,
-          64,
-          65,
-          66,
-          67,
-          68,
-          69,
-          72,
-          74,
-          75,
-          77,
-          78,
-          81,
-          84
-        ])
+      }
     }
+    |> build_tiles()
   end
 
-  defp build_tiles(tile_ids_for_map, additional_neighbors \\ []) do
-    tile_ids_for_map
-    |> Enum.map(fn tile_id ->
-      neighbors =
-        Enum.filter(@all_neighbor_ids[tile_id], fn neighbor_id ->
-          neighbor_id in tile_ids_for_map
-        end)
+  def new("westeros") do
+    %__MODULE__{
+      name: "westeros",
+      players_count: 8,
+      regions: %{
+        1 => %Region{value: 2, tile_ids: [3, 4, 5, 6, 13, 14]},
+        2 => %Region{value: 4, tile_ids: [24, 25, 26, 34]},
+        3 => %Region{value: 3, tile_ids: [35, 44, 45]},
+        4 => %Region{value: 6, tile_ids: [22, 23, 32, 33, 42, 43]},
+        5 => %Region{value: 7, tile_ids: [51, 52, 53, 60, 61, 62, 70]},
+        6 => %Region{value: 3, tile_ids: [31, 40, 41, 50]},
+        7 => %Region{value: 3, tile_ids: [71, 72, 80, 81, 82, 83]},
+        8 => %Region{value: 3, tile_ids: [54, 55, 63, 64, 65]}
+      }
+    }
+    |> build_tiles()
+  end
 
-      neighbors = maybe_add_additional_neighbors(tile_id, neighbors, additional_neighbors)
+  defp build_tiles(board, additional_neighbors \\ []) do
+    tile_ids_for_map =
+      Enum.reduce(board.regions, [], fn({_id, region}, tile_ids) ->
+        tile_ids ++ region.tile_ids
+      end)
 
-      {tile_id, Tile.new(neighbors)}
-    end)
-    |> Enum.into(%{})
+    tiles =
+      tile_ids_for_map
+      |> Enum.map(fn tile_id ->
+        neighbors =
+          Enum.filter(@all_neighbor_ids[tile_id], fn neighbor_id ->
+            neighbor_id in tile_ids_for_map
+          end)
+
+        neighbors = maybe_add_additional_neighbors(tile_id, neighbors, additional_neighbors)
+
+        {tile_id, Tile.new(neighbors)}
+      end)
+      |> Enum.into(%{})
+
+    Map.put(board, :tiles, tiles)
   end
 
   defp maybe_add_additional_neighbors(tile_id, neighbors, additional_neighbor_pairs) do

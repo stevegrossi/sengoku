@@ -6,7 +6,7 @@ defmodule SengokuWeb.BoardBuilderLive do
     {:ok, assign(socket,
       tiles: build_tiles(),
       regions: 1..8,
-      current_region: 1,
+      current_region: 1
     )}
   end
 

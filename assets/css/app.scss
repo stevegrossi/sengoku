@@ -305,7 +305,7 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 
 .Region {
   position: relative;
-  flex-basis: 16.67%;
+  flex-basis: 25%;
 
   &-value {
     position: absolute;
@@ -534,4 +534,10 @@ $tile-height: $tile-width * 1.1547005; // ratio of circumradius to inradius
 
 .opacity-25 {
   opacity: 0.25;
+}
+
+// Board Builder
+[phx-click="toggle_tile"],
+[phx-click="select_region"] {
+  cursor: pointer;
 }

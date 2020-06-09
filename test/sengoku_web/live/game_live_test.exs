@@ -9,13 +9,13 @@ defmodule SengokuWeb.GameLiveTest do
 
   test "connected mount", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
-    {:ok, _view, html} = live(conn, live_path(conn, SengokuWeb.GameLive, game_id))
+    {:ok, _view, html} = live(conn, Routes.live_path(conn, SengokuWeb.GameLive, game_id))
     assert html =~ ~s(<div class="Game">)
   end
 
   test "joining and playing a game", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
-    {:ok, view, _html} = live(conn, live_path(conn, SengokuWeb.GameLive, game_id))
+    {:ok, view, _html} = live(conn, Routes.live_path(conn, SengokuWeb.GameLive, game_id))
 
     # Ensure nothing on the board is interactive before the game starts
     refute has_element?(view, ~s([phx-click="place_unit"]))
@@ -69,7 +69,7 @@ defmodule SengokuWeb.GameLiveTest do
 
   test "the Region Bonuses module", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
-    {:ok, view, html} = live(conn, live_path(conn, SengokuWeb.GameLive, game_id))
+    {:ok, view, html} = live(conn, Routes.live_path(conn, SengokuWeb.GameLive, game_id))
 
     assert html =~ "Region Bonuses"
 

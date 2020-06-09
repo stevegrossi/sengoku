@@ -29,11 +29,11 @@ defmodule SengokuWeb.Telemetry do
       ),
 
       # Database Metrics
-      # summary("sengoku.repo.query.total_time", unit: {:native, :millisecond}),
-      # summary("sengoku.repo.query.decode_time", unit: {:native, :millisecond}),
-      # summary("sengoku.repo.query.query_time", unit: {:native, :millisecond}),
-      # summary("sengoku.repo.query.queue_time", unit: {:native, :millisecond}),
-      # summary("sengoku.repo.query.idle_time", unit: {:native, :millisecond}),
+      summary("sengoku.repo.query.total_time", unit: {:native, :millisecond}),
+      summary("sengoku.repo.query.decode_time", unit: {:native, :millisecond}),
+      summary("sengoku.repo.query.query_time", unit: {:native, :millisecond}),
+      summary("sengoku.repo.query.queue_time", unit: {:native, :millisecond}),
+      summary("sengoku.repo.query.idle_time", unit: {:native, :millisecond}),
 
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),

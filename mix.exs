@@ -10,6 +10,7 @@ defmodule Sengoku.Mixfile do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -33,6 +34,7 @@ defmodule Sengoku.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 2.0"},
       {:phoenix, "~> 1.5.3"},
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.4"},
@@ -49,7 +51,23 @@ defmodule Sengoku.Mixfile do
       {:plug, "~> 1.10"},
       {:plug_cowboy, "~> 2.2"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:mix_test_watch, "~> 0.9", only: :dev, runtime: false}
+      {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
+      {:phx_gen_auth, "~> 0.3.0", only: [:dev], runtime: false}
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to install project dependencies and perform other setup tasks, run:
+  #
+  #     $ mix setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

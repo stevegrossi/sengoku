@@ -8,7 +8,7 @@ defmodule Sengoku.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      # Sengoku.Repo,
+      Sengoku.Repo,
       # Start the Telemetry supervisor
       SengokuWeb.Telemetry,
       # Start the PubSub system

@@ -10,6 +10,10 @@
     <%= text_input f, :email, required: true, class: "TextInput" %>
     <%= error_tag f, :email %>
 
+    <%= label f, :username, "Username (3–20 characters)", class: "Label" %>
+    <%= text_input f, :username, required: true, class: "TextInput" %>
+    <%= error_tag f, :username %>
+
     <%= label f, :password, class: "Label" %>
     <%= password_input f, :password, required: true, class: "TextInput" %>
     <%= error_tag f, :password %>

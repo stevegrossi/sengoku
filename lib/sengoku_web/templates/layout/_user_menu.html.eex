@@ -1,6 +1,6 @@
 <nav class="UserMenu" role="navigation">
   <%= if @current_user do %>
-    <div>Hi, <%= @current_user.email %></div>
+    <div>Hi, <%= @current_user.username %>!</div>
     <div>
       <%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %>
       |

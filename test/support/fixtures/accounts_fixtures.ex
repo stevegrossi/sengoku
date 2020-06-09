@@ -5,6 +5,7 @@ defmodule Sengoku.AccountsFixtures do
   """
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def valid_user_username, do: "#{System.unique_integer([:positive])}"
   def valid_user_password, do: "hello world!"
 
   def user_fixture(attrs \\ %{}) do
@@ -12,6 +13,7 @@ defmodule Sengoku.AccountsFixtures do
       attrs
       |> Enum.into(%{
         email: unique_user_email(),
+        username: valid_user_username(),
         password: valid_user_password()
       })
       |> Sengoku.Accounts.register_user()

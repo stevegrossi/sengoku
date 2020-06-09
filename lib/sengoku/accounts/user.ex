@@ -5,6 +5,7 @@ defmodule Sengoku.Accounts.User do
   @derive {Inspect, except: [:password]}
   schema "users" do
     field(:email, :string)
+    field(:username, :string)
     field(:password, :string, virtual: true)
     field(:hashed_password, :string)
     field(:confirmed_at, :naive_datetime)
@@ -22,8 +23,9 @@ defmodule Sengoku.Accounts.User do
   """
   def registration_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :username, :password])
     |> validate_email()
+    |> validate_username()
     |> validate_password()
   end
 
@@ -34,6 +36,14 @@ defmodule Sengoku.Accounts.User do
     |> validate_length(:email, max: 160)
     |> unsafe_validate_unique(:email, Sengoku.Repo)
     |> unique_constraint(:email)
+  end
+
+  defp validate_username(changeset) do
+    changeset
+    |> validate_required([:username])
+    |> validate_format(:username, ~r/\A\w{3,20}\z/, message: "must be between 3–20 characters without spaces")
+    |> unsafe_validate_unique(:username, Sengoku.Repo)
+    |> unique_constraint(:username)
   end
 
   defp validate_password(changeset) do

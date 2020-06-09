@@ -30,6 +30,13 @@ defmodule SengokuWeb.Router do
   scope "/", SengokuWeb do
     pipe_through :browser
 
+    # Accounts
+    delete "/users/logout", UserSessionController, :delete
+    get "/users/confirm", UserConfirmationController, :new
+    post "/users/confirm", UserConfirmationController, :create
+    get "/users/confirm/:token", UserConfirmationController, :confirm
+
+    # Games
     get "/", GameController, :new
     post "/games", GameController, :create
     live "/games/:game_id", GameLive, layout: {SengokuWeb.LayoutView, :game}
@@ -64,14 +71,5 @@ defmodule SengokuWeb.Router do
     put "/users/settings/update_password", UserSettingsController, :update_password
     put "/users/settings/update_email", UserSettingsController, :update_email
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
-  end
-
-  scope "/", SengokuWeb do
-    pipe_through [:browser]
-
-    delete "/users/logout", UserSessionController, :delete
-    get "/users/confirm", UserConfirmationController, :new
-    post "/users/confirm", UserConfirmationController, :create
-    get "/users/confirm/:token", UserConfirmationController, :confirm
   end
 end

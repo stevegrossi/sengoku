@@ -3,7 +3,7 @@ defmodule SengokuWeb.GameLive do
 
   require Logger
 
-  alias Sengoku.GameServer
+  alias Sengoku.{Accounts, GameServer}
   alias SengokuWeb.MoveUnitsForm
 
   @impl Phoenix.LiveView
@@ -19,6 +19,7 @@ defmodule SengokuWeb.GameLive do
        assign(socket,
          game_id: game_id,
          player_id: player_id,
+         saved_player_name: get_saved_player_name(player_id),
          player_number: game_state.tokens[player_id],
          game_state: game_state
        )}
@@ -28,6 +29,11 @@ defmodule SengokuWeb.GameLive do
        |> put_flash(:error, "Game not found. Start a new one?")
        |> redirect(to: Routes.game_path(SengokuWeb.Endpoint, :new))}
     end
+  end
+
+  def get_saved_player_name("anonymous" <> _), do: nil
+  def get_saved_player_name(player_id) do
+    Accounts.get_user!(player_id).username
   end
 
   @impl Phoenix.LiveView
@@ -73,11 +79,15 @@ defmodule SengokuWeb.GameLive do
 
         <%= if @game_state.turn == 0 && not Map.has_key?(@game_state.tokens, @player_id) do %>
           <form phx-submit="join">
-            <label for="player_name" class="visually-hidden">Your Name:</label>
-            <div class="ComboInput">
-              <input id="player_name" class="ComboInput-input" type="text" name="player_name" placeholder="Your Name" required autofocus />
-              <input type="submit" class="Button ComboInput-button" value="Join" />
-            </div>
+            <%= if @saved_player_name do %>
+              <input type="submit" class="Button" value="Join Game" />
+            <% else %>
+              <label for="player_name" class="visually-hidden">Your Name:</label>
+              <div class="ComboInput">
+                <input id="player_name" class="ComboInput-input" type="text" name="player_name" placeholder="Your Name" required autofocus />
+                <input type="submit" class="Button ComboInput-button" value="Join" />
+              </div>
+            <% end %>
           </form>
         <% end %>
 
@@ -186,11 +196,12 @@ defmodule SengokuWeb.GameLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("join", %{"player_name" => player_name}, socket) do
+  def handle_event("join", params, socket) do
+    name = socket.assigns.saved_player_name || params["player_name"]
     case GameServer.authenticate_player(
            socket.assigns.game_id,
            socket.assigns.player_id,
-           player_name
+           name
          ) do
       {:ok, player_number, _token} ->
         {:noreply, assign(socket, player_number: player_number)}

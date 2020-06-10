@@ -13,6 +13,36 @@ defmodule SengokuWeb.GameLiveTest do
     assert html =~ ~s(<div class="Game">)
   end
 
+  @session  Plug.Session.init([
+    store:            :cookie,
+    key:              "_app",
+    encryption_salt:  "secret",
+    signing_salt:     "secret",
+    encrypt:          false
+  ])
+
+  defp setup_session(conn) do
+    conn
+    |> Plug.Session.call(@session)
+    |> fetch_session()
+  end
+
+  test "joining a game when logged in uses your username", %{conn: conn} do
+    user = Sengoku.AccountsFixtures.user_fixture(%{username: "tokugawa"})
+    {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
+    {:ok, view, _html} =
+      conn
+      |> setup_session()
+      |> put_session(:player_id, user.id)
+      |> live(Routes.live_path(conn, SengokuWeb.GameLive, game_id))
+
+    refute has_element?(view, ~s([name="player_name"]))
+
+    render_submit(view, :join)
+
+    assert has_element?(view, ".Player.player-bg-1", user.username)
+  end
+
   test "joining and playing a game", %{conn: conn} do
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
     {:ok, view, _html} = live(conn, Routes.live_path(conn, SengokuWeb.GameLive, game_id))

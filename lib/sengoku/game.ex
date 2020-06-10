@@ -12,7 +12,7 @@ defmodule Sengoku.Game do
   @tiles_per_new_unit 3
   @initial_state %{
     turn: 0,
-    current_player_id: nil,
+    current_player_number: nil,
     winner_id: nil,
     pending_move: nil,
     selected_tile_id: nil
@@ -88,19 +88,19 @@ defmodule Sengoku.Game do
     |> grant_region_bonuses()
   end
 
-  defp grant_new_units(%{current_player_id: current_player_id} = state) do
+  defp grant_new_units(%{current_player_number: current_player_number} = state) do
     new_units_count =
       state
-      |> Tile.ids_owned_by(current_player_id)
+      |> Tile.ids_owned_by(current_player_number)
       |> length()
       |> Integer.floor_div(@tiles_per_new_unit)
       |> max(@min_new_units)
 
-    Player.grant_reinforcements(state, current_player_id, new_units_count)
+    Player.grant_reinforcements(state, current_player_number, new_units_count)
   end
 
-  defp grant_region_bonuses(%{current_player_id: current_player_id} = state) do
-    owned_tile_ids = Tile.ids_owned_by(state, current_player_id)
+  defp grant_region_bonuses(%{current_player_number: current_player_number} = state) do
+    owned_tile_ids = Tile.ids_owned_by(state, current_player_number)
 
     case Region.containing_tile_ids(state, owned_tile_ids) do
       [] ->
@@ -113,7 +113,7 @@ defmodule Sengoku.Game do
           end)
 
         state
-        |> Player.grant_reinforcements(current_player_id, bonus)
+        |> Player.grant_reinforcements(current_player_number, bonus)
     end
   end
 
@@ -129,30 +129,30 @@ defmodule Sengoku.Game do
     |> begin_turn()
   end
 
-  defp rotate_current_player(%{current_player_id: current_player_id} = state) do
+  defp rotate_current_player(%{current_player_number: current_player_number} = state) do
     active_player_ids = Player.active_ids(state)
 
     next_player_id =
       active_player_ids
-      |> Enum.at(Enum.find_index(active_player_ids, &(&1 == current_player_id)) + 1)
+      |> Enum.at(Enum.find_index(active_player_ids, &(&1 == current_player_number)) + 1)
 
     if next_player_id in active_player_ids do
       state
-      |> Map.put(:current_player_id, next_player_id)
+      |> Map.put(:current_player_number, next_player_id)
     else
       state
       |> Map.update!(:turn, &(&1 + 1))
-      |> Map.put(:current_player_id, hd(active_player_ids))
+      |> Map.put(:current_player_number, hd(active_player_ids))
     end
   end
 
-  def place_unit(%{current_player_id: current_player_id} = state, tile_id) do
+  def place_unit(%{current_player_number: current_player_number} = state, tile_id) do
     if current_player(state).unplaced_units > 0 and is_nil(state.pending_move) do
       tile = state.tiles[tile_id]
 
-      if Tile.owned_by_player_id?(tile, current_player_id) do
+      if Tile.owned_by_player_id?(tile, current_player_number) do
         state
-        |> Player.use_reinforcement(current_player_id)
+        |> Player.use_reinforcement(current_player_number)
         |> Tile.adjust_units(tile_id, 1)
       else
         Logger.info("Tried to place unit in unowned tile")
@@ -172,15 +172,15 @@ defmodule Sengoku.Game do
     %{state | selected_tile_id: nil}
   end
 
-  def attack(%{current_player_id: current_player_id} = state, from_id, to_id, outcome \\ nil) do
+  def attack(%{current_player_number: current_player_number} = state, from_id, to_id, outcome \\ nil) do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
     defender_id = to_tile.owner
     attacking_units = from_tile.units - 1
     defending_units = to_tile.units
 
-    if attacking_units > 0 and from_tile.owner == current_player_id and
-         defender_id != current_player_id and to_id in from_tile.neighbors and
+    if attacking_units > 0 and from_tile.owner == current_player_number and
+         defender_id != current_player_number and to_id in from_tile.neighbors and
          is_nil(state.pending_move) do
       {attacker_losses, defender_losses} =
         outcome || Battle.decide(attacking_units, defending_units)
@@ -193,7 +193,7 @@ defmodule Sengoku.Game do
       |> check_for_winner()
     else
       Logger.info(
-        "Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_id}`"
+        "Invalid attack from `#{from_id}` to `#{to_id}` by player `#{current_player_number}`"
       )
 
       state
@@ -206,7 +206,7 @@ defmodule Sengoku.Game do
 
       if movable_units > attacking_units do
         state
-        |> Tile.set_owner(to_id, state.current_player_id)
+        |> Tile.set_owner(to_id, state.current_player_number)
         |> Tile.adjust_units(to_id, 0)
         |> Map.put(:pending_move, %{
           from_id: from_id,
@@ -218,7 +218,7 @@ defmodule Sengoku.Game do
       else
         state
         |> Tile.adjust_units(from_id, -attacking_units)
-        |> Tile.set_owner(to_id, state.current_player_id)
+        |> Tile.set_owner(to_id, state.current_player_number)
         |> Tile.adjust_units(to_id, attacking_units)
         |> Map.put(:selected_tile_id, nil)
       end
@@ -254,13 +254,13 @@ defmodule Sengoku.Game do
   end
 
   def move(
-        %{pending_move: nil, current_player_id: current_player_id} = state,
+        %{pending_move: nil, current_player_number: current_player_number} = state,
         from_id,
         to_id,
         count
       ) do
-    if state.tiles[from_id].owner == current_player_id and
-         state.tiles[to_id].owner == current_player_id and count < state.tiles[from_id].units and
+    if state.tiles[from_id].owner == current_player_number and
+         state.tiles[to_id].owner == current_player_number and count < state.tiles[from_id].units and
          from_id in state.tiles[to_id].neighbors do
       state
       |> Tile.adjust_units(from_id, -count)
@@ -297,7 +297,7 @@ defmodule Sengoku.Game do
 
   defp setup_first_turn(state) do
     state
-    |> Map.put(:current_player_id, List.first(Map.keys(state.players)))
+    |> Map.put(:current_player_number, List.first(Map.keys(state.players)))
   end
 
   defp assign_tiles(state) do
@@ -347,6 +347,6 @@ defmodule Sengoku.Game do
   end
 
   def current_player(state) do
-    state.players[state.current_player_id]
+    state.players[state.current_player_number]
   end
 end

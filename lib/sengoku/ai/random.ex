@@ -70,11 +70,11 @@ defmodule Sengoku.AI.Random do
   defp tile_ids_with_attackable_neighbors(state) do
     state
     |> Tile.filter_ids(fn tile ->
-      tile.owner == state.current_player_id && tile.units > 1 &&
+      tile.owner == state.current_player_number && tile.units > 1 &&
         tile.neighbors
         |> Enum.any?(fn neighbor_id ->
           neighbor = state.tiles[neighbor_id]
-          neighbor.owner !== state.current_player_id
+          neighbor.owner !== state.current_player_number
         end)
     end)
   end
@@ -83,7 +83,7 @@ defmodule Sengoku.AI.Random do
     state.tiles[tile_id].neighbors
     |> Enum.filter(fn neighbor_id ->
       neighbor = state.tiles[neighbor_id]
-      neighbor.owner !== state.current_player_id
+      neighbor.owner !== state.current_player_number
     end)
     |> Enum.random()
   end
@@ -91,7 +91,7 @@ defmodule Sengoku.AI.Random do
   defp owned_tile_ids(state) do
     state
     |> Tile.filter_ids(fn tile ->
-      tile.owner == state.current_player_id
+      tile.owner == state.current_player_number
     end)
   end
 
@@ -128,11 +128,11 @@ defmodule Sengoku.AI.Random do
   defp tile_ids_with_friendly_neighbors(state) do
     state
     |> Tile.filter_ids(fn tile ->
-      tile.owner == state.current_player_id && tile.units > 0 &&
+      tile.owner == state.current_player_number && tile.units > 0 &&
         tile.neighbors
         |> Enum.any?(fn neighbor_id ->
           neighbor = state.tiles[neighbor_id]
-          neighbor.owner == state.current_player_id
+          neighbor.owner == state.current_player_number
         end)
     end)
   end
@@ -141,7 +141,7 @@ defmodule Sengoku.AI.Random do
     state.tiles[tile_id].neighbors
     |> Enum.filter(fn neighbor_id ->
       neighbor = state.tiles[neighbor_id]
-      neighbor.owner == state.current_player_id
+      neighbor.owner == state.current_player_number
     end)
     |> Enum.random()
   end

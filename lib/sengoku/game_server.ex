@@ -73,7 +73,7 @@ defmodule Sengoku.GameServer do
   end
 
   def handle_cast({:action, player_id, %{} = action}, state) do
-    if player_id == state.current_player_id do
+    if player_id == state.current_player_number do
       new_state = Game.handle_action(state, action)
       state_updated(new_state)
       {:noreply, new_state}
@@ -92,7 +92,7 @@ defmodule Sengoku.GameServer do
     if Game.current_player(state) && Game.current_player(state).ai && !state.winner_id do
       Process.sleep(ai_wait_time())
       action = AI.Smart.take_action(state)
-      action(state.id, state.current_player_id, action)
+      action(state.id, state.current_player_number, action)
     end
 
     {:noreply, state}

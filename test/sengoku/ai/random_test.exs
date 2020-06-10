@@ -5,7 +5,7 @@ defmodule Sengoku.AI.RandomTest do
 
   test "places a unit when unplaced units" do
     state = %{
-      current_player_id: 1,
+      current_player_number: 1,
       players: %{
         1 => %Player{unplaced_units: 1, active: true, ai: true},
         2 => %Player{unplaced_units: 0, active: true, ai: true}
@@ -24,7 +24,7 @@ defmodule Sengoku.AI.RandomTest do
 
   test "attacks when a neighbor has fewer units" do
     state = %{
-      current_player_id: 1,
+      current_player_number: 1,
       players: %{
         1 => %Player{unplaced_units: 0, active: true, ai: true},
         2 => %Player{unplaced_units: 0, active: true, ai: true}
@@ -43,7 +43,7 @@ defmodule Sengoku.AI.RandomTest do
 
   test "moves the maximum number of units away from non-border tiles" do
     state = %{
-      current_player_id: 1,
+      current_player_number: 1,
       players: %{
         1 => %Player{unplaced_units: 0, active: true, ai: true},
         2 => %Player{unplaced_units: 0, active: true, ai: true}
@@ -68,7 +68,7 @@ defmodule Sengoku.AI.RandomTest do
 
   test "makes a required move when necessary" do
     state = %{
-      current_player_id: 1,
+      current_player_number: 1,
       players: %{
         1 => %Player{unplaced_units: 0, active: true, ai: true},
         2 => %Player{unplaced_units: 0, active: true, ai: true}
@@ -98,7 +98,7 @@ defmodule Sengoku.AI.RandomTest do
 
   test "ends turn when no other action" do
     state = %{
-      current_player_id: 1,
+      current_player_number: 1,
       players: %{
         1 => %Player{unplaced_units: 0, active: true, ai: true},
         2 => %Player{unplaced_units: 0, active: true, ai: true}

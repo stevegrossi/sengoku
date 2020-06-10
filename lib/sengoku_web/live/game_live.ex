@@ -20,7 +20,7 @@ defmodule SengokuWeb.GameLive do
          game_id: game_id,
          player_id: player_id,
          saved_player_name: get_saved_player_name(player_id),
-         player_number: game_state.tokens[player_id],
+         player_number: game_state.player_ids[player_id],
          game_state: game_state
        )}
     else
@@ -77,7 +77,7 @@ defmodule SengokuWeb.GameLive do
           <% end %>
         </ol>
 
-        <%= if @game_state.turn == 0 && not Map.has_key?(@game_state.tokens, @player_id) do %>
+        <%= if @game_state.turn == 0 && not Map.has_key?(@game_state.player_ids, @player_id) do %>
           <form phx-submit="join">
             <%= if @saved_player_name do %>
               <input type="submit" class="Button" value="Join Game" />

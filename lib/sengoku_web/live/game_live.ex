@@ -32,6 +32,7 @@ defmodule SengokuWeb.GameLive do
   end
 
   def get_saved_player_name("anonymous" <> _), do: nil
+
   def get_saved_player_name(player_id) do
     Accounts.get_user!(player_id).username
   end
@@ -198,6 +199,7 @@ defmodule SengokuWeb.GameLive do
   @impl Phoenix.LiveView
   def handle_event("join", params, socket) do
     name = socket.assigns.saved_player_name || params["player_name"]
+
     case GameServer.authenticate_player(
            socket.assigns.game_id,
            socket.assigns.player_id,
@@ -258,8 +260,11 @@ defmodule SengokuWeb.GameLive do
   def handle_event("attack", %{"tile_id" => tile_id_string}, socket) do
     {tile_id, _} = Integer.parse(tile_id_string)
 
-    %{game_id: game_id, player_number: player_number, game_state: %{selected_tile_id: selected_tile_id}} =
-      socket.assigns
+    %{
+      game_id: game_id,
+      player_number: player_number,
+      game_state: %{selected_tile_id: selected_tile_id}
+    } = socket.assigns
 
     GameServer.action(game_id, player_number, %{
       type: "attack",
@@ -274,8 +279,11 @@ defmodule SengokuWeb.GameLive do
   def handle_event("start_move", %{"tile_id" => tile_id_string}, socket) do
     {to_tile_id, _} = Integer.parse(tile_id_string)
 
-    %{game_id: game_id, player_number: player_number, game_state: %{selected_tile_id: selected_tile_id}} =
-      socket.assigns
+    %{
+      game_id: game_id,
+      player_number: player_number,
+      game_state: %{selected_tile_id: selected_tile_id}
+    } = socket.assigns
 
     GameServer.action(game_id, player_number, %{
       type: "start_move",

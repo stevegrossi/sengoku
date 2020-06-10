@@ -13,13 +13,13 @@ defmodule SengokuWeb.GameLiveTest do
     assert html =~ ~s(<div class="Game">)
   end
 
-  @session  Plug.Session.init([
-    store:            :cookie,
-    key:              "_app",
-    encryption_salt:  "secret",
-    signing_salt:     "secret",
-    encrypt:          false
-  ])
+  @session Plug.Session.init(
+             store: :cookie,
+             key: "_app",
+             encryption_salt: "secret",
+             signing_salt: "secret",
+             encrypt: false
+           )
 
   defp setup_session(conn) do
     conn
@@ -30,6 +30,7 @@ defmodule SengokuWeb.GameLiveTest do
   test "joining a game when logged in uses your username", %{conn: conn} do
     user = Sengoku.AccountsFixtures.user_fixture(%{username: "tokugawa"})
     {:ok, game_id} = Sengoku.GameServer.new(%{"board" => "japan"})
+
     {:ok, view, _html} =
       conn
       |> setup_session()

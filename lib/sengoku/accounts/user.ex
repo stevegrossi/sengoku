@@ -41,7 +41,9 @@ defmodule Sengoku.Accounts.User do
   defp validate_username(changeset) do
     changeset
     |> validate_required([:username])
-    |> validate_format(:username, ~r/\A\w{3,20}\z/, message: "must be between 3–20 characters without spaces")
+    |> validate_format(:username, ~r/\A\w{3,20}\z/,
+      message: "must be between 3–20 characters without spaces"
+    )
     |> unsafe_validate_unique(:username, Sengoku.Repo)
     |> unique_constraint(:username)
   end

@@ -172,7 +172,12 @@ defmodule Sengoku.Game do
     %{state | selected_tile_id: nil}
   end
 
-  def attack(%{current_player_number: current_player_number} = state, from_id, to_id, outcome \\ nil) do
+  def attack(
+        %{current_player_number: current_player_number} = state,
+        from_id,
+        to_id,
+        outcome \\ nil
+      ) do
     from_tile = state.tiles[from_id]
     to_tile = state.tiles[to_id]
     defender_id = to_tile.owner

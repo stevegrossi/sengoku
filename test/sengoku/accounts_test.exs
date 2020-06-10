@@ -85,11 +85,14 @@ defmodule Sengoku.AccountsTest do
 
     test "registers users with a hashed password" do
       email = unique_user_email()
-      {:ok, user} = Accounts.register_user(%{
-        email: email,
-        username: valid_user_username(),
-        password: valid_user_password()
-      })
+
+      {:ok, user} =
+        Accounts.register_user(%{
+          email: email,
+          username: valid_user_username(),
+          password: valid_user_password()
+        })
+
       assert user.email == email
       assert is_binary(user.hashed_password)
       assert is_nil(user.confirmed_at)

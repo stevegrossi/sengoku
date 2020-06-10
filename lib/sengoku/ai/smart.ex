@@ -83,7 +83,10 @@ defmodule Sengoku.AI.Smart do
     end)
   end
 
-  defp find_attackable_neighbor_id(tile_id, %{current_player_number: current_player_number} = state) do
+  defp find_attackable_neighbor_id(
+         tile_id,
+         %{current_player_number: current_player_number} = state
+       ) do
     Tile.get(state, tile_id).neighbors
     |> Enum.filter(fn neighbor_id ->
       neighbor = Tile.get(state, neighbor_id)

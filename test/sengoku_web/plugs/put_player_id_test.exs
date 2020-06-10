@@ -4,13 +4,13 @@ defmodule SengokuWeb.Plugs.PutPlayerIDTest do
   alias SengokuWeb.Plugs.PutPlayerID
 
   @opts PutPlayerID.init([])
-  @session  Plug.Session.init([
-    store:            :cookie,
-    key:              "_app",
-    encryption_salt:  "secret",
-    signing_salt:     "secret",
-    encrypt:          false
-  ])
+  @session Plug.Session.init(
+             store: :cookie,
+             key: "_app",
+             encryption_salt: "secret",
+             signing_salt: "secret",
+             encrypt: false
+           )
 
   defp setup_session(conn) do
     conn

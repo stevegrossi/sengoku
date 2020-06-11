@@ -13,7 +13,7 @@ defmodule Sengoku.Game do
   @initial_state %{
     turn: 0,
     current_player_number: nil,
-    winner_id: nil,
+    winning_player: nil,
     pending_move: nil,
     selected_tile_id: nil
   }
@@ -345,7 +345,7 @@ defmodule Sengoku.Game do
 
     if length(active_player_ids) == 1 do
       state
-      |> Map.put(:winner_id, hd(active_player_ids))
+      |> Map.put(:winning_player, hd(active_player_ids))
     else
       state
     end

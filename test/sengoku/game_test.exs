@@ -9,7 +9,7 @@ defmodule Sengoku.GameTest do
 
       assert state.turn == 0
       assert state.current_player_number == nil
-      assert state.winner_id == nil
+      assert state.winning_player == nil
     end
   end
 
@@ -417,7 +417,7 @@ defmodule Sengoku.GameTest do
 
     test "when only one player remains active, they win!" do
       old_state = %{
-        winner_id: nil,
+        winning_player: nil,
         current_player_number: 1,
         players: %{
           1 => %Player{active: true, unplaced_units: 5},
@@ -433,7 +433,7 @@ defmodule Sengoku.GameTest do
       new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.players[2].active == false
       assert new_state.players[1].active == true
-      assert new_state.winner_id == 1
+      assert new_state.winning_player == 1
     end
 
     test "changes nothing if Player has 1 unit in origin" do

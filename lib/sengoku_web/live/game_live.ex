@@ -41,10 +41,10 @@ defmodule SengokuWeb.GameLive do
   def render(assigns) do
     ~L"""
     <div class="Game">
-      <%= if @game_state.winner_id do %>
+      <%= if @game_state.winning_player do %>
         <div class="Modal GameOver">
           <div>
-            <p class="jumbo"><%= @game_state.players[@game_state.winner_id].name %> wins!</p>
+            <p class="jumbo"><%= @game_state.players[@game_state.winning_player].name %> wins!</p>
             <p><a href="<%= Routes.game_path(@socket, :new) %>" class="Button Button--primary">Start a New Game</a></p>
           </div>
         </div>
@@ -96,7 +96,7 @@ defmodule SengokuWeb.GameLive do
           <button class="Button" phx-click="start">Start Game</button>
         <% end %>
 
-        <%= if @game_state.turn > 0 && !@game_state.winner_id && @game_state.current_player_number == @player_number do %>
+        <%= if @game_state.turn > 0 && !@game_state.winning_player && @game_state.current_player_number == @player_number do %>
           <button class="Button" phx-click="end_turn">End Turn</button>
         <% end %>
 
@@ -130,7 +130,7 @@ defmodule SengokuWeb.GameLive do
               You are currently spectating. Join the game or wait and watch.
             <% end %>
           <% else %>
-            <%= if @game_state.current_player_number == @player_number && !@game_state.winner_id do %>
+            <%= if @game_state.current_player_number == @player_number && !@game_state.winning_player do %>
               <%= cond do %>
                 <% @game_state.players[@game_state.current_player_number].unplaced_units > 0 -> %>
                   <%= "You have #{@game_state.players[@game_state.current_player_number].unplaced_units} units to place. Click on one of your territories to place a unit." %>
@@ -150,7 +150,7 @@ defmodule SengokuWeb.GameLive do
         class="Board"
         <%= if @game_state.selected_tile_id, do: "phx-click=unselect_tile" %>
       >
-        <%= if @game_state.pending_move && is_nil(@game_state.winner_id) && @game_state.current_player_number == @player_number do %>
+        <%= if @game_state.pending_move && is_nil(@game_state.winning_player) && @game_state.current_player_number == @player_number do %>
           <%= live_component(@socket, MoveUnitsForm, id: "move_form", pending_move: @game_state.pending_move) %>
         <% end %>
         <ul class="Tiles">

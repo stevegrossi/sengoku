@@ -10,6 +10,7 @@ defmodule SengokuWeb.UserSessionController do
 
   def create(conn, %{"user" => user_params}) do
     %{"email_or_username" => email_or_username, "password" => password} = user_params
+
     user =
       if String.contains?(email_or_username, "@") do
         Accounts.get_user_by_email_and_password(email_or_username, password)

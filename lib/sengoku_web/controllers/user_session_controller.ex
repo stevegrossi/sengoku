@@ -9,9 +9,15 @@ defmodule SengokuWeb.UserSessionController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    %{"email" => email, "password" => password} = user_params
+    %{"email_or_username" => email_or_username, "password" => password} = user_params
+    user =
+      if String.contains?(email_or_username, "@") do
+        Accounts.get_user_by_email_and_password(email_or_username, password)
+      else
+        Accounts.get_user_by_username_and_password(email_or_username, password)
+      end
 
-    if user = Accounts.get_user_by_email_and_password(email, password) do
+    if user do
       UserAuth.login_user(conn, user, user_params)
     else
       render(conn, "new.html", error_message: "Invalid e-mail or password")

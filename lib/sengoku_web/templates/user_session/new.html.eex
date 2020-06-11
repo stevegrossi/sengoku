@@ -6,8 +6,8 @@
       <p class="alert alert-danger"><%= @error_message %></p>
     <% end %>
 
-    <%= label f, :email, class: "Label" %>
-    <%= text_input f, :email, required: true, class: "TextInput" %>
+    <%= label f, :email_or_username, class: "Label" %>
+    <%= text_input f, :email_or_username, required: true, class: "TextInput" %>
 
     <%= label f, :password, class: "Label" %>
     <%= password_input f, :password, required: true, class: "TextInput" %>

@@ -44,6 +44,24 @@ defmodule Sengoku.Accounts do
   end
 
   @doc """
+  Gets a user by username and password.
+
+  ## Examples
+
+      iex> get_user_by_username_and_password("tokugawa", "correct_password")
+      %User{}
+
+      iex> get_user_by_username_and_password("tokugawa", "invalid_password")
+      nil
+
+  """
+  def get_user_by_username_and_password(username, password)
+      when is_binary(username) and is_binary(password) do
+    user = Repo.get_by(User, username: username)
+    if User.valid_password?(user, password), do: user
+  end
+
+  @doc """
   Gets a single user.
 
   Raises `Ecto.NoResultsError` if the User does not exist.

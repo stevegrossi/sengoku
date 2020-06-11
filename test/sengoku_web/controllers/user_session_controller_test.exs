@@ -23,10 +23,27 @@ defmodule SengokuWeb.UserSessionControllerTest do
   end
 
   describe "POST /users/login" do
-    test "logs the user in", %{conn: conn, user: user} do
+    test "logs the user in with an email", %{conn: conn, user: user} do
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
-          "user" => %{"email" => user.email, "password" => valid_user_password()}
+          "user" => %{"email_or_username" => user.email, "password" => valid_user_password()}
+        })
+
+      assert get_session(conn, :user_token)
+      assert redirected_to(conn) =~ "/"
+
+      # Now do a logged in request and assert on the menu
+      conn = get(conn, "/")
+      response = html_response(conn, 200)
+      assert response =~ "Hi, #{user.username}"
+      assert response =~ "Settings</a>"
+      assert response =~ "Sign Out</a>"
+    end
+
+    test "logs the user in with a username", %{conn: conn, user: user} do
+      conn =
+        post(conn, Routes.user_session_path(conn, :create), %{
+          "user" => %{"email_or_username" => user.username, "password" => valid_user_password()}
         })
 
       assert get_session(conn, :user_token)
@@ -44,7 +61,7 @@ defmodule SengokuWeb.UserSessionControllerTest do
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
           "user" => %{
-            "email" => user.email,
+            "email_or_username" => user.email,
             "password" => valid_user_password(),
             "remember_me" => "true"
           }
@@ -57,7 +74,7 @@ defmodule SengokuWeb.UserSessionControllerTest do
     test "emits error message with invalid credentials", %{conn: conn, user: user} do
       conn =
         post(conn, Routes.user_session_path(conn, :create), %{
-          "user" => %{"email" => user.email, "password" => "invalid_password"}
+          "user" => %{"email_or_username" => user.email, "password" => "invalid_password"}
         })
 
       response = html_response(conn, 200)

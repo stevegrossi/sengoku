@@ -35,7 +35,7 @@ defmodule Mix.Tasks.Ai.Arena do
 
   defp start_n_games(num) when is_integer(num) do
     Enum.map(1..num, fn(_) ->
-      {:ok, game_id} = GameServer.new(@game_opts)
+      {:ok, game_id} = GameServer.new(@game_opts, true)
       GameServer.action(game_id, nil, %{type: "start_game"})
       game_id
     end)

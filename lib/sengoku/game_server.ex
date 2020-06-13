@@ -12,23 +12,23 @@ defmodule Sengoku.GameServer do
 
   @default_ai_wait_time_ms 100
 
-  def new(%{} = options) do
+  def new(%{} = options, arena \\ false) do
     game_id = Token.new(8)
-    start_link(game_id, options)
+    start_link(game_id, options, arena)
     {:ok, game_id}
   end
 
-  def start_link(game_id, options) do
-    GenServer.start_link(__MODULE__, {game_id, options})
+  def start_link(game_id, options, arena) do
+    GenServer.start_link(__MODULE__, {game_id, options, arena})
   end
 
-  def init({game_id, options}) do
+  def init({game_id, options, arena}) do
     case Registry.register(:game_server_registry, game_id, :ok) do
       {:ok, _pid} -> {:ok, game_id}
       {:error, reason} -> {:error, reason}
     end
 
-    {:ok, Game.initialize_state(game_id, options)}
+    {:ok, Map.put(Game.initialize_state(game_id, options), :arena, arena)}
   end
 
   # API
@@ -90,7 +90,7 @@ defmodule Sengoku.GameServer do
 
   def handle_info(:take_ai_move_if_necessary, state) do
     if Game.current_player(state) && Game.current_player(state).ai && !state.winning_player do
-      Process.sleep(ai_wait_time())
+      unless state.arena, do: Process.sleep(ai_wait_time())
       action = AI.Smart.take_action(state)
       action(state.id, state.current_player_number, action)
     end
@@ -107,7 +107,9 @@ defmodule Sengoku.GameServer do
 
   defp state_updated(state) do
     send(self(), :take_ai_move_if_necessary)
-    Phoenix.PubSub.broadcast(Sengoku.PubSub, "game:" <> state.id, {:game_updated, state})
+    unless state.arena do
+      Phoenix.PubSub.broadcast(Sengoku.PubSub, "game:" <> state.id, {:game_updated, state})
+    end
   end
 
   defp via_tuple(game_id) do

@@ -4,8 +4,8 @@ defmodule Sengoku.AccountsFixtures do
   entities via the `Sengoku.Accounts` context.
   """
 
-  def unique_user_email, do: "user#{System.unique_integer()}@example.com"
-  def valid_user_username, do: "#{System.unique_integer([:positive])}"
+  def unique_user_email, do: "user-#{Sengoku.Token.new(8)}@example.com"
+  def valid_user_username, do: "#{Sengoku.Token.new(8)}"
   def valid_user_password, do: "hello world!"
 
   def user_fixture(attrs \\ %{}) do

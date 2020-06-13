@@ -66,3 +66,9 @@ config :sengoku, Sengoku.Mailer,
   hackney_opts: [
     recv_timeout: :timer.minutes(1)
   ]
+
+config :sengoku, Sengoku.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: {:system, "DATABASE_URL"},
+  ssl: true,
+  pool_size: 2

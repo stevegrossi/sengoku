@@ -59,3 +59,16 @@ config :logger, level: :info
 #
 #     config :sengoku, SengokuWeb.Endpoint, server: true
 #
+
+config :sengoku, Sengoku.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  api_key: {:system, "SENDGRID_API_KEY"},
+  hackney_opts: [
+    recv_timeout: :timer.minutes(1)
+  ]
+
+config :sengoku, Sengoku.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: {:system, "DATABASE_URL"},
+  ssl: true,
+  pool_size: 2

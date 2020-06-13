@@ -1,0 +1,27 @@
+<div class="narrow">
+  <h1 class="center">Sign In</h1>
+
+  <%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user, class: "Form"], fn f -> %>
+    <%= if @error_message do %>
+      <p class="alert alert-danger"><%= @error_message %></p>
+    <% end %>
+
+    <%= label f, :email_or_username, class: "Label" %>
+    <%= text_input f, :email_or_username, required: true, class: "TextInput" %>
+
+    <%= label f, :password, class: "Label" %>
+    <%= password_input f, :password, required: true, class: "TextInput" %>
+
+    <div class="Checkbox">
+      <%= checkbox f, :remember_me %>
+      <%= label f, :remember_me, "Remember me for 60 days" %>
+    </div>
+
+    <%= submit "Sign In", class: "Button Button--primary" %>
+  <% end %>
+
+  <p class="center">
+    <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
+    <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+  </p>
+</div>

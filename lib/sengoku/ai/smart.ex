@@ -72,10 +72,10 @@ defmodule Sengoku.AI.Smart do
     }
   end
 
-  defp tile_ids_with_attackable_neighbors(%{current_player_id: current_player_id} = state) do
+  defp tile_ids_with_attackable_neighbors(%{current_player_number: current_player_number} = state) do
     state
     |> Tile.filter_ids(fn tile ->
-      Tile.owned_by_player_id?(tile, current_player_id) and tile.units > 1 and
+      Tile.owned_by_player_id?(tile, current_player_number) and tile.units > 1 and
         Enum.any?(tile.neighbors, fn neighbor_id ->
           neighbor = Tile.get(state, neighbor_id)
           !Tile.owned_by_player_id?(tile, neighbor.owner)
@@ -83,19 +83,22 @@ defmodule Sengoku.AI.Smart do
     end)
   end
 
-  defp find_attackable_neighbor_id(tile_id, %{current_player_id: current_player_id} = state) do
+  defp find_attackable_neighbor_id(
+         tile_id,
+         %{current_player_number: current_player_number} = state
+       ) do
     Tile.get(state, tile_id).neighbors
     |> Enum.filter(fn neighbor_id ->
       neighbor = Tile.get(state, neighbor_id)
-      !Tile.owned_by_player_id?(neighbor, current_player_id)
+      !Tile.owned_by_player_id?(neighbor, current_player_number)
     end)
     |> Enum.random()
   end
 
-  defp owned_border_tile_ids(%{current_player_id: current_player_id} = state) do
+  defp owned_border_tile_ids(%{current_player_number: current_player_number} = state) do
     state
     |> Tile.filter_ids(fn tile ->
-      Tile.owned_by_player_id?(tile, current_player_id) and
+      Tile.owned_by_player_id?(tile, current_player_number) and
         tile.neighbors
         |> Enum.any?(fn neighbor_id ->
           neighbor = Tile.get(state, neighbor_id)
@@ -117,8 +120,8 @@ defmodule Sengoku.AI.Smart do
   end
 
   # Returns regions sorted by how close you are to owning it
-  def get_preferred_regions(%{current_player_id: current_player_id} = state) do
-    owned_tile_ids = Tile.ids_owned_by(state, current_player_id)
+  def get_preferred_regions(%{current_player_number: current_player_number} = state) do
+    owned_tile_ids = Tile.ids_owned_by(state, current_player_number)
 
     state.regions
     |> Enum.sort(fn {_id_1, region_1}, {_id_2, region_2} ->
@@ -163,11 +166,11 @@ defmodule Sengoku.AI.Smart do
   defp safe_owned_tiles(state) do
     state
     |> Tile.filter_ids(fn tile ->
-      tile.owner == state.current_player_id && tile.units > 1 &&
+      tile.owner == state.current_player_number && tile.units > 1 &&
         tile.neighbors
         |> Enum.all?(fn neighbor_id ->
           neighbor = Tile.get(state, neighbor_id)
-          neighbor.owner == state.current_player_id
+          neighbor.owner == state.current_player_number
         end)
     end)
   end
@@ -177,7 +180,7 @@ defmodule Sengoku.AI.Smart do
     Tile.get(state, tile_id).neighbors
     |> Enum.filter(fn neighbor_id ->
       neighbor = Tile.get(state, neighbor_id)
-      neighbor.owner == state.current_player_id
+      neighbor.owner == state.current_player_number
     end)
     |> Enum.random()
   end

@@ -1,0 +1,29 @@
+<div class="narrow">
+  <h1 class="center">Create an Account</h1>
+
+  <%= form_for @changeset, Routes.user_registration_path(@conn, :create), [class: "Form"], fn f -> %>
+    <%= if @changeset.action do %>
+      <p class="alert alert-danger">Oops, something went wrong! Please check the errors below.</p>
+    <% end %>
+
+    <%= label f, :email, class: "Label" %>
+    <%= text_input f, :email, required: true, class: "TextInput" %>
+    <%= error_tag f, :email %>
+
+    <%= label f, :username, "Username (3–20 characters)", class: "Label" %>
+    <%= text_input f, :username, required: true, class: "TextInput" %>
+    <%= error_tag f, :username %>
+
+    <%= label f, :password, class: "Label" %>
+    <%= password_input f, :password, required: true, class: "TextInput" %>
+    <%= error_tag f, :password %>
+
+    <%= submit "Register", class: "Button Button--primary" %>
+  <% end %>
+
+  <p class="center">
+    <%= link "Sign In", to: Routes.user_session_path(@conn, :new) %>
+    |
+    <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+  </p>
+</div>

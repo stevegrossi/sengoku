@@ -1,20 +1,21 @@
 defmodule Sengoku.Authentication do
   @moduledoc """
-  Responible for token-based authentication to determine which human players
-  correspond to which integer player IDs in the GameServer’s state.
+  Responible for determining and recording which human players (identified by a
+  unique player_id) correspond to which integer player numbers in the
+  GameServer’s state.
   """
 
   alias Sengoku.Player
 
   def initialize_state(state) do
-    Map.put(state, :tokens, %{})
+    Map.put(state, :player_ids, %{})
   end
 
-  def authenticate_player(state, token, name) do
-    existing_player_id = state.tokens[token]
+  def authenticate_player(state, player_id, name) do
+    existing_player_id = state.player_ids[player_id]
 
     if existing_player_id do
-      {:ok, {existing_player_id, token}, state}
+      {:ok, {existing_player_id, player_id}, state}
     else
       if state.turn == 0 do
         first_available_player_id =
@@ -27,10 +28,10 @@ defmodule Sengoku.Authentication do
         else
           state =
             state
-            |> put_in([:tokens, token], first_available_player_id)
+            |> put_in([:player_ids, player_id], first_available_player_id)
             |> Player.update_attributes(first_available_player_id, %{ai: false, name: name})
 
-          {:ok, {first_available_player_id, token}, state}
+          {:ok, {first_available_player_id, player_id}, state}
         end
       else
         {:error, :in_progress}

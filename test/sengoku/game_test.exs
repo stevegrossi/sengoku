@@ -8,8 +8,8 @@ defmodule Sengoku.GameTest do
       state = Game.initialize_state("123", %{"board" => "japan"})
 
       assert state.turn == 0
-      assert state.current_player_id == nil
-      assert state.winner_id == nil
+      assert state.current_player_number == nil
+      assert state.winning_player == nil
     end
   end
 
@@ -92,7 +92,7 @@ defmodule Sengoku.GameTest do
   describe "begin_turn/1" do
     test "grants the current player 1 unit for every 3 owned territories" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 2},
           2 => %Tile{owner: 1},
@@ -122,7 +122,7 @@ defmodule Sengoku.GameTest do
 
     test "grants the current player at least 3 unplaced units" do
       old_state = %{
-        current_player_id: 2,
+        current_player_number: 2,
         tiles: %{
           1 => %Tile{owner: 2},
           2 => %Tile{owner: 1},
@@ -152,7 +152,7 @@ defmodule Sengoku.GameTest do
 
     test "grants a bonus for owning all tiles in a region" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 2},
           2 => %Tile{owner: 1},
@@ -186,9 +186,9 @@ defmodule Sengoku.GameTest do
   end
 
   describe "end_turn/1" do
-    test "increments current_player_id to the next active Player and grants them units" do
+    test "increments current_player_number to the next active Player and grants them units" do
       old_state = %{
-        current_player_id: 2,
+        current_player_number: 2,
         selected_tile_id: 1,
         turn: 1,
         players: %{
@@ -202,14 +202,14 @@ defmodule Sengoku.GameTest do
 
       new_state = old_state |> Game.end_turn()
 
-      assert new_state.current_player_id == 4
+      assert new_state.current_player_number == 4
       assert new_state.players[4].unplaced_units == 4
       assert new_state.selected_tile_id == nil
     end
 
     test "when the last active Player’s turn ends, starts at 1 and increments turn" do
       old_state = %{
-        current_player_id: 4,
+        current_player_number: 4,
         turn: 1,
         players: %{
           1 => %Player{unplaced_units: 0, active: false},
@@ -222,14 +222,14 @@ defmodule Sengoku.GameTest do
 
       new_state = old_state |> Game.end_turn()
 
-      assert new_state.current_player_id == 2
+      assert new_state.current_player_number == 2
       assert new_state.players[2].unplaced_units == 4
       assert new_state.turn == 2
     end
 
     test "does nothing when a move is pending" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         turn: 1,
         players: %{
           1 => %Player{unplaced_units: 0, active: false},
@@ -253,7 +253,7 @@ defmodule Sengoku.GameTest do
   describe "place_unit/2" do
     test "moves a unit from the Player to the Tile" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{unplaced_units: 2}
         },
@@ -271,7 +271,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if the Player does not own the Tile" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{unplaced_units: 2}
         },
@@ -288,7 +288,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if the Player has no unplaced units" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{unplaced_units: 0}
         },
@@ -305,7 +305,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if a move is pending" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{unplaced_units: 2}
         },
@@ -327,7 +327,7 @@ defmodule Sengoku.GameTest do
   describe "attack/4" do
     test "attackers and defenders lose units" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -346,7 +346,7 @@ defmodule Sengoku.GameTest do
 
     test "when the attacker defeats the last defender, captures the territory and moves the attacking number of units in" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         selected_tile_id: 1,
         players: %{
           1 => %Player{active: true},
@@ -368,7 +368,7 @@ defmodule Sengoku.GameTest do
 
     test "with more units in the origin tile, requires moving some in" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -396,7 +396,7 @@ defmodule Sengoku.GameTest do
 
     test "when the defender loses their last tile, makes them inactive" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{active: true, unplaced_units: 5},
           2 => %Player{active: true, unplaced_units: 5}
@@ -417,8 +417,8 @@ defmodule Sengoku.GameTest do
 
     test "when only one player remains active, they win!" do
       old_state = %{
-        winner_id: nil,
-        current_player_id: 1,
+        winning_player: nil,
+        current_player_number: 1,
         players: %{
           1 => %Player{active: true, unplaced_units: 5},
           2 => %Player{active: true, unplaced_units: 5}
@@ -433,12 +433,12 @@ defmodule Sengoku.GameTest do
       new_state = Game.attack(old_state, 1, 2, {0, 1})
       assert new_state.players[2].active == false
       assert new_state.players[1].active == true
-      assert new_state.winner_id == 1
+      assert new_state.winning_player == 1
     end
 
     test "changes nothing if Player has 1 unit in origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
@@ -452,7 +452,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if Player does not own origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{units: 1, owner: 2, neighbors: [2]},
           2 => %Tile{units: 1, owner: 2, neighbors: [1]}
@@ -466,7 +466,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if Player owns the destination" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [2]},
           2 => %Tile{units: 1, owner: 1, neighbors: [1]}
@@ -480,7 +480,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if the destination is not a neighbor of the origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{units: 1, owner: 1, neighbors: [3]},
           2 => %Tile{units: 1, owner: 2, neighbors: [3]}
@@ -494,7 +494,7 @@ defmodule Sengoku.GameTest do
 
     test "changes nothing if a move is pending" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         players: %{
           1 => %Player{active: true},
           2 => %Player{active: true}
@@ -544,7 +544,7 @@ defmodule Sengoku.GameTest do
   describe "move/4" do
     test "moves a number of units from one territory to another and clears selection" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         selected_tile_id: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
@@ -566,7 +566,7 @@ defmodule Sengoku.GameTest do
 
     test "ends the Player’s turn when pending_move.end_turn is true" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -585,12 +585,12 @@ defmodule Sengoku.GameTest do
       }
 
       new_state = Game.move(old_state, 1, 2, 3)
-      refute new_state.current_player_id == 1
+      refute new_state.current_player_number == 1
     end
 
     test "does nothing if the destination is not a neighbor of the origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [3]},
           2 => %Tile{owner: 1, units: 1, neighbors: [3]}
@@ -608,7 +608,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if the Player does not own the origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 2, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -626,7 +626,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if the Player does not own the destination" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 2, units: 1, neighbors: [1]}
@@ -644,7 +644,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if the count is more than the number of units in the origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -662,7 +662,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if at least one unit won’t be left in the origin" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -680,7 +680,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if the origin and destination are the same" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 1, neighbors: [1]}
@@ -698,7 +698,7 @@ defmodule Sengoku.GameTest do
 
     test "required moves do not end turn" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1]}
@@ -721,12 +721,12 @@ defmodule Sengoku.GameTest do
       assert new_state.tiles[1].units == 2
       assert new_state.tiles[2].units == 3
       assert is_nil(new_state.pending_move)
-      assert new_state.current_player_id == 1
+      assert new_state.current_player_number == 1
     end
 
     test "required moves enforce the minimum" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1]}
@@ -750,7 +750,7 @@ defmodule Sengoku.GameTest do
 
     test "required moves do not allow moves from other origins" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1, 3]},
@@ -775,7 +775,7 @@ defmodule Sengoku.GameTest do
 
     test "required moves do not allow moves to other destinations" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         tiles: %{
           1 => %Tile{owner: 1, units: 5, neighbors: [2, 3]},
           2 => %Tile{owner: 1, units: 0, neighbors: [1]},
@@ -802,7 +802,7 @@ defmodule Sengoku.GameTest do
   describe "cancel_move/1" do
     test "removes the pending move, clearing the selection and resuming the player’s turn" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         selected_tile_id: 1,
         pending_move: %{
           required: false
@@ -812,13 +812,13 @@ defmodule Sengoku.GameTest do
       new_state = Game.cancel_move(old_state)
 
       assert is_nil(new_state.pending_move)
-      assert old_state.current_player_id == new_state.current_player_id
+      assert old_state.current_player_number == new_state.current_player_number
       assert is_nil(new_state.selected_tile_id)
     end
 
     test "does nothing if no move is pending" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         selected_tile_id: 1,
         pending_move: nil
       }
@@ -830,7 +830,7 @@ defmodule Sengoku.GameTest do
 
     test "does nothing if the pending move is required" do
       old_state = %{
-        current_player_id: 1,
+        current_player_number: 1,
         selected_tile_id: 1,
         pending_move: %{
           required: true

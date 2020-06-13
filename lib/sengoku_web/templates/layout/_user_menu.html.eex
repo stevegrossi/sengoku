@@ -1,0 +1,16 @@
+<nav class="UserMenu" role="navigation">
+  <%= if @current_user do %>
+    <div>Hi, <%= @current_user.username %>!</div>
+    <div>
+      <%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %>
+      |
+      <%= link "Sign Out", to: Routes.user_session_path(@conn, :delete), method: :delete %>
+    </div>
+  <% else %>
+    <div>
+      <%= link "Register", to: Routes.user_registration_path(@conn, :new) %>
+      or
+      <%= link "Sign In", to: Routes.user_session_path(@conn, :new) %>
+    </div>
+  <% end %>
+</nav>

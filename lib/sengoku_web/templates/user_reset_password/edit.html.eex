@@ -1,0 +1,25 @@
+<div class="narrow">
+  <h1 class="center">Reset Your Password</h1>
+
+  <%= form_for @changeset, Routes.user_reset_password_path(@conn, :update, @token), [class: "Form"], fn f -> %>
+    <%= if @changeset.action do %>
+      <p class="alert alert-danger">Oops, something went wrong! Please check the errors below.</p>
+    <% end %>
+
+    <%= label f, :password, "New password", class: "Label" %>
+    <%= password_input f, :password, required: true, class: "TextInput" %>
+    <%= error_tag f, :password %>
+
+    <%= label f, :password_confirmation, "Confirm new password", class: "Label" %>
+    <%= password_input f, :password_confirmation, required: true, class: "TextInput" %>
+    <%= error_tag f, :password_confirmation %>
+
+    <%= submit "Reset password", class: "Button Button--primary" %>
+  <% end %>
+
+  <p class="center">
+    <%= link "Register", to: Routes.user_registration_path(@conn, :new) %>
+    |
+    <%= link "Sign In", to: Routes.user_session_path(@conn, :new) %>
+  </p>
+</div>

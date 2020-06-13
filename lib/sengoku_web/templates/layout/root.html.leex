@@ -11,9 +11,13 @@
     <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body class="App">
-    <h1>
-      <a href="/" class="Logo"><img src="<%= Routes.static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
-    </h1>
+    <header class="Header">
+      <h1>
+        <a href="/" class="Logo"><img src="<%= Routes.static_path(@conn, "/images/sengoku.svg") %>" alt="Sengoku" /></a>
+      </h1>
+
+      <%= render "_user_menu.html", assigns %>
+    </header>
 
     <main role="main">
       <%= @inner_content %>

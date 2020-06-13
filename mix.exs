@@ -50,6 +50,7 @@ defmodule Sengoku.Mixfile do
       {:jason, "~> 1.0"},
       {:plug, "~> 1.10"},
       {:plug_cowboy, "~> 2.2"},
+      {:bamboo, "~> 1.5"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 0.9", only: :dev, runtime: false},
       {:phx_gen_auth, "~> 0.3.0", only: [:dev], runtime: false}

@@ -59,3 +59,10 @@ config :logger, level: :info
 #
 #     config :sengoku, SengokuWeb.Endpoint, server: true
 #
+
+config :sengoku, Sengoku.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  api_key: {:system, "SENDGRID_API_KEY"},
+  hackney_opts: [
+    recv_timeout: :timer.minutes(1)
+  ]

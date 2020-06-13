@@ -5,5 +5,4 @@ config :sengoku, SengokuWeb.Endpoint,
   http: [port: {:system, "PORT"}],
   url: [host: "www.playsengoku.com", port: 443]
 
-config :sengoku, Sengoku.Repo,
-  url: System.fetch_env!("DATABASE_URL")
+config :sengoku, Sengoku.Repo, url: System.fetch_env!("DATABASE_URL")

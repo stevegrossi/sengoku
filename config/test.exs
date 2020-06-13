@@ -24,5 +24,4 @@ config :sengoku, SengokuWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :sengoku, Sengoku.Mailer,
-  adapter: Bamboo.TestAdapter
+config :sengoku, Sengoku.Mailer, adapter: Bamboo.TestAdapter

@@ -73,7 +73,7 @@ defmodule SengokuWeb.Router do
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
   end
 
-  if Mix.env == :dev do
+  if Mix.env() == :dev do
     forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end
 end

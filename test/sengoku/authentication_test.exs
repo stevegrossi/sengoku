@@ -9,7 +9,7 @@ defmodule Sengoku.AuthenticationTest do
         turn: 0,
         players: %{
           1 => %Player{ai: false},
-          2 => %Player{ai: true}
+          2 => %Player{ai: Sengoku.AI.Smart}
         },
         player_ids: %{
           "foo" => 1
@@ -31,7 +31,7 @@ defmodule Sengoku.AuthenticationTest do
         turn: 1,
         players: %{
           1 => %Player{ai: false},
-          2 => %Player{ai: true}
+          2 => %Player{ai: Sengoku.AI.Smart}
         },
         player_ids: %{
           "foo" => 1
@@ -67,7 +67,7 @@ defmodule Sengoku.AuthenticationTest do
         turn: 0,
         players: %{
           1 => %Player{ai: false},
-          2 => %Player{ai: true}
+          2 => %Player{ai: Sengoku.AI.Smart}
         },
         player_ids: %{player_id => 1}
       }

@@ -4,7 +4,9 @@ defmodule Sengoku.Player do
   human- or computer-controller actor in the game.
   """
 
-  defstruct unplaced_units: 0, active: true, ai: true, name: nil, color: nil
+  @default_ai Sengoku.AI.Smart
+
+  defstruct unplaced_units: 0, active: true, ai: @default_ai, name: nil, color: nil
 
   @colors %{
     # Red
@@ -54,7 +56,7 @@ defmodule Sengoku.Player do
 
   def ai_ids(state) do
     state
-    |> filter_ids(& &1.ai)
+    |> filter_ids(& &1.ai != false)
   end
 
   def active_ids(state) do

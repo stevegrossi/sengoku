@@ -36,7 +36,7 @@ defmodule Mix.Tasks.Ai.Arena do
       player =
         case player_id do
           id when is_integer(id) -> Integer.to_string(id)
-          nil -> "Draw" # should never happen
+          nil -> "Draw"
         end
       IO.puts " #{String.pad_leading(player, 5)} | #{String.pad_leading(Float.to_string(Float.round(win_percent, 1)), 5)}%"
     end)

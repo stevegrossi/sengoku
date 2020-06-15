@@ -92,7 +92,7 @@ defmodule SengokuWeb.GameLive do
           </form>
         <% end %>
 
-        <%= if @game_state.turn == 0 && @player_number do %>
+        <%= if @game_state.turn == 0 do %>
           <button class="Button" phx-click="start">Start Game</button>
         <% end %>
 

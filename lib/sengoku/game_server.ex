@@ -49,6 +49,10 @@ defmodule Sengoku.GameServer do
     GenServer.call(via_tuple(game_id), :get_state)
   end
 
+  def update_ai_player(game_id, player_number, ai_type) do
+    GenServer.call(via_tuple(game_id), {:update_ai_player, player_number, ai_type})
+  end
+
   # Server
 
   def handle_call({:authenticate_player, token, name}, _from, state) do
@@ -64,6 +68,13 @@ defmodule Sengoku.GameServer do
 
   def handle_call(:get_state, _from, state) do
     {:reply, state, state}
+  end
+
+  def handle_call({:update_ai_player, player_number, ai_type}, _from, state) do
+    new_state = Game.update_ai_player(state, player_number, ai_type)
+    state_updated(new_state)
+
+    {:reply, new_state, new_state}
   end
 
   def handle_cast({:action, _player_id, %{type: "start_game"}}, state) do

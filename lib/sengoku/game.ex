@@ -88,6 +88,11 @@ defmodule Sengoku.Game do
     |> grant_region_bonuses()
   end
 
+  def update_ai_player(state, player_number, ai_type) do
+    state
+    |> Player.update_attributes(player_number, %{ai: ai_type})
+  end
+
   defp grant_new_units(%{current_player_number: current_player_number} = state) do
     new_units_count =
       state

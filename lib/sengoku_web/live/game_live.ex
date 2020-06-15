@@ -63,7 +63,7 @@ defmodule SengokuWeb.GameLive do
               <b>
                 <%= player.name %>
                 <%= if player.ai do %>
-                  <small class="Player-type">AI</small>
+                  <small class="Player-type"><%= String.replace(inspect(player.ai), "Sengoku.", "") %></small>
                 <% end %>
               </b>
               <%= if player.unplaced_units > 0 do %>

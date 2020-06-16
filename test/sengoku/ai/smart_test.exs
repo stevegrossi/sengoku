@@ -21,7 +21,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action == %{type: "place_unit", tile_id: 1}
   end
@@ -44,7 +44,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action == %{type: "attack", from_id: 1, to_id: 2}
   end
@@ -67,7 +67,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action != %{type: "attack", from_id: 1, to_id: 2}
   end
@@ -90,7 +90,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action != %{type: "attack", from_id: 1, to_id: 2}
   end
@@ -110,7 +110,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action == %{
              type: "move",
@@ -140,7 +140,7 @@ defmodule Sengoku.AI.SmartTest do
       }
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action == %{
              type: "move",
@@ -164,7 +164,7 @@ defmodule Sengoku.AI.SmartTest do
       pending_move: nil
     }
 
-    action = AI.Smarter.take_action(state)
+    action = AI.Smart.take_action(state)
 
     assert action == %{type: "end_turn"}
   end
@@ -191,7 +191,7 @@ defmodule Sengoku.AI.SmartTest do
         }
       }
 
-      assert AI.Smarter.get_preferred_regions(state) == [
+      assert AI.Smart.get_preferred_regions(state) == [
                # 2
                %Region{value: 1, tile_ids: [4, 5]},
                # 3

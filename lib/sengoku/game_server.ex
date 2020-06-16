@@ -8,7 +8,7 @@ defmodule Sengoku.GameServer do
 
   require Logger
 
-  alias Sengoku.{Authentication, Game, Token, AI}
+  alias Sengoku.{Authentication, Game, Token}
 
   @default_ai_wait_time_ms 100
 

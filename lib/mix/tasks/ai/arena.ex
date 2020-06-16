@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Ai.Arena do
 
   use Mix.Task
 
-  alias Sengoku.{GameServer}
+  alias Sengoku.{Board, GameServer}
 
   @games_to_play 2_000
   @max_turns 1_000
@@ -57,7 +57,9 @@ defmodule Mix.Tasks.Ai.Arena do
   defp print_results(results, ai_module) do
     IO.puts " Player                         | Win % "
     IO.puts "--------------------------------|-------"
-    Enum.each(results, fn({player_id, win_count}) ->
+    players_count = Board.new(@game_opts["board"]).players_count
+    Enum.each(1..players_count, fn(player_id) ->
+      win_count = results[player_id] || 0
       win_percent = win_count / @games_to_play * 100
       player =
         case player_id do

@@ -24,23 +24,10 @@ defmodule Mix.Tasks.Ai.Arena do
     against #{inspect(@default_ai)} as all other players
     """
 
-    results =
-      @games_to_play
-      |> start_n_games(ai_module)
-      |> tally_winners()
-
-    IO.puts " Player                         | Win % "
-    IO.puts "--------------------------------|-------"
-    Enum.each(results, fn({player_id, win_count}) ->
-      win_percent = win_count / @games_to_play * 100
-      player =
-        case player_id do
-          @custom_ai_player_number -> "#{player_id} (#{inspect(ai_module)})"
-          id when is_integer(id) -> "#{id} (#{inspect(@default_ai)})"
-          nil -> "Draw"
-        end
-      IO.puts " #{String.pad_trailing(player, 30)} | #{String.pad_leading(Float.to_string(Float.round(win_percent, 1)), 5)}%"
-    end)
+    @games_to_play
+    |> start_n_games(ai_module)
+    |> tally_winners()
+    |> print_results(ai_module)
   end
 
   defp start_n_games(num, ai_module) when is_integer(num) do
@@ -65,5 +52,20 @@ defmodule Mix.Tasks.Ai.Arena do
     else
       Map.update(results, winning_player, 1, &(&1 + 1))
     end
+  end
+
+  defp print_results(results, ai_module) do
+    IO.puts " Player                         | Win % "
+    IO.puts "--------------------------------|-------"
+    Enum.each(results, fn({player_id, win_count}) ->
+      win_percent = win_count / @games_to_play * 100
+      player =
+        case player_id do
+          @custom_ai_player_number -> "#{player_id} (#{inspect(ai_module)})"
+          id when is_integer(id) -> "#{id} (#{inspect(@default_ai)})"
+          nil -> "Draw"
+        end
+      IO.puts " #{String.pad_trailing(player, 30)} | #{String.pad_leading(Float.to_string(Float.round(win_percent, 1)), 5)}%"
+    end)
   end
 end

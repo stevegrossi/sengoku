@@ -56,7 +56,7 @@ defmodule Sengoku.Player do
 
   def ai_ids(state) do
     state
-    |> filter_ids(& &1.ai != false)
+    |> filter_ids(&(&1.ai != false))
   end
 
   def active_ids(state) do

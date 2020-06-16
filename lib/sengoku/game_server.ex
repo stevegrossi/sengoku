@@ -118,6 +118,7 @@ defmodule Sengoku.GameServer do
 
   defp state_updated(state) do
     send(self(), :take_ai_move_if_necessary)
+
     unless state.arena do
       Phoenix.PubSub.broadcast(Sengoku.PubSub, "game:" <> state.id, {:game_updated, state})
     end

@@ -19,10 +19,10 @@ defmodule Mix.Tasks.Ai.Arena do
     Registry.start_link(keys: :unique, name: :game_server_registry)
     ai_module = String.to_existing_atom("Elixir.#{ai_name}")
 
-    IO.puts """
+    IO.puts("""
     Starting #{@games_to_play} games with #{inspect(ai_module)} as Player 1
     against #{inspect(@default_ai)} as all other players
-    """
+    """)
 
     @games_to_play
     |> start_n_games(ai_module)
@@ -31,7 +31,7 @@ defmodule Mix.Tasks.Ai.Arena do
   end
 
   defp start_n_games(num, ai_module) when is_integer(num) do
-    Enum.map(1..num, fn(_) ->
+    Enum.map(1..num, fn _ ->
       {:ok, game_id} = GameServer.new(@game_opts, true)
       GameServer.update_ai_player(game_id, @custom_ai_player_number, ai_module)
       GameServer.action(game_id, nil, %{type: "start_game"})
@@ -46,6 +46,7 @@ defmodule Mix.Tasks.Ai.Arena do
   defp tally_winner(game_id, results) do
     game_state = GameServer.get_state(game_id)
     winning_player = game_state.winning_player
+
     if is_nil(winning_player) && game_state.turn < @max_turns do
       Process.sleep(1_000)
       tally_winner(game_id, results)
@@ -55,19 +56,26 @@ defmodule Mix.Tasks.Ai.Arena do
   end
 
   defp print_results(results, ai_module) do
-    IO.puts " Player                         | Win % "
-    IO.puts "--------------------------------|-------"
+    IO.puts(" Player                         | Win % ")
+    IO.puts("--------------------------------|-------")
     players_count = Board.new(@game_opts["board"]).players_count
-    Enum.each(1..players_count, fn(player_id) ->
+
+    Enum.each(1..players_count, fn player_id ->
       win_count = results[player_id] || 0
       win_percent = win_count / @games_to_play * 100
+
       player =
         case player_id do
           @custom_ai_player_number -> "#{player_id} (#{inspect(ai_module)})"
           id when is_integer(id) -> "#{id} (#{inspect(@default_ai)})"
           nil -> "Draw"
         end
-      IO.puts " #{String.pad_trailing(player, 30)} | #{String.pad_leading(Float.to_string(Float.round(win_percent, 1)), 5)}%"
+
+      IO.puts(
+        " #{String.pad_trailing(player, 30)} | #{
+          String.pad_leading(Float.to_string(Float.round(win_percent, 1)), 5)
+        }%"
+      )
     end)
   end
 end

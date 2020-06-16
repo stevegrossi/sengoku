@@ -6,5 +6,5 @@ defmodule Sengoku.AI.Passive do
 
   @behaviour Sengoku.AI
 
-  def take_action(state), do: %{type: "end_turn"}
+  def take_action(_state), do: %{type: "end_turn"}
 end

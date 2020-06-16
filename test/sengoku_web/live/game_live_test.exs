@@ -55,7 +55,6 @@ defmodule SengokuWeb.GameLiveTest do
     refute has_element?(view, ~s([phx-click="attack"]))
 
     assert render(view) =~ "You are currently spectating. Join the game or wait and watch."
-    refute has_element?(view, ~s([phx-click="start"]))
 
     render_submit(view, :join, %{"player_name" => "Yojimbo"})
 

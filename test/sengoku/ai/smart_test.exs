@@ -26,7 +26,30 @@ defmodule Sengoku.AI.SmartTest do
     assert action == %{type: "place_unit", tile_id: 1}
   end
 
-  test "attacks when a neighbor has fewer units" do
+  test "attacks when a neighbor has at least two fewer units" do
+    state = %{
+      current_player_number: 1,
+      players: %{
+        1 => %Player{unplaced_units: 0, active: true, ai: true},
+        2 => %Player{unplaced_units: 0, active: true, ai: true}
+      },
+      tiles: %{
+        1 => %Tile{owner: 1, units: 3, neighbors: [2]},
+        2 => %Tile{owner: 2, units: 1, neighbors: [1]}
+      },
+      regions: %{
+        1 => %Region{value: 1, tile_ids: [1]},
+        2 => %Region{value: 1, tile_ids: [2]}
+      },
+      pending_move: nil
+    }
+
+    action = AI.Smart.take_action(state)
+
+    assert action == %{type: "attack", from_id: 1, to_id: 2}
+  end
+
+  test "does not attack when a neighbor has one fewer units" do
     state = %{
       current_player_number: 1,
       players: %{
@@ -46,7 +69,30 @@ defmodule Sengoku.AI.SmartTest do
 
     action = AI.Smart.take_action(state)
 
-    assert action == %{type: "attack", from_id: 1, to_id: 2}
+    assert action != %{type: "attack", from_id: 1, to_id: 2}
+  end
+
+  test "does not attack when a neighbor has more units" do
+    state = %{
+      current_player_number: 1,
+      players: %{
+        1 => %Player{unplaced_units: 0, active: true, ai: true},
+        2 => %Player{unplaced_units: 0, active: true, ai: true}
+      },
+      tiles: %{
+        1 => %Tile{owner: 1, units: 5, neighbors: [2]},
+        2 => %Tile{owner: 2, units: 6, neighbors: [1]}
+      },
+      regions: %{
+        1 => %Region{value: 1, tile_ids: [1]},
+        2 => %Region{value: 1, tile_ids: [2]}
+      },
+      pending_move: nil
+    }
+
+    action = AI.Smart.take_action(state)
+
+    assert action != %{type: "attack", from_id: 1, to_id: 2}
   end
 
   test "moves the maximum number of units away from non-border tiles" do

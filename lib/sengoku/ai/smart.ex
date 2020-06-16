@@ -75,10 +75,10 @@ defmodule Sengoku.AI.Smart do
   defp tile_ids_with_attackable_neighbors(%{current_player_number: current_player_number} = state) do
     state
     |> Tile.filter_ids(fn tile ->
-      Tile.owned_by_player_id?(tile, current_player_number) and tile.units > 1 and
+      Tile.owned_by_player_id?(tile, current_player_number) and tile.units > 2 and
         Enum.any?(tile.neighbors, fn neighbor_id ->
           neighbor = Tile.get(state, neighbor_id)
-          !Tile.owned_by_player_id?(tile, neighbor.owner)
+          !Tile.owned_by_player_id?(tile, neighbor.owner) && neighbor.units <= tile.units
         end)
     end)
   end

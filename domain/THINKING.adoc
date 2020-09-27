@@ -1,17 +1,50 @@
 # Thinking
 
-## Entities
+## Divisions
 
-This should encompass the representations of first-class domain objects or agents up and down the stack. We have this interesting thing in Elixir where technically a module's functions and its state-changing struct are separate but in practice they usually live in the same file. So for a User module in a typical Phoenix app, the User module + struct will live here, as will the controller, 
+### Entities
 
-## Collaborators
+This should encompass the representations of first-class domain objects or agents up and down the stack. We have this interesting thing in Elixir where technically a module's functions and its state-changing struct are separate concerns, but in practice they usually live in the same file. So for a User module in a typical Phoenix app, the User module + struct will live here, as will the controller...
+// more to come
 
-These don't represent first-class objects or agents but they help these do their work.
+### Collaborators
 
-## Actions
+These don't represent first-class objects or agents but they help these to do their work.
+
+### Actions
 
 These are the simplest meaningful state-changing operations that exist in an application. By meaningful, it is meant that they impact the state of one or more entities. 
 
-## Workflows
+### Workflows
 
 These are higher-order state-changing operations that have actions as their components.
+
+## Implementation Specifics
+
+### Nesting everything under Entity?
+
+Entities are really the first-class citizens of the app. They are agents and objects that users should be able to instantly recognize and talk about. Having said that, not all first-class citizens are created equal, and I think it will prove impossible to universally distinguish between an Entity and what we are presently calling a Collaborator.
+
+As entities are the stars of the show as I see it now, it seems reasonable to nest all the other players under the entity they support or whose behavior they describe. 
+
+Now that I say that, though, I can't help but wonder if this is extremely short-sighted -- similar to how a similarly short-sighted famous singer might fully attribute their success to their own efforts and qualities. Just as the singer's success is inextricably bound to their supporters, fans, and other supportive conditions, so are the identities of these so-called "first-class" agents and object inextricably bound to their supporters and the actions they participate in. Some would even make the argument that their identity actually arises from their behavior and relationships, rather than their behavior and relationships arising from their identity (a viewpoint I am sympathetic to but do not share). I believe it is most accurate to say that the identity, relationships, and behavior of these agents and objects of criticaly importance to the system they inhabit arise *interdependently*, as do the identity, relationships, and behavior of the system in which they are all included.
+
+So that leaves us -- is it appropriate to nest Collaborators, Actions, and Workflows under the Entity they support or whose behavior they describe?
+
+I think the answer is yes. But if you ask if it's appropriate to nest Entities, Collaborators, and Actions under the Workflows they support, I would also have to say yes -- and there are still more yeses to come if we extend this thought experiment to a more magnanimous treatment of Collaborators and Actions.
+
+So do we opt for four different domain organizations depending on which of the four domain concept is being given first consideration? This seems neither justifiable nor practical. But I could see organizing the three chosen non-primary domain concepts under either Entities or Workflows. I do not intuit a compelling reason to unilaterally favor one over the other.
+
+At first blush, an advantage of putting Workflows first would appear to be in putting primacy on how users interact with the system, while yielding a disadvantage in ease of comprehension and navigation. On the other hand, putting Entities first might yield greater insight into the system's participants and potentially ease comprehension and file navigation, but might also somewhat obfuscate the user behavior that drives these participants to action.
+
+In any event, this being a learning process and odds being what they are that I'll get it right the first time, for now I don't see a problem with putting three arbitrarily non-prime domain concepts under the Entity they support or whose behavior they describe.
+
+As a side note, the reasons I am not coming from both the Entity and Workflow angle at once are the following:
+
+1) It would greatly increase the complexity of my present task, and the cost of additional complexity in a new domain is much steeper than in a well-trod one.
+
+2) I am worried there will be issues with establishing or maintaining two domain organizations in this way, either the mere burden of the maintainance itself or with complications or roadblocks caused by recursive symlinks.
+
+### Collaborators -- or Facilitators -- or something else?
+
+I can't remember why `Collaborators` was rubbing me the wrong way, but it was.

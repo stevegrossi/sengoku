@@ -1,0 +1,7 @@
+## Workflows
+
+// tag::body[]
+Higher-order state-changing operations that can be undertaken by a user of Sengoku.
+
+While the number of Actions in any application used by and useful to humans at a specific point in time must be finite, the number of Workflows in said application is exponentially larger and -- depending on its behavior and constraints on Workflow classification -- may not always be finite.
+// end::body[]

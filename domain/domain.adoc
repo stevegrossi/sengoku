@@ -1,0 +1,29 @@
+# Domain
+
+A collection of symlinks that organizes Sengoku according to Entitites, Collaborators, Actions, and Workflows. 
+
+---
+
+.Entities
+[%collapsible]
+====
+include::entities.adoc[tag=body]
+====
+
+.Collaborators
+[%collapsible]
+====
+include::collaborators.adoc[tag=body]
+====
+
+.Actions
+[%collapsible]
+====
+include::actions.adoc[tag=body]
+====
+
+.Workflows
+[%collapsible]
+====
+include::workflows.adoc[tag=body]
+====

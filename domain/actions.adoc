@@ -1,3 +1,5 @@
 ## Actions
 
+// tag::body[]
 Simple state-changing operations that can be undertaken by a user of Sengoku.
+// end::body[]

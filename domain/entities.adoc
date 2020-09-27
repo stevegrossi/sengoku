@@ -1,3 +1,5 @@
 ## Entities
 
+// tag::body[]
 The agents and objects representing domain concepts that are first-class citizens in Sengoku.
+// end::body[]

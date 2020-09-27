@@ -1,0 +1,3 @@
+## Collaborators
+
+The agents and objects in Sengoku that support, enable, or orchestrate the behavior of entities.

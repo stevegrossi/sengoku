@@ -1,0 +1,3 @@
+## Entities
+
+The agents and objects representing domain concepts that are first-class citizens in Sengoku.

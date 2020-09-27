@@ -1,0 +1,16 @@
+# Domain
+
+A collection of symlinks that organizes Sengoku according to Entitites, Collaborators, Actions, and Workflows.
+
+'''
+
+include::1_entities/README.adoc[]
+
+include::2_collaborators/README.adoc[]
+
+include::3_actions/README.adoc[]
+
+include::4_workflows/README.adoc[]
+
+
+

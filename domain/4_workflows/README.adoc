@@ -1,0 +1,5 @@
+## Workflows
+
+Higher-order state-changing operations that can be undertaken by a user of Sengoku.
+
+While the number of Actions in any application used by and useful to humans at a specific point in time must be finite, the number of Workflows in the same application is exponentially larger and may not always be finite.

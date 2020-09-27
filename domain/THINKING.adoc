@@ -1,0 +1,17 @@
+# Thinking
+
+## Entities
+
+This should encompass the representations of first-class domain objects or agents up and down the stack. We have this interesting thing in Elixir where technically a module's functions and its state-changing struct are separate but in practice they usually live in the same file. So for a User module in a typical Phoenix app, the User module + struct will live here, as will the controller, 
+
+## Collaborators
+
+These don't represent first-class objects or agents but they help these do their work.
+
+## Actions
+
+These are the simplest meaningful state-changing operations that exist in an application. By meaningful, it is meant that they impact the state of one or more entities. 
+
+## Workflows
+
+These are higher-order state-changing operations that have actions as their components.

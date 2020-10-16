@@ -1,7 +1,7 @@
 defmodule Sengoku.GameTest do
   use ExUnit.Case, async: true
 
-  alias Sengoku.{Game, Player, Tile}
+  alias Sengoku.{Game, Player, Region, Tile}
 
   describe "initialize_state/2" do
     test "returns the state before the game begins" do
@@ -86,6 +86,14 @@ defmodule Sengoku.GameTest do
 
       new_state = Game.start_game(old_state)
       assert new_state == old_state
+    end
+
+    # Regions were ownable at game start at and before 4976597
+    test "it will not let a player own a region at game start" do
+      100
+      # Probably easiest to eviscerate simulate_n_game_starts and just run it non-concurrently
+      |> simulate_n_game_starts(game_state__tiny_map_with_two_players())
+      |> check_games_have_no_region_owners()
     end
   end
 
@@ -841,5 +849,67 @@ defmodule Sengoku.GameTest do
 
       assert old_state == new_state
     end
+  end
+
+  @doc """
+  Returns a list of resultant game states for n game starts
+  """
+  defp simulate_n_game_starts(n, initial_state) when is_integer(n) do
+    1..n
+    |> Task.async_stream(fn _simulation_number -> Game.start_game(initial_state) end)
+    |> Enum.map(fn {:ok, resultant_state} -> resultant_state end)
+  end
+
+  @doc """
+  Verify that a list of game states contains no game state with a region owner
+  """
+  defp check_games_have_no_region_owners([%{regions: regions} | _t] = games) do
+    region_tile_ids = Enum.map(regions, fn {_key, region} -> region.tile_ids end)
+    # assert games.
+    # look through the games, get players from each game, get owned_tile_ids from each player
+
+    player_owned_tile_ids =
+      Enum.map(games, fn %{players: players} ->
+        Enum.map(players, fn player -> player.owned_tile_ids end)
+      end)
+
+    assert region_tile_ids == player_owned_tile_ids
+    # regions are in the game state map
+    # how to check an owner?
+    # Tile.ids_owned_by
+    # Check the intersection of ids_owned_by and region struct's tile_ids?
+    # go over each region
+  end
+
+  @doc """
+  Verify that a game state contains no region owner
+  """
+  defp check_game_has_no_region_owner(%{regions: regions, players: players, tiles: tiles}) do
+    # !Enum.any?(regions, fn (region) -> Region.has_owner?)
+  end
+
+
+  @doc """
+  A game state designed to evoke region-owning by a player at game start.
+  """
+  defp game_state__tiny_map_with_two_players do
+    %{
+      turn: 0,
+      tiles: %{
+        1 => %Tile{owner: nil},
+        2 => %Tile{owner: nil},
+        3 => %Tile{owner: nil},
+        4 => %Tile{owner: nil},
+        5 => %Tile{owner: nil}
+      },
+      regions: %{
+        1 => %{value: 2, tile_ids: [1, 2, 3]},
+        2 => %{value: 1, tile_ids: [4, 5]}
+      },
+      players: %{
+        1 => %Player{active: true},
+        2 => %Player{active: true}
+      }
+    }
   end
 end
